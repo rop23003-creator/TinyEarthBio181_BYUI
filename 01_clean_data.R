@@ -1,0 +1,206 @@
+# ============================================================
+# 01_clean_data.R
+#
+# PURPOSE
+#   Reads the raw Excel exports for the bacteria/antibiotics
+#   project, fixes a couple of known data-quality issues, and
+#   saves one clean R object that the app script (file #2) can
+#   load in a single line -- no re-cleaning needed every time
+#   the app starts.
+#
+# BEFORE YOU RUN THIS
+#   1. Open this project through its .Rproj file (not by double-
+#      clicking the script directly). That makes RStudio's
+#      "working directory" the project folder automatically, so
+#      the relative file paths below just work.
+#   2. Put all the raw .xlsx files, unchanged, in a folder named
+#      "data-raw" next to this script.
+#   3. Install these packages once, if you haven't already:
+#        install.packages(c("readxl", "dplyr", "purrr", "stringr",
+#                            "readr", "lubridate"))
+# ============================================================
+
+library(readxl)     # reads .xlsx files into R
+library(dplyr)      # data-cleaning verbs: mutate(), rename(), across()
+library(purrr)      # lets us repeat the same steps across many files at once
+library(stringr)    # tools for cleaning up text
+library(readr)      # type_convert(): re-guesses column types below
+library(lubridate)  # ymd(): parses the "date" columns properly
+
+# ------------------------------------------------------------
+# 1. List every table we have, and where its file lives.
+#    A named vector like this means the rest of the script can
+#    loop over `table_files` instead of repeating the same code
+#    14 separate times. To add the 15th table once you have it,
+#    you'll just add one more line here -- nothing else changes.
+# ------------------------------------------------------------
+table_files <- c(
+  institutions         = "data-raw/institutions.xlsx",
+  samples              = "data-raw/samples.xlsx",
+  dilutions            = "data-raw/dilutions.xlsx",
+  library_collections  = "data-raw/library-collections.xlsx",
+  aa_screen_libraries  = "data-raw/aa-screen-libraries.xlsx",
+  isolates             = "data-raw/isolates.xlsx",
+  streaks              = "data-raw/streaks.xlsx",
+  aa_screen_isolates   = "data-raw/aa-screen-isolates.xlsx",
+  gram_stains          = "data-raw/gram-stains.xlsx",
+  other_tests          = "data-raw/other-tests.xlsx",
+  rrna_analyses        = "data-raw/rrna-analyses.xlsx",
+  antibio_suscepts     = "data-raw/antibio-suscepts.xlsx",
+  eukaryotics          = "data-raw/eukaryotics.xlsx",
+  extracts             = "data-raw/extracts.xlsx"
+  # aa_screen_extracts = "data-raw/aa-screen-extracts.xlsx",  # add once you have it
+)
+
+# ------------------------------------------------------------
+# 2. A function that cleans ONE table.
+#    We write the cleaning logic once, then apply it to every
+#    file in the loop below. If we find another issue later, we
+#    only have to fix it in this one place.
+# ------------------------------------------------------------
+clean_table <- function(df) {
+  df <- df %>%
+    # The exported files use a single space " " for missing
+    # values instead of leaving the cell truly blank. That means
+    # R's is.na() misses them entirely. This line finds every
+    # text column, trims whitespace, and turns anything left
+    # empty into a real NA (R's built-in "missing value" marker).
+    mutate(across(where(is.character), ~ na_if(str_trim(.x), ""))) %>%
+    # In every table, the column called "name" is actually a
+    # lookup showing the *institution's* name -- not that row's
+    # own label (the row's own label lives in "nickname"). We
+    # rename it here so it's unambiguous every time you see it
+    # later. any_of() just means "rename it if this column
+    # exists" so the script won't error on a table that lacks it.
+    rename(any_of(c(institution_name = "name")))
+
+  # If this table has a "date" column, parse it from text (e.g.
+  # "2024/09/18") into a real R Date. ymd() reads the digits in
+  # year-month-day order regardless of the separator used, so it copes
+  # fine if the source ever switches between "/" and "-".
+  if ("date" %in% names(df)) {
+    df <- df %>% mutate(date = lubridate::ymd(date))
+  }
+
+  # Columns like sample_ph, air_temperature, or duration are genuinely
+  # numeric, but because some cells came in as a blank space, R read the
+  # WHOLE column as text (a column can only have one type, so one
+  # non-numeric cell forces the rest to text too). Now that those blanks
+  # are real NAs, type_convert() re-guesses a sensible type -- numeric,
+  # logical, or left as text -- for every remaining character column,
+  # the same way it would when reading a fresh CSV.
+  df <- suppressMessages(readr::type_convert(df))
+
+  # Columns named "num_something" (e.g. num_streak, num_extract) are
+  # rollup COUNTS -- "how many streaks does this isolate have?" -- not
+  # measurements. A blank cell there means that count is genuinely zero,
+  # not "we don't know." So for just these columns, we convert to a real
+  # number and fill any remaining blanks with 0 instead of leaving NA.
+  # coalesce(x, 0) means "use x if it has a value, otherwise use 0."
+  num_cols <- str_subset(names(df), "^num_")
+  df %>%
+    mutate(across(all_of(num_cols), ~ coalesce(as.numeric(.x), 0)))
+}
+
+# ------------------------------------------------------------
+# 3. Read + clean every file, all at once.
+#    imap() walks through table_files, and for each entry it
+#    gets BOTH the file path (.x) and that entry's name (.y,
+#    e.g. "isolates"), so we can print progress as we go.
+# ------------------------------------------------------------
+tep_data <- imap(table_files, function(path, tbl_name) {
+  message("Reading ", tbl_name, " ...")
+  # By default, read_excel() only looks at the first 1,000 rows to guess
+  # each column's type. A column that's mostly blank in that window gets
+  # guessed as "logical" -- then real values further down the sheet get
+  # silently turned into NA because they don't fit that guess. Since our
+  # tables run up to ~24,000 rows, we raise guess_max well past that so
+  # it scans the WHOLE sheet before deciding each column's type.
+  read_excel(path, guess_max = 1e5) %>% clean_table()
+})
+
+# tep_data is now a named list of tibbles (data frames), e.g.
+#   tep_data$isolates
+#   tep_data$samples
+# Explore any one of them in the RStudio Viewer with:
+#   View(tep_data$isolates)
+
+# ------------------------------------------------------------
+# 4. Quick sanity check -- print size + missingness for every
+#    table so you can eyeball whether anything looks off before
+#    trusting the data downstream.
+# ------------------------------------------------------------
+iwalk(tep_data, function(df, tbl_name) {
+  pct_missing <- round(100 * sum(is.na(df)) / (nrow(df) * ncol(df)), 1)
+  cat(sprintf("%-22s %6d rows  %3d cols  %5s%% missing\n",
+              tbl_name, nrow(df), ncol(df), pct_missing))
+})
+
+# ------------------------------------------------------------
+# 5. Save the whole cleaned list as one file.
+#    saveRDS() stores an R object exactly as-is (all 14 tables,
+#    their types, everything) in one compact file. The app script
+#    can load it all back in a single line:
+#      tep_data <- readRDS("data/tep_data.rds")
+# ------------------------------------------------------------
+dir.create("data", showWarnings = FALSE)
+saveRDS(tep_data, "data/tep_data.rds")
+
+# ------------------------------------------------------------
+# 6. Join helpers -- attach related-table context onto any table
+#    that carries the matching foreign key, without repeating the
+#    same left_join() everywhere it's needed later.
+# ------------------------------------------------------------
+
+# join_with_sample(): attach columns from `samples` onto any table
+# that already has a sample_id column (antibio_suscepts, streaks, etc.)
+join_with_sample <- function(child_df) {
+  sample_info <- tep_data$samples %>%
+    # institution_name already exists on every child table (we renamed
+    # it there earlier), so drop it here rather than bringing in a
+    # second, identical copy.
+    select(-institution_name) %>%
+    # Prefix every OTHER column with "sample_". rename_with()'s second
+    # argument is a tidyselect expression -- "-id" means "every column
+    # except id" -- so id is left alone (it's about to become the join
+    # key) while things like date/nickname/sample_type become
+    # sample_date/sample_nickname/sample_sample_type. That guarantees
+    # nothing here can ever collide with the child table's own columns,
+    # even ones that happen to share a name but mean something different.
+    rename_with(~ paste0("sample_", .x), -id)
+
+  child_df %>%
+    left_join(sample_info, by = c("sample_id" = "id"))
+}
+
+# Quick test -- run these two lines by hand in the console (not part of
+# the automatic pipeline) to confirm the join behaves correctly:
+#   combined <- join_with_sample(tep_data$antibio_suscepts)
+#   nrow(combined) == nrow(tep_data$antibio_suscepts)  # should be TRUE
+#   names(combined)                                    # new sample_* columns
+
+# join_with_institution(): attach columns from `institutions` onto any
+# table that already has an institution_name column (basically all of
+# them). Unlike sample_id/id, institution_name is a text match rather
+# than a numeric foreign key -- worth spot-checking once with:
+#   anti_join(tep_data$samples, tep_data$institutions, by = "institution_name")
+# which should return zero rows if every name lines up cleanly.
+join_with_institution <- function(child_df) {
+  institution_info <- tep_data$institutions %>%
+    # id is that table's own internal row number -- nothing else refers
+    # to it, so it's safe to drop (unlike institution_name, which is the
+    # actual join key and has to stay).
+    select(-id) %>%
+    # Prefix everything EXCEPT the join key, same idea as
+    # join_with_sample: country_name becomes institution_country_name,
+    # so it's unambiguous which table it came from and it can never
+    # collide with a same-named column elsewhere.
+    rename_with(~ paste0("institution_", .x), -institution_name)
+
+  child_df %>%
+    left_join(institution_info, by = "institution_name")
+}
+
+message("\nDone. Clean data saved to data/tep_data.rds")
+
+View(tep_data$extracts)
