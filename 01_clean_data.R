@@ -137,17 +137,7 @@ iwalk(tep_data, function(df, tbl_name) {
 })
 
 # ------------------------------------------------------------
-# 5. Save the whole cleaned list as one file.
-#    saveRDS() stores an R object exactly as-is (all 14 tables,
-#    their types, everything) in one compact file. The app script
-#    can load it all back in a single line:
-#      tep_data <- readRDS("data/tep_data.rds")
-# ------------------------------------------------------------
-dir.create("data", showWarnings = FALSE)
-saveRDS(tep_data, "data/tep_data.rds")
-
-# ------------------------------------------------------------
-# 6. Join helpers -- attach related-table context onto any table
+# 5. Join helpers -- attach related-table context onto any table
 #    that carries the matching foreign key, without repeating the
 #    same left_join() everywhere it's needed later.
 # ------------------------------------------------------------
@@ -201,6 +191,76 @@ join_with_institution <- function(child_df) {
     left_join(institution_info, by = "institution_name")
 }
 
-message("\nDone. Clean data saved to data/tep_data.rds")
+# ------------------------------------------------------------
+# 7. build_display_table() -- a "dressed up" version of any table,
+#    ready to show in the app. It checks which join keys a table
+#    actually has, and attaches sample_* / institution_* context
+#    accordingly. Since both joins are many-to-one (many streaks
+#    per sample, many samples per institution), this only ADDS
+#    columns -- it never multiplies rows, so row counts stay exactly
+#    what they were in the original table.
+# ------------------------------------------------------------
+build_display_table <- function(tbl_name) {
+  df <- tep_data[[tbl_name]]
 
-View(tep_data$extracts)
+  if ("sample_id" %in% names(df)) {
+    df <- df %>% join_with_sample()
+  }
+  if ("institution_name" %in% names(df)) {
+    df <- df %>% join_with_institution()
+  }
+
+  df
+}
+
+# Try it out -- compare the original to the "dressed up" version:
+#   View(tep_data$isolates)
+#   View(build_display_table("isolates"))
+
+# ------------------------------------------------------------
+# 6. Build ready-to-use combined views.
+#    The app COULD call join_with_sample()/join_with_institution()
+#    itself every time it draws a table, but doing that join once
+#    here, right after cleaning, means the app just displays an
+#    already-joined table -- simpler code over there, and the join
+#    only happens once instead of every time someone opens the app.
+# ------------------------------------------------------------
+
+# Chains both helpers: sample context, then institution context
+# (institution_name survives the first join, so the second one still
+# has something to match against).
+join_with_context <- function(child_df) {
+  child_df %>%
+    join_with_sample() %>%
+    join_with_institution()
+}
+
+# Only tables that actually have a sample_id column can go through
+# join_with_sample() -- institutions and samples themselves are the
+# "parent" tables here, not children, so they're left out of this list.
+# map_lgl() checks each table in tep_data and keeps just the TRUE ones
+# (the "_lgl" means it expects each check to return one TRUE/FALSE).
+combinable_tables <- names(tep_data)[
+  map_lgl(tep_data, ~ "sample_id" %in% names(.x))
+]
+
+tep_data_combined <- tep_data[combinable_tables] %>%
+  map(join_with_context)
+
+# e.g. tep_data_combined$antibio_suscepts now has the antibiotic
+# results AND the sample's site/environment info AND the institution's
+# country, all in one table, ready for the app to display directly.
+
+# ------------------------------------------------------------
+# 7. Save everything.
+#    saveRDS() stores an R object exactly as-is (types, structure,
+#    everything) in one compact file. The app script loads each
+#    back in a single line:
+#      tep_data          <- readRDS("data/tep_data.rds")
+#      tep_data_combined <- readRDS("data/tep_data_combined.rds")
+# ------------------------------------------------------------
+dir.create("data", showWarnings = FALSE)
+saveRDS(tep_data, "data/tep_data.rds")
+saveRDS(tep_data_combined, "data/tep_data_combined.rds")
+
+message("\nDone. Saved data/tep_data.rds and data/tep_data_combined.rds")
