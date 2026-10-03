@@ -11,7 +11,7 @@
 #
 # BEFORE YOU RUN THIS
 #   install.packages(c("shiny", "DT"))
-#   This file expects 01_clean_data.R and the data-raw/ folder to
+#   This file expects 01_clean_data.R and the Data_Raw/ folder to
 #   be in the same project (it re-uses that script directly --
 #   see the note by source() below).
 #
@@ -32,10 +32,10 @@ library(DT)
 # (under a couple seconds) and guarantees the app never shows stale
 # data. If that ever starts to feel slow once more data is added,
 # the fix is to swap this line for:
-#   tep_data <- readRDS("data/tep_data.rds")
+#   tep_data <- <read each table from the Data/ folder's .csv files>
 # -- but you'd still need the three functions defined somewhere the
 # app can see them, so we're keeping it this way for now.
-source("01_clean_data.R")
+source("Data_Clean.R")
 
 # ------------------------------------------------------------
 # UI -- one dropdown to choose a table, one table to show it

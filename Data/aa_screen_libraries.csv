@@ -1,0 +1,452 @@
+id,nickname,date,media_used,media_used_concentration,media_mod,temperature,duration,test_bacteria,activity_yes,activity_no,activity_isolate_did_not_grow,activity_inconclusive,additives,additive_concentration,sample_id,antibiotic_activity,isolate_id,institution_name
+1014686,,2024-09-25,Tryptic Soy Agar (TSA),10,,28,48,Staphylococus epidermidis,4,9,0,9,nystatin,50,1004610,Yes,1014668,Salisbury University
+1014691,,2024-09-25,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,7,7,0,8,nystatin,50,1004610,Yes,1014668,Salisbury University
+1014976,JG6,2024-10-02,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,4,18,2,0,nystatin,50,1004587,Yes,1014662,Salisbury University
+1015050,MillerK_F24,2024-09-18,Tryptic Soy Agar (TSA),100,,28,120,Staphylococcus epidermidis,2,22,0,3,nystatin,50,1004499,Yes,1015041,Salisbury University
+1015105,,2024-09-23,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,2,16,0,0,nystatin,50,1004595,Yes,1015111,Salisbury University
+1015107,,2024-09-23,Potato Dextrose Agar (PDA),100,,28,48,Erwinia carotovora,1,3,0,0,nystatin,50,1004403,Yes,1015096,Salisbury University
+1015179,,2024-09-16,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,4,16,3,0,nystatin,50,1004496,Yes,1015165,Salisbury University
+1015477,,2024-09-23,Tryptic Soy Agar (TSA),10,,28,72,Erwinia carotovora,3,13,5,0,nystatin,50,1004460,Yes,1012540,Salisbury University
+1015752,,2024-09-23,Potato Dextrose Agar (PDA),100,,28,120,Erwinia carotovora,4,13,0,3,nystatin,50,1004719,Yes,1015746,Salisbury University
+1015778,JG17,2024-10-02,Tryptic Soy Agar (TSA),10,,28,120,Erwinia carotovora,4,18,2,0,nystatin,50,1004587,Yes,1015068,Salisbury University
+1017402,,2024-09-18,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,4,19,0,0,nystatin,50,1004384,Yes,1017134,Salisbury University
+1045997,0ppm Staphylococcu e,2024-11-21,Actinomycete Isolation Agar (AIA),100,none,28,48,Staphylococcus epidermidis,1,21,0,0,none,,1045631,Yes,1045713,University of Wisconsin–Madison
+1046386,0ppmErwinia carotovo,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Erwinia carotovora,9,13,0,0,none,,1045631,Yes,1046098,University of Wisconsin–Madison
+1046386,0ppmErwinia carotovo,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Erwinia carotovora,9,13,0,0,none,,1045631,Yes,1046157,University of Wisconsin–Madison
+1046386,0ppmErwinia carotovo,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Erwinia carotovora,9,13,0,0,none,,1045631,Yes,1046176,University of Wisconsin–Madison
+1046386,0ppmErwinia carotovo,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Erwinia carotovora,9,13,0,0,none,,1045631,Yes,1046185,University of Wisconsin–Madison
+1046386,0ppmErwinia carotovo,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Erwinia carotovora,9,13,0,0,none,,1045631,Yes,1046199,University of Wisconsin–Madison
+1046386,0ppmErwinia carotovo,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Erwinia carotovora,9,13,0,0,none,,1045631,Yes,1046217,University of Wisconsin–Madison
+1046386,0ppmErwinia carotovo,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Erwinia carotovora,9,13,0,0,none,,1045631,Yes,1046229,University of Wisconsin–Madison
+1046386,0ppmErwinia carotovo,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Erwinia carotovora,9,13,0,0,none,,1045631,Yes,1046238,University of Wisconsin–Madison
+1046386,0ppmErwinia carotovo,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Erwinia carotovora,9,13,0,0,none,,1045631,Yes,1046258,University of Wisconsin–Madison
+1046508,0ppmBacillus subtili,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Bacillus subtilis,0,0,0,0,none,,1045631,Yes,1046209,University of Wisconsin–Madison
+1046508,0ppmBacillus subtili,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Bacillus subtilis,0,0,0,0,none,,1045631,Yes,1046217,University of Wisconsin–Madison
+1046508,0ppmBacillus subtili,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,none,28,48,Bacillus subtilis,0,0,0,0,none,,1045631,Yes,1046229,University of Wisconsin–Madison
+1046566,250ppmErwinia caroto,2024-11-21,,100,250ppm Silver,28,48,Erwinia carotovora,2,20,0,0,none,,1045631,Yes,1046298,University of Wisconsin–Madison
+1046566,250ppmErwinia caroto,2024-11-21,,100,250ppm Silver,28,48,Erwinia carotovora,2,20,0,0,none,,1045631,Yes,1046310,University of Wisconsin–Madison
+1046612,250Bacillus subtilis,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,250ppm Silver,28,48,Bacillus subtilis,3,0,0,0,none,,1045631,Yes,1046283,University of Wisconsin–Madison
+1046612,250Bacillus subtilis,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,250ppm Silver,28,48,Bacillus subtilis,3,0,0,0,none,,1045631,Yes,1046298,University of Wisconsin–Madison
+1046612,250Bacillus subtilis,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,250ppm Silver,28,48,Bacillus subtilis,3,0,0,0,none,,1045631,Yes,1046310,University of Wisconsin–Madison
+1083463,,2025-02-17,Tryptic Soy Agar (TSA),10,,28,48,Enterobacter aerogenes,0,24,0,0,none,,1076151,,,"California State University, Sacramento"
+1083470,,2025-02-19,Tryptic Soy Agar (TSA),10,,28,48,Acinetobacter baylyi,0,24,0,0,none,,1076151,,,"California State University, Sacramento"
+1083476,,2025-02-19,Tryptic Soy Agar (TSA),10,,28,48,Escherichia coli,0,24,0,0,none,,1076151,,,"California State University, Sacramento"
+1083696,B. subtilis,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,Bacillus subtilis,7,4,0,0,none,100,1076165,Yes,1095325,"California State University, Sacramento"
+1083696,B. subtilis,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,Bacillus subtilis,7,4,0,0,none,100,1076165,Yes,1095330,"California State University, Sacramento"
+1083696,B. subtilis,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,Bacillus subtilis,7,4,0,0,none,100,1076165,Yes,1095334,"California State University, Sacramento"
+1083696,B. subtilis,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,Bacillus subtilis,7,4,0,0,none,100,1076165,Yes,1095340,"California State University, Sacramento"
+1083696,B. subtilis,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,Bacillus subtilis,7,4,0,0,none,100,1076165,Yes,1095344,"California State University, Sacramento"
+1083696,B. subtilis,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,Bacillus subtilis,7,4,0,0,none,100,1076165,Yes,1095350,"California State University, Sacramento"
+1083696,B. subtilis,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,Bacillus subtilis,7,4,0,0,none,100,1076165,Yes,1095354,"California State University, Sacramento"
+1086853,E. carotovora,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,3,8,0,0,none,,1076165,Yes,1095325,"California State University, Sacramento"
+1086853,E. carotovora,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,3,8,0,0,none,,1076165,Yes,1095330,"California State University, Sacramento"
+1086853,E. carotovora,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,3,8,0,0,none,,1076165,Yes,1095334,"California State University, Sacramento"
+1086853,E. carotovora,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,3,8,0,0,none,,1076165,No,1095340,"California State University, Sacramento"
+1086853,E. carotovora,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,3,8,0,0,none,,1076165,No,1095344,"California State University, Sacramento"
+1086853,E. carotovora,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,3,8,0,0,none,,1076165,No,1095350,"California State University, Sacramento"
+1086853,E. carotovora,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,3,8,0,0,none,,1076165,No,1095354,"California State University, Sacramento"
+1086859,E. raffinosus,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Enterococcus raffinosus,3,8,0,0,none,,1076165,Yes,1095325,"California State University, Sacramento"
+1086859,E. raffinosus,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Enterococcus raffinosus,3,8,0,0,none,,1076165,Yes,1095330,"California State University, Sacramento"
+1086859,E. raffinosus,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Enterococcus raffinosus,3,8,0,0,none,,1076165,Yes,1095334,"California State University, Sacramento"
+1086859,E. raffinosus,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Enterococcus raffinosus,3,8,0,0,none,,1076165,No,1095340,"California State University, Sacramento"
+1086859,E. raffinosus,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Enterococcus raffinosus,3,8,0,0,none,,1076165,No,1095344,"California State University, Sacramento"
+1086859,E. raffinosus,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Enterococcus raffinosus,3,8,0,0,none,,1076165,No,1095350,"California State University, Sacramento"
+1086859,E. raffinosus,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Enterococcus raffinosus,3,8,0,0,none,,1076165,No,1095354,"California State University, Sacramento"
+1086865,A. baylyi,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Acinetobacter baylyi,3,8,0,0,none,,1076165,Yes,1095325,"California State University, Sacramento"
+1086865,A. baylyi,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Acinetobacter baylyi,3,8,0,0,none,,1076165,Yes,1095330,"California State University, Sacramento"
+1086865,A. baylyi,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Acinetobacter baylyi,3,8,0,0,none,,1076165,Yes,1095334,"California State University, Sacramento"
+1086865,A. baylyi,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Acinetobacter baylyi,3,8,0,0,none,,1076165,No,1095340,"California State University, Sacramento"
+1086865,A. baylyi,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Acinetobacter baylyi,3,8,0,0,none,,1076165,No,1095344,"California State University, Sacramento"
+1086865,A. baylyi,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Acinetobacter baylyi,3,8,0,0,none,,1076165,No,1095350,"California State University, Sacramento"
+1086865,A. baylyi,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Acinetobacter baylyi,3,8,0,0,none,,1076165,No,1095354,"California State University, Sacramento"
+1086871,S. epidermidis,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Staphylococcus epidermidis,3,8,0,0,none,,1076165,Yes,1095325,"California State University, Sacramento"
+1086871,S. epidermidis,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Staphylococcus epidermidis,3,8,0,0,none,,1076165,Yes,1095330,"California State University, Sacramento"
+1086871,S. epidermidis,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Staphylococcus epidermidis,3,8,0,0,none,,1076165,Yes,1095334,"California State University, Sacramento"
+1086871,S. epidermidis,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Staphylococcus epidermidis,3,8,0,0,none,,1076165,No,1095340,"California State University, Sacramento"
+1086871,S. epidermidis,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Staphylococcus epidermidis,3,8,0,0,none,,1076165,No,1095344,"California State University, Sacramento"
+1086871,S. epidermidis,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Staphylococcus epidermidis,3,8,0,0,none,,1076165,No,1095350,"California State University, Sacramento"
+1086871,S. epidermidis,2025-02-28,Tryptic Soy Agar (TSA),10,,28,48,Staphylococcus epidermidis,3,8,0,0,none,,1076165,No,1095354,"California State University, Sacramento"
+1086915,,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,0,24,0,0,none,,1076151,,,"California State University, Sacramento"
+1086928,,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Erwinia carotovora,0,24,0,0,none,,1076151,,,"California State University, Sacramento"
+1086998,,2025-02-12,Reasoner’s 2A Agar (R2A),100,,28,48,Acinetobacter baylyi,0,16,1,0,cycloheximide,100,1076161,,,"California State University, Sacramento"
+1087006,,2025-02-12,Reasoner’s 2A Agar (R2A),100,,28,48,Enterobacter aerogenes,0,12,5,0,cycloheximide,100,1076161,,,"California State University, Sacramento"
+1087017,,2025-02-12,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,0,14,3,0,cycloheximide,100,1076161,,,"California State University, Sacramento"
+1087021,,2025-02-17,Reasoner’s 2A Agar (R2A),100,,28,48,Bacillus subtilis,0,11,6,0,none,,1076161,,,"California State University, Sacramento"
+1087025,,2025-02-17,Reasoner’s 2A Agar (R2A),100,,28,48,Enterococcus raffinosus,0,14,3,0,none,,1076161,,,"California State University, Sacramento"
+1087032,,2025-02-17,Reasoner’s 2A Agar (R2A),100,,,,Erwinia carotovora,3,9,5,0,none,,1076161,,,"California State University, Sacramento"
+1087039,,2025-02-17,Reasoner’s 2A Agar (R2A),100,,28,48,Pseudomonas putida,0,7,9,0,none,,1076161,,,"California State University, Sacramento"
+1087048,,2025-02-17,,100,,28,48,Staphylococcus epidermidis,4,11,2,0,none,,1076161,,,"California State University, Sacramento"
+1087695,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Bacillus subtilis,5,12,0,0,none,,1081157,,,University of St. Thomas
+1087697,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Pseudomonas putida,2,19,0,0,none,,1081163,,,University of St. Thomas
+1087699,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Bacillus subtilis,1,10,0,0,none,,1081153,,,University of St. Thomas
+1087700,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Bacillus subtilis,5,19,0,0,none,,1081153,Yes,1087940,University of St. Thomas
+1087700,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Bacillus subtilis,5,19,0,0,none,,1081153,Yes,1087934,University of St. Thomas
+1087703,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Bacillus subtilis,5,19,0,0,none,,1081157,,,University of St. Thomas
+1087720,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Bacillus subtilis,7,0,0,0,none,,1081163,Yes,1087909,University of St. Thomas
+1087722,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Bacillus subtilis,16,5,0,0,none,,1081154,,,University of St. Thomas
+1087724,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Bacillus subtilis,1,23,0,0,none,,1081154,Yes,1087942,University of St. Thomas
+1087724,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Bacillus subtilis,1,23,0,0,none,,1081154,No,1128202,University of St. Thomas
+1087739,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Escherichia coli,1,23,0,0,none,,1081157,,,University of St. Thomas
+1087748,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Escherichia coli,0,24,0,0,none,,1081153,,,University of St. Thomas
+1087752,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Escherichia coli,0,21,0,0,none,,1081163,,,University of St. Thomas
+1087757,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Escherichia coli,0,21,0,0,none,,1081154,,,University of St. Thomas
+1087763,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Bacillus subtilis,1,21,0,0,none,,1081163,Yes,1087914,University of St. Thomas
+1087770,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Pseudomonas putida,0,24,0,0,none,,1081153,,,University of St. Thomas
+1087784,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,,,Escherichia coli,0,24,0,0,none,,1081163,,,University of St. Thomas
+1087792,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Escherichia coli,0,11,0,0,none,,1081153,,,University of St. Thomas
+1087800,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Escherichia coli,1,23,0,0,none,,1081154,Yes,1087942,University of St. Thomas
+1087800,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Escherichia coli,1,23,0,0,none,,1081154,No,1128202,University of St. Thomas
+1087806,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Pseudomonas putida,0,24,0,0,none,,1081163,,,University of St. Thomas
+1087814,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Pseudomonas putida,0,21,0,0,none,,1081154,,,University of St. Thomas
+1087823,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Pseudomonas putida,0,11,0,0,none,,1081153,,,University of St. Thomas
+1087854,,2025-03-03,Potato Dextrose Agar (PDA),100,,,,Pseudomonas putida,1,23,0,0,none,,1081154,Yes,1087942,University of St. Thomas
+1087854,,2025-03-03,Potato Dextrose Agar (PDA),100,,,,Pseudomonas putida,1,23,0,0,none,,1081154,Yes,1128202,University of St. Thomas
+1087856,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Escherichia coli,0,16,1,0,none,,1081157,Yes,1087936,University of St. Thomas
+1087874,,2025-03-03,Reasoner’s 2A Agar (R2A),100,,30,24,Pseudomonas putida,0,24,0,0,none,,1081157,,,University of St. Thomas
+1087880,,2025-03-03,Potato Dextrose Agar (PDA),100,,30,24,Pseudomonas putida,2,14,1,0,none,,1081157,,,University of St. Thomas
+1093542,isolates,2025-03-13,Reasoner’s 2A Agar (R2A),100,,20,185.99000549316,Acinetobacter baylyi,1,31,0,0,none,,1093232,,,Brigham Young University–Idaho
+1093546,Master plate,2025-03-11,Luria Bertani/Lysogeny Agar (LBA),100,,28,24,Escherichia coli,1,31,0,0,none,,1093239,Yes,1093415,Brigham Young University–Idaho
+1093555,Masterplate,2025-03-11,Nutrient Agar (NA),100,,28,48,Acinetobacter baylyi,1,4,0,0,none,,1093247,Yes,1093503,Brigham Young University–Idaho
+1093580,tester plate,2025-03-11,Luria Bertani/Lysogeny Agar (LBA),100,,28,24,Escherichia coli,1,31,0,0,none,,1093235,,,Brigham Young University–Idaho
+1093594,,2025-03-11,,100,,,,,0,0,0,0,none,,1093242,No,1093513,Brigham Young University–Idaho
+1093659,tester plate 1,2025-03-11,Nutrient Agar (NA),100,,28,48,Escherichia coli,2,30,0,0,none,,1093241,Yes,1093534,Brigham Young University–Idaho
+1093668,,2025-03-11,Potato Dextrose Agar (PDA),100,,,,Escherichia coli,1,31,0,0,none,,1093251,,,Brigham Young University–Idaho
+1093671,Enterobacter tester,2025-03-11,Nutrient Agar (NA),100,,20,168,Enterobacter aerogenes,1,31,0,0,none,,1093230,Yes,1093475,Brigham Young University–Idaho
+1093756,,2025-03-04,Tryptic Soy Agar (TSA),100,,20,24,Acinetobacter baylyi,1,31,0,0,none,,1093234,No,1093634,Brigham Young University–Idaho
+1093786,Proof plate,2025-03-11,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,2,0,0,0,none,,1093287,Yes,1093742,Brigham Young University–Idaho
+1093786,Proof plate,2025-03-11,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,2,0,0,0,none,,1093287,Yes,1093774,Brigham Young University–Idaho
+1093899,test plate,2025-03-11,Tryptic Soy Agar (TSA),50,,20,48,Acinetobacter baylyi,2,30,0,0,none,,1093240,Yes,1093497,Brigham Young University–Idaho
+1093899,test plate,2025-03-11,Tryptic Soy Agar (TSA),50,,20,48,Acinetobacter baylyi,2,30,0,0,none,,1093240,Yes,1093512,Brigham Young University–Idaho
+1094006,,2025-03-11,Reasoner’s 2A Agar (R2A),100,,20,35,Escherichia coli,2,30,0,0,none,,1093245,Yes,1093859,Brigham Young University–Idaho
+1094006,,2025-03-11,Reasoner’s 2A Agar (R2A),100,,20,35,Escherichia coli,2,30,0,0,none,,1093245,Yes,1093878,Brigham Young University–Idaho
+1094012,Tester Plate - NA,2025-03-11,Nutrient Agar (NA),100,,28,48,Staphylococcus epidermidis,2,30,0,0,none,,1093289,Yes,1093938,Brigham Young University–Idaho
+1094012,Tester Plate - NA,2025-03-11,Nutrient Agar (NA),100,,28,48,Staphylococcus epidermidis,2,30,0,0,none,,1093289,Yes,1093953,Brigham Young University–Idaho
+1094020,tester plate,2025-03-11,Nutrient Agar (NA),100,,20,,,1,31,0,0,none,,1093233,No,1093894,Brigham Young University–Idaho
+1094048,Tester - LB,2025-03-11,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Escherichia coli,1,31,0,0,none,,1093289,Yes,1093953,Brigham Young University–Idaho
+1094051,LB tester plate,2025-03-11,Luria Bertani/Lysogeny Agar (LBA),100,,20,168,Escherichia coli,1,24,0,0,none,,1093257,Yes,1093976,Brigham Young University–Idaho
+1094060,Tester - Potato,2025-03-11,Potato Dextrose Agar (PDA),100,,28,48,Enterobacter aerogenes,2,30,0,0,none,,1093289,Yes,1093964,Brigham Young University–Idaho
+1094060,Tester - Potato,2025-03-11,Potato Dextrose Agar (PDA),100,,28,48,Enterobacter aerogenes,2,30,0,0,none,,1093289,Yes,1093938,Brigham Young University–Idaho
+1094131,Isolate #12,2025-03-11,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,2,30,0,0,none,,1093246,Yes,1094108,Brigham Young University–Idaho
+1094529,,2025-03-03,Tryptic Soy Agar (TSA),10,,,48,Enterococcus raffinosus,0,24,0,0,none,,1076151,,,"California State University, Sacramento"
+1094534,,2025-03-03,Tryptic Soy Agar (TSA),10,,28,48,Staphylococcus epidermidis,0,24,0,0,none,,1076151,,,"California State University, Sacramento"
+1094538,,2025-03-03,Tryptic Soy Agar (TSA),10,,28,48,Bacillus subtilis,2,22,0,0,none,,1076151,,,"California State University, Sacramento"
+1094774,test plates,2025-03-12,Tryptic Soy Agar (TSA),100,,28,40,Escherichia coli,0,32,0,0,none,,1094737,,,Brigham Young University–Idaho
+1094846,path plate 1,2025-02-12,Luria Bertani/Lysogeny Agar (LBA),100,,28,168,Staphylococcus epidermidis,0,32,0,0,none,,1094741,,,Brigham Young University–Idaho
+1094887,path plate 2,2025-02-05,Tryptic Soy Agar (TSA),100,,28,168,Escherichia coli,0,32,0,0,none,,1094741,,,Brigham Young University–Idaho
+1094918,path plate 3,2025-02-12,Nutrient Agar (NA),100,,28,168,Enterobacter aerogenes,0,32,0,0,none,,1094741,,,Brigham Young University–Idaho
+1094933,path plate 4,2025-02-12,Potato Dextrose Agar (PDA),100,,28,167.97999572754,Pseudomonas putida,0,32,0,0,none,,1094741,,,Brigham Young University–Idaho
+1094942,50% TSA,2025-03-12,Tryptic Soy Agar (TSA),50,,28,48,Pseudomonas putida,2,30,0,0,none,,1094729,Yes,1094845,Brigham Young University–Idaho
+1094942,50% TSA,2025-03-12,Tryptic Soy Agar (TSA),50,,28,48,Pseudomonas putida,2,30,0,0,none,,1094729,Yes,1094936,Brigham Young University–Idaho
+1095014,Sauron's breakfast,2025-02-11,Reasoner’s 2A Agar (R2A),100,,28,72,Bacillus subtilis,0,32,0,0,none,,1094853,,,Brigham Young University–Idaho
+1095035,#1 Potato Dextrose,2025-03-12,Potato Dextrose Agar (PDA),100,,25,168,Escherichia coli,3,29,0,0,none,,1094778,,,Brigham Young University–Idaho
+1095041,Sauron's lunch,2025-02-26,Nutrient Agar (NA),100,,28,72,Staphylococcus epidermidis,0,32,0,0,none,,1094853,,,Brigham Young University–Idaho
+1095077,The Booger of BYUI,2025-03-12,Tryptic Soy Agar (TSA),100,,28,168,Bacillus subtilis,0,32,0,0,none,,1094835,,,Brigham Young University–Idaho
+1095082,Sauron's dinner,2025-02-12,Potato Dextrose Agar (PDA),100,,,,Pseudomonas putida,0,32,0,0,none,,1094853,,,Brigham Young University–Idaho
+1095094,The Booger of BYUI 2,2025-03-12,Potato Dextrose Agar (PDA),100,,28,168,Enterobacter aerogenes,0,32,0,0,none,,1094835,,,Brigham Young University–Idaho
+1095152,,2025-03-12,Potato Dextrose Agar (PDA),100,,28,,Acinetobacter baylyi,2,30,0,0,none,,1094756,,,Brigham Young University–Idaho
+1095165,Sauron's snack,2025-02-26,Tryptic Soy Agar (TSA),10,,28,,Escherichia coli,0,32,0,0,none,,1094853,,,Brigham Young University–Idaho
+1095179,R2A Staph Clear Soup,2025-02-14,Reasoner’s 2A Agar (R2A),100,,28,48,Staphylococcus epidermidis,2,30,12,0,none,,1094924,,,Brigham Young University–Idaho
+1095201,,2025-03-12,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,5,27,0,0,none,,1094756,,,Brigham Young University–Idaho
+1095226,TSA Acin. Swamp,2025-02-14,Tryptic Soy Agar (TSA),50,,,,Acinetobacter baylyi,1,31,14,0,none,,1094924,,,Brigham Young University–Idaho
+1095257,E. coli,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Escherichia coli,0,6,0,5,none,,1076165,Inconclusive,1095325,"California State University, Sacramento"
+1095257,E. coli,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Escherichia coli,0,6,0,5,none,,1076165,Inconclusive,1095330,"California State University, Sacramento"
+1095257,E. coli,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Escherichia coli,0,6,0,5,none,,1076165,Inconclusive,1095334,"California State University, Sacramento"
+1095257,E. coli,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Escherichia coli,0,6,0,5,none,,1076165,Inconclusive,1095340,"California State University, Sacramento"
+1095257,E. coli,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Escherichia coli,0,6,0,5,none,,1076165,Inconclusive,1095344,"California State University, Sacramento"
+1095257,E. coli,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Escherichia coli,0,6,0,5,none,,1076165,No,1095350,"California State University, Sacramento"
+1095257,E. coli,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Escherichia coli,0,6,0,5,none,,1076165,No,1095354,"California State University, Sacramento"
+1095269,P. putida,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,0,11,0,0,none,,1076165,No,1095325,"California State University, Sacramento"
+1095269,P. putida,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,0,11,0,0,none,,1076165,No,1095330,"California State University, Sacramento"
+1095269,P. putida,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,0,11,0,0,none,,1076165,No,1095334,"California State University, Sacramento"
+1095269,P. putida,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,0,11,0,0,none,,1076165,No,1095340,"California State University, Sacramento"
+1095269,P. putida,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,0,11,0,0,none,,1076165,No,1095344,"California State University, Sacramento"
+1095269,P. putida,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,0,11,0,0,none,,1076165,No,1095350,"California State University, Sacramento"
+1095269,P. putida,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,0,11,0,0,none,,1076165,No,1095354,"California State University, Sacramento"
+1095275,E. aerogenes,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Enterobacter aerogenes,0,11,0,0,none,,1076165,No,1095325,"California State University, Sacramento"
+1095275,E. aerogenes,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Enterobacter aerogenes,0,11,0,0,none,,1076165,No,1095330,"California State University, Sacramento"
+1095275,E. aerogenes,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Enterobacter aerogenes,0,11,0,0,none,,1076165,No,1095334,"California State University, Sacramento"
+1095275,E. aerogenes,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Enterobacter aerogenes,0,11,0,0,none,,1076165,No,1095340,"California State University, Sacramento"
+1095275,E. aerogenes,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Enterobacter aerogenes,0,11,0,0,none,,1076165,No,1095344,"California State University, Sacramento"
+1095275,E. aerogenes,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Enterobacter aerogenes,0,11,0,0,none,,1076165,No,1095350,"California State University, Sacramento"
+1095275,E. aerogenes,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Enterobacter aerogenes,0,11,0,0,none,,1076165,No,1095354,"California State University, Sacramento"
+1095464,¯\_(ツ)_/¯  #1,2025-02-19,Nutrient Agar (NA),100,,20,168,Staphylococcus epidermidis,0,32,0,0,none,,1095392,,,Brigham Young University–Idaho
+1095482,Tester plate 1,2025-02-12,Tryptic Soy Agar (TSA),50,,28,48,Bacillus subtilis,0,32,0,0,none,,1095393,,,Brigham Young University–Idaho
+1095505,Bacillus Subtillis,2025-02-12,Luria Bertani/Lysogeny Agar (LBA),100,,28,168,Bacillus subtilis,0,32,0,0,none,,1095402,,,Brigham Young University–Idaho
+1095510,Tester plate 2,2025-02-26,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Staphylococcus epidermidis,0,32,0,0,none,,1095393,,,Brigham Young University–Idaho
+1095534,Tester plate 3,2025-03-05,Potato Dextrose Agar (PDA),100,,28,48,Pseudomonas putida,0,32,0,0,none,,1095393,,,Brigham Young University–Idaho
+1095535,Tester Plate 1,2025-02-12,Tryptic Soy Agar (TSA),50,,28,48,Bacillus subtilis,0,32,32,0,none,,1095389,,,Brigham Young University–Idaho
+1095562,PB test plate,2025-02-12,Potato Dextrose Agar (PDA),100,,28,336,Bacillus subtilis,0,32,0,0,none,,1095439,,,Brigham Young University–Idaho
+1095572,Orion,2025-02-12,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Staphylococcus epidermidis,0,32,0,0,none,,1095421,,,Brigham Young University–Idaho
+1095576,Pseudomonas Putida,2025-02-12,Tryptic Soy Agar (TSA),10,,28,168,Pseudomonas putida,0,32,0,0,none,,1095402,,,Brigham Young University–Idaho
+1095578,Tester Plate 2,2025-02-26,Nutrient Agar (NA),100,,28,48,Escherichia coli,0,32,32,0,none,,1095389,,,Brigham Young University–Idaho
+1095584,¯\_(ツ)_/¯  #2,2025-02-19,Tryptic Soy Agar (TSA),10,,20,168,Bacillus subtilis,0,32,0,0,none,,1095392,,,Brigham Young University–Idaho
+1095588,"Tester plate 1, 2",2025-02-12,Tryptic Soy Agar (TSA),50,,28,48,Escherichia coli,0,32,0,0,none,,1095393,,,Brigham Young University–Idaho
+1095591,Pre master plate 1,2025-02-05,Potato Dextrose Agar (PDA),100,,28,48,Escherichia coli,0,32,0,0,none,,1095413,,,Brigham Young University–Idaho
+1095616,¯\_(ツ)_/¯  #3,2025-02-26,Luria Bertani/Lysogeny Agar (LBA),100,,20,168,Acinetobacter baylyi,0,32,0,0,none,,1095392,,,Brigham Young University–Idaho
+1095628,Staphylococcus Epide,2025-02-26,Tryptic Soy Agar (TSA),50,,28,50,Staphylococcus epidermidis,3,29,0,0,none,,1095402,Yes,1095451,Brigham Young University–Idaho
+1095628,Staphylococcus Epide,2025-02-26,Tryptic Soy Agar (TSA),50,,28,50,Staphylococcus epidermidis,3,29,0,0,none,,1095402,Yes,1095468,Brigham Young University–Idaho
+1095628,Staphylococcus Epide,2025-02-26,Tryptic Soy Agar (TSA),50,,28,50,Staphylococcus epidermidis,3,29,0,0,none,,1095402,Yes,1095491,Brigham Young University–Idaho
+1095633,Tester Plate 3,2025-03-05,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,0,32,32,0,none,,1095389,,,Brigham Young University–Idaho
+1095635,"Tester plate 2, 2",2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,0,0,0,0,none,,1095393,,,Brigham Young University–Idaho
+1095638,experiment 1,2025-02-26,Potato Dextrose Agar (PDA),100,,28,48,Escherichia coli,0,32,0,0,none,,1095472,,,Brigham Young University–Idaho
+1095648,Bootes,2025-02-12,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,0,32,0,0,none,,1095421,,,Brigham Young University–Idaho
+1095651,¯\_(ツ)_/¯  #4,2025-02-26,Reasoner’s 2A Agar (R2A),100,,20,168,Pseudomonas putida,0,32,0,0,none,,1095392,,,Brigham Young University–Idaho
+1095652,Master plates,2025-02-05,Potato Dextrose Agar (PDA),100,,22,168,,0,0,0,0,none,,1095400,,,Brigham Young University–Idaho
+1095661,"Tester plate 3,2",2025-03-05,Reasoner’s 2A Agar (R2A),100,,28,48,Staphylococcus epidermidis,0,32,0,0,none,,1095393,,,Brigham Young University–Idaho
+1095668,¯\_(ツ)_/¯  #5,2025-03-05,Tryptic Soy Agar (TSA),50,,20,168,Enterobacter aerogenes,0,32,0,0,none,,1095392,,,Brigham Young University–Idaho
+1095679,R2A staph,2025-02-26,Reasoner’s 2A Agar (R2A),100,,28,168,Staphylococcus epidermidis,0,32,32,0,none,,1095398,,,Brigham Young University–Idaho
+1095690,¯\_(ツ)_/¯  #6,2025-03-05,Potato Dextrose Agar (PDA),100,,20,168,Escherichia coli,0,32,0,0,none,,1095392,,,Brigham Young University–Idaho
+1095691,"Tester plate 3,3",2025-03-05,Nutrient Agar (NA),100,,28,48,Bacillus subtilis,0,32,0,0,none,,1095393,,,Brigham Young University–Idaho
+1095701,NE test plate,2025-02-12,Nutrient Agar (NA),100,,28,336,Escherichia coli,0,32,0,0,none,,1095439,,,Brigham Young University–Idaho
+1095709,¯\_(ツ)_/¯  #7,2025-03-05,Nutrient Agar (NA),100,,20,168,Acinetobacter baylyi,0,32,0,0,none,,1095392,,,Brigham Young University–Idaho
+1095719,experiment 1 pt 2,2025-02-26,Tryptic Soy Agar (TSA),50,,28,48,Bacillus subtilis,0,32,0,0,none,,1095472,,,Brigham Young University–Idaho
+1095725,10% Acine,2025-03-12,Tryptic Soy Agar (TSA),10,,28,168,Acinetobacter baylyi,0,32,32,0,none,,1095398,,,Brigham Young University–Idaho
+1095726,Klebsiella Pneumonia,2025-02-26,Nutrient Agar (NA),100,,28,168,Escherichia coli,0,32,0,0,none,,1095402,,,Brigham Young University–Idaho
+1095743,Nutrient E.coli,2025-02-26,Nutrient Agar (NA),100,,28,168,Escherichia coli,0,32,32,0,none,,1095398,,,Brigham Young University–Idaho
+1095745,experiment 2 pt 1,2025-03-05,Luria Bertani/Lysogeny Agar (LBA),100,,28,168,Acinetobacter baylyi,0,32,0,0,none,,1095472,,,Brigham Young University–Idaho
+1095757,PE test plate,2025-03-12,Potato Dextrose Agar (PDA),100,,28,168,Escherichia coli,0,32,0,0,none,,1095439,,,Brigham Young University–Idaho
+1095764,Taurus,2025-02-26,Tryptic Soy Agar (TSA),50,,28,48,Acinetobacter baylyi,2,30,0,0,none,,1095421,Yes,1095746,Brigham Young University–Idaho
+1095764,Taurus,2025-02-26,Tryptic Soy Agar (TSA),50,,28,48,Acinetobacter baylyi,2,30,0,0,none,,1095421,Yes,1095754,Brigham Young University–Idaho
+1095774,LB pseudo,2025-02-26,Luria Bertani/Lysogeny Agar (LBA),100,,28,168,Pseudomonas putida,0,32,32,0,none,,1095398,,,Brigham Young University–Idaho
+1095778,Sassy Soil,2025-02-26,Reasoner’s 2A Agar (R2A),100,,20,72,Enterobacter aerogenes,0,0,0,0,none,0,1095390,,,Brigham Young University–Idaho
+1095781,Experiment 2 pt 1,2025-03-12,Luria Bertani/Lysogeny Agar (LBA),100,,28,168,Acinetobacter baylyi,0,32,0,0,none,,1095413,,,Brigham Young University–Idaho
+1095787,experiment 2 pt 2,2025-03-12,Nutrient Agar (NA),100,,28,168,Staphylococcus epidermidis,0,32,0,0,none,,1095472,,,Brigham Young University–Idaho
+1095793,TA test plate,2025-02-26,Tryptic Soy Agar (TSA),10,,28,168,Acinetobacter baylyi,0,32,0,0,none,,1095439,,,Brigham Young University–Idaho
+1095800,Tester plates 1,2025-02-19,Nutrient Agar (NA),100,,28,168,Escherichia coli,1,32,0,0,none,,1095400,Yes,1095493,Brigham Young University–Idaho
+1095809,Experiment 2 pt 2,2025-03-12,Nutrient Agar (NA),100,,28,168,Staphylococcus epidermidis,0,32,0,0,none,,1095413,,,Brigham Young University–Idaho
+1095811,Tester 1,2025-02-12,Reasoner’s 2A Agar (R2A),100,,28,,Pseudomonas putida,0,32,0,0,none,,1095509,,,Brigham Young University–Idaho
+1095814,Cassiopeia,2025-02-26,Tryptic Soy Agar (TSA),10,,28,168,Bacillus subtilis,0,32,0,0,none,,1095421,,,Brigham Young University–Idaho
+1095821,50 entero,2025-03-04,Tryptic Soy Agar (TSA),50,,28,168,Enterobacter aerogenes,4,28,28,0,none,,1095398,,,Brigham Young University–Idaho
+1095824,experiment 3 pt 1,2025-03-12,Potato Dextrose Agar (PDA),100,,28,168,Pseudomonas putida,0,32,0,0,none,,1095472,,,Brigham Young University–Idaho
+1095825,Experiment 3 pt 1,2025-03-12,Potato Dextrose Agar (PDA),100,,28,168,Pseudomonas putida,0,32,0,0,none,,1095413,,,Brigham Young University–Idaho
+1095830,Sassy Soil,2025-02-26,Tryptic Soy Agar (TSA),100,,20,72,Staphylococcus epidermidis,5,27,0,0,none,0,1095390,,,Brigham Young University–Idaho
+1095846,experiment 3 pt 2,2025-03-12,Tryptic Soy Agar (TSA),10,,28,168,Enterobacter aerogenes,0,32,0,0,none,,1095472,,,Brigham Young University–Idaho
+1095852,Experiment 3 pt 2,2025-03-12,Tryptic Soy Agar (TSA),100,,28,168,Enterobacter aerogenes,0,32,0,0,none,,1095413,,,Brigham Young University–Idaho
+1095858,"Nutr,  Bacillus",2025-03-04,Nutrient Agar (NA),100,,28,168,Bacillus subtilis,0,32,32,0,none,,1095398,,,Brigham Young University–Idaho
+1095860,LS test plate,2025-03-05,Luria Bertani/Lysogeny Agar (LBA),100,,28,168,Staphylococcus epidermidis,0,32,0,0,none,,1095439,,,Brigham Young University–Idaho
+1095870,experiment 3 pt 3,2025-03-12,Reasoner’s 2A Agar (R2A),100,,28,167.99000549316,Escherichia coli,0,32,0,0,none,,1095472,,,Brigham Young University–Idaho
+1095874,Experiment 3 pt 3,2025-03-12,Reasoner’s 2A Agar (R2A),100,,28,168,Escherichia coli,0,32,0,0,none,,1095413,,,Brigham Young University–Idaho
+1095875,Tester 2,2025-02-12,Potato Dextrose Agar (PDA),100,,28,168,Bacillus subtilis,0,32,0,0,none,,1095509,,,Brigham Young University–Idaho
+1095880,"potato, E.coli",2025-03-04,Potato Dextrose Agar (PDA),100,,28,168,Escherichia coli,0,32,32,0,none,,1095398,,,Brigham Young University–Idaho
+1095891,RP test plate,2025-03-05,Reasoner’s 2A Agar (R2A),100,,28,168,Pseudomonas putida,0,32,0,0,none,,1095439,,,Brigham Young University–Idaho
+1095892,silly grid plate,2025-02-12,Luria Bertani/Lysogeny Agar (LBA),100,,28,168,Acinetobacter baylyi,0,32,0,0,none,,1095537,,,Brigham Young University–Idaho
+1095896,Tester plates 1,2025-02-19,Tryptic Soy Agar (TSA),50,,28,168,Bacillus subtilis,0,32,0,0,none,,1095400,,,Brigham Young University–Idaho
+1095908,TE test plate,2025-03-05,Tryptic Soy Agar (TSA),50,,28,168,Enterobacter aerogenes,0,32,0,0,none,,1095439,,,Brigham Young University–Idaho
+1095919,Tester plates 2,2025-02-26,Tryptic Soy Agar (TSA),10,,28,168,Escherichia coli,3,29,0,0,none,,1095400,Yes,1095529,Brigham Young University–Idaho
+1095919,Tester plates 2,2025-02-26,Tryptic Soy Agar (TSA),10,,28,168,Escherichia coli,3,29,0,0,none,,1095400,Yes,1095567,Brigham Young University–Idaho
+1095919,Tester plates 2,2025-02-26,Tryptic Soy Agar (TSA),10,,28,168,Escherichia coli,3,29,0,0,none,,1095400,Yes,1095583,Brigham Young University–Idaho
+1095926,Tester 3,2025-02-26,Luria Bertani/Lysogeny Agar (LBA),100,,28,168,Enterobacter aerogenes,0,32,0,0,none,,1095509,,,Brigham Young University–Idaho
+1095942,Tester 4,2025-02-26,Tryptic Soy Agar (TSA),10,,28,168,,0,32,0,0,none,,1095509,,,Brigham Young University–Idaho
+1095949,Tester plates 2,2025-02-26,Nutrient Agar (NA),100,,28,168,Pseudomonas putida,4,28,0,0,none,,1095400,Yes,1095602,Brigham Young University–Idaho
+1095949,Tester plates 2,2025-02-26,Nutrient Agar (NA),100,,28,168,Pseudomonas putida,4,28,0,0,none,,1095400,Yes,1095624,Brigham Young University–Idaho
+1095949,Tester plates 2,2025-02-26,Nutrient Agar (NA),100,,28,168,Pseudomonas putida,4,28,0,0,none,,1095400,Yes,1095634,Brigham Young University–Idaho
+1095949,Tester plates 2,2025-02-26,Nutrient Agar (NA),100,,28,168,Pseudomonas putida,4,28,0,0,none,,1095400,Yes,1095634,Brigham Young University–Idaho
+1095950,Staphylococcus testi,2025-02-12,Tryptic Soy Agar (TSA),10,,20,168,Staphylococcus epidermidis,0,32,32,0,none,,1095508,,,Brigham Young University–Idaho
+1095960,Tester 5,2025-03-05,Nutrient Agar (NA),100,,28,168,Staphylococcus epidermidis,0,32,0,0,none,,1095509,,,Brigham Young University–Idaho
+1095973,Tester 6,2025-03-05,Tryptic Soy Agar (TSA),10,,28,168,Bacillus subtilis,0,32,0,0,none,,1095509,,,Brigham Young University–Idaho
+1095976,Proof plates,2025-03-05,Tryptic Soy Agar (TSA),10,,28,168,Escherichia coli,2,2,0,0,none,,1095400,Yes,1095529,Brigham Young University–Idaho
+1095976,Proof plates,2025-03-05,Tryptic Soy Agar (TSA),10,,28,168,Escherichia coli,2,2,0,0,none,,1095400,Yes,1095583,Brigham Young University–Idaho
+1095985,E. Coli test,2025-02-12,Reasoner’s 2A Agar (R2A),100,,20,168,Escherichia coli,1,31,31,0,none,,1095508,Yes,1095903,Brigham Young University–Idaho
+1095990,Tester 7,2025-03-05,Tryptic Soy Agar (TSA),50,,28,168,Acinetobacter baylyi,4,28,0,0,none,,1095509,,,Brigham Young University–Idaho
+1096008,Bacillus test,2025-02-26,Luria Bertani/Lysogeny Agar (LBA),100,,20,168,Bacillus subtilis,0,32,32,0,none,,1095508,,,Brigham Young University–Idaho
+1096021,Enterobacter,2025-02-26,Tryptic Soy Agar (TSA),50,,20,168,Enterobacter aerogenes,0,32,32,0,none,,1095508,,,Brigham Young University–Idaho
+1096053,Antibiotic Screen 1,2025-02-26,Potato Dextrose Agar (PDA),100,,20,48,Escherichia coli,1,31,0,0,none,,1095405,Yes,1095981,Brigham Young University–Idaho
+1096054,Testing Isolates 1,2025-02-26,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Pseudomonas putida,0,32,0,0,none,,1095475,No,1095930,Brigham Young University–Idaho
+1096054,Testing Isolates 1,2025-02-26,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Pseudomonas putida,0,32,0,0,none,,1095475,No,1095953,Brigham Young University–Idaho
+1096063,Testing Isolates 2,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Staphylococcus epidermidis,2,30,0,0,none,,1095475,Yes,1095930,Brigham Young University–Idaho
+1096063,Testing Isolates 2,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Staphylococcus epidermidis,2,30,0,0,none,,1095475,Yes,1095953,Brigham Young University–Idaho
+1096072,Testing Isolates 3,2025-03-05,Nutrient Agar (NA),100,,28,48,Pseudomonas putida,0,32,0,0,none,,1095475,No,1095930,Brigham Young University–Idaho
+1096072,Testing Isolates 3,2025-03-05,Nutrient Agar (NA),100,,28,48,Pseudomonas putida,0,32,0,0,none,,1095475,No,1095953,Brigham Young University–Idaho
+1096081,Testing Isolates 4,2025-03-05,Tryptic Soy Agar (TSA),10,,28,48,Escherichia coli,1,31,0,0,none,,1095475,Yes,1095957,Brigham Young University–Idaho
+1096081,Testing Isolates 4,2025-03-05,Tryptic Soy Agar (TSA),10,,28,48,Escherichia coli,1,31,0,0,none,,1095475,No,1095953,Brigham Young University–Idaho
+1096084,Antibiotic Screen 2,2025-02-26,Tryptic Soy Agar (TSA),100,,20,48,Acinetobacter baylyi,0,0,0,0,none,,1095405,,,Brigham Young University–Idaho
+1096089,Antibiotic Screen 3,2025-02-26,Tryptic Soy Agar (TSA),100,,20,48,Staphylococcus epidermidis,1,31,0,0,none,,1095405,Yes,1095981,Brigham Young University–Idaho
+1096115,AA activity,2025-02-05,,100,,28,72,,3,29,0,0,none,,1095426,,,Brigham Young University–Idaho
+1096117,Antibiotic Screen 4,2025-02-26,Reasoner’s 2A Agar (R2A),100,,20,48,Bacillus subtilis,0,0,0,0,none,,1095405,,,Brigham Young University–Idaho
+1096130,tester 1,2025-02-12,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Escherichia coli,0,32,0,0,none,,1095388,,,Brigham Young University–Idaho
+1096138,tester 1 part 2,2025-02-12,Reasoner’s 2A Agar (R2A),100,,28,48,Bacillus subtilis,0,32,0,0,none,,1095388,,,Brigham Young University–Idaho
+1096143,tester plate 2,2025-02-26,Potato Dextrose Agar (PDA),100,,28,48,Pseudomonas putida,3,29,0,0,none,,1095388,Inconclusive,1095911,Brigham Young University–Idaho
+1096143,tester plate 2,2025-02-26,Potato Dextrose Agar (PDA),100,,28,48,Pseudomonas putida,3,29,0,0,none,,1095388,Inconclusive,1095911,Brigham Young University–Idaho
+1096143,tester plate 2,2025-02-26,Potato Dextrose Agar (PDA),100,,28,48,Pseudomonas putida,3,29,0,0,none,,1095388,Inconclusive,1095911,Brigham Young University–Idaho
+1096147,tester 2 part 2,2025-02-26,Nutrient Agar (NA),100,,28,48,Staphylococcus epidermidis,0,32,0,0,none,,1095388,,,Brigham Young University–Idaho
+1096165,proof plate,2025-03-05,Potato Dextrose Agar (PDA),100,,28,168,Pseudomonas putida,0,4,0,0,none,,1095388,No,1095911,Brigham Young University–Idaho
+1096165,proof plate,2025-03-05,Potato Dextrose Agar (PDA),100,,28,168,Pseudomonas putida,0,4,0,0,none,,1095388,No,1095911,Brigham Young University–Idaho
+1096165,proof plate,2025-03-05,Potato Dextrose Agar (PDA),100,,28,168,Pseudomonas putida,0,4,0,0,none,,1095388,No,1095911,Brigham Young University–Idaho
+1096213,Tiny Library,2025-03-12,Nutrient Agar (NA),100,,28,168,Acinetobacter baylyi,1,31,0,0,none,,1095890,,,Brigham Young University–Idaho
+1096234,Isolation Plate,2025-03-12,,100,,28,168,Staphylococcus epidermidis,1,31,0,0,none,,1096223,Yes,1096272,Brigham Young University–Idaho
+1096427,,2025-03-12,Tryptic Soy Agar (TSA),10,,28,168,Pseudomonas putida,1,31,0,0,none,,1096266,Yes,1096295,Brigham Young University–Idaho
+1096565,tester plates,2025-03-12,Potato Dextrose Agar (PDA),100,,,,Staphylococcus epidermidis,1,31,0,0,none,,1096346,,,Brigham Young University–Idaho
+1096571,Tester plates,2025-03-05,Nutrient Agar (NA),100,,20,48,Bacillus subtilis,2,30,0,0,none,,1096262,Yes,1096306,Brigham Young University–Idaho
+1096636,#1,2025-02-12,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Enterobacter aerogenes,0,32,0,0,none,,1096363,,,Brigham Young University–Idaho
+1097087,Test Plates,2025-03-12,Nutrient Agar (NA),100,,20,168,Staphylococcus epidermidis,0,31,0,1,none,,1096503,,,Brigham Young University–Idaho
+1097093,Driveway Dirt,2025-03-12,Tryptic Soy Agar (TSA),50,,20,168,Pseudomonas putida,0,32,0,32,none,,1096695,,,Brigham Young University–Idaho
+1097097,Trial 1,2025-02-12,Tryptic Soy Agar (TSA),10,,28,336,Pseudomonas putida,2,30,0,0,none,,1096629,,,Brigham Young University–Idaho
+1097114,Test Plate 1,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,6,25,1,0,none,,1096264,Yes,1096350,Brigham Young University–Idaho
+1097114,Test Plate 1,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,6,25,1,0,none,,1096264,Yes,1096378,Brigham Young University–Idaho
+1097114,Test Plate 1,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,6,25,1,0,none,,1096264,Yes,1096389,Brigham Young University–Idaho
+1097114,Test Plate 1,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,6,25,1,0,none,,1096264,Yes,1096395,Brigham Young University–Idaho
+1097114,Test Plate 1,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,6,25,1,0,none,,1096264,Yes,1096402,Brigham Young University–Idaho
+1097114,Test Plate 1,2025-02-26,Tryptic Soy Agar (TSA),10,,28,48,Pseudomonas putida,6,25,1,0,none,,1096264,Yes,1096412,Brigham Young University–Idaho
+1097132,Test Plate 2,2025-03-05,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,5,0,0,0,none,,1096264,Yes,1096422,Brigham Young University–Idaho
+1097132,Test Plate 2,2025-03-05,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,5,0,0,0,none,,1096264,Yes,1096435,Brigham Young University–Idaho
+1097132,Test Plate 2,2025-03-05,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,5,0,0,0,none,,1096264,Yes,1096441,Brigham Young University–Idaho
+1097132,Test Plate 2,2025-03-05,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,5,0,0,0,none,,1096264,Yes,1096462,Brigham Young University–Idaho
+1097132,Test Plate 2,2025-03-05,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,5,0,0,0,none,,1096264,Yes,1096471,Brigham Young University–Idaho
+1097171,Antibiotics,2025-03-12,Potato Dextrose Agar (PDA),100,,,48,Staphylococcus epidermidis,4,28,0,0,none,,1097139,Yes,1097149,Brigham Young University–Idaho
+1097325,,2025-03-12,Potato Dextrose Agar (PDA),100,,28,168,Staphylococcus epidermidis,1,31,0,0,none,,1097268,,,Brigham Young University–Idaho
+1097425,Inhibitor,2025-03-12,Tryptic Soy Agar (TSA),49.990001678467,,28,168,Escherichia coli,1,31,0,0,none,,1097235,Yes,1097337,Brigham Young University–Idaho
+1097450,antibiotics,2025-03-12,Luria Bertani/Lysogeny Agar (LBA),100,,20,168,Staphylococcus epidermidis,1,0,0,0,none,,1097242,Yes,1097327,Brigham Young University–Idaho
+1097521,Test Plate,2025-02-12,Nutrient Agar (NA),100,,28,168,Acinetobacter baylyi,1,31,0,0,none,,1097366,,,Brigham Young University–Idaho
+1097546,#8 and #12,2025-03-05,Luria Bertani/Lysogeny Agar (LBA),100,,20,168,Staphylococcus epidermidis,2,30,2,0,none,,1097292,No,1097359,Brigham Young University–Idaho
+1097546,#8 and #12,2025-03-05,Luria Bertani/Lysogeny Agar (LBA),100,,20,168,Staphylococcus epidermidis,2,30,2,0,none,,1097292,No,1097371,Brigham Young University–Idaho
+1097551,killvirus1,2025-03-12,Luria Bertani/Lysogeny Agar (LBA),100,,20,168,Staphylococcus epidermidis,3,28,3,0,none,,1097239,,,Brigham Young University–Idaho
+1097582,Media plate,2025-03-12,Potato Dextrose Agar (PDA),100,,,,Escherichia coli,1,31,0,0,none,,1097405,Yes,1097549,Brigham Young University–Idaho
+1097591,Test #1,2025-03-12,Tryptic Soy Agar (TSA),50,,28,168,Acinetobacter baylyi,1,31,0,0,none,,1097233,Yes,1097307,Brigham Young University–Idaho
+1097655,1st Trial,2025-02-19,Reasoner’s 2A Agar (R2A),100,,,48,Escherichia coli,1,31,0,0,none,,1097232,No,1097306,Brigham Young University–Idaho
+1097716,2nd Trial,2025-02-26,Potato Dextrose Agar (PDA),100,,,48,Staphylococcus epidermidis,3,29,0,0,none,,1097232,Yes,1097345,Brigham Young University–Idaho
+1097716,2nd Trial,2025-02-26,Potato Dextrose Agar (PDA),100,,,48,Staphylococcus epidermidis,3,29,0,0,none,,1097232,Yes,1097375,Brigham Young University–Idaho
+1097716,2nd Trial,2025-02-26,Potato Dextrose Agar (PDA),100,,,48,Staphylococcus epidermidis,3,29,0,0,none,,1097232,Yes,1097385,Brigham Young University–Idaho
+1097809,Jobies activity scre,2025-03-12,Nutrient Agar (NA),100,,20,168,Staphylococcus epidermidis,1,31,1,31,none,,1097685,,,Brigham Young University–Idaho
+1098514,ZI - Staph #10,2025-03-06,Tryptic Soy Agar (TSA),50,,28,96,Staphylococcus epidermidis,1,0,0,0,none,,1098283,Yes,1098387,Brigham Young University–Idaho
+1098541,Tester 2,2025-03-06,Luria Bertani/Lysogeny Agar (LBA),100,,20,,Staphylococcus epidermidis,1,31,0,0,none,,1098286,Yes,1098397,Brigham Young University–Idaho
+1098594,12 white mons,2025-02-27,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Acinetobacter baylyi,1,31,0,0,none,,1098297,Yes,1098544,Brigham Young University–Idaho
+1098635,Tester plate,2025-03-06,Tryptic Soy Agar (TSA),9.9899997711182,,28,168,Staphylococcus epidermidis,1,31,0,0,none,,1098293,Yes,1098458,Brigham Young University–Idaho
+1098636,Tester Plate Childs,2025-03-13,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Acinetobacter baylyi,3,0,0,0,none,,1098294,Yes,1098465,Brigham Young University–Idaho
+1098636,Tester Plate Childs,2025-03-13,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Acinetobacter baylyi,3,0,0,0,none,,1098294,Yes,1098551,Brigham Young University–Idaho
+1098647,dirt,2025-03-13,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,0,32,0,0,none,,1098493,,,Brigham Young University–Idaho
+1098676,Tester Plate 3,2025-02-27,Reasoner’s 2A Agar (R2A),100,,28,48,Pseudomonas putida,1,0,0,0,none,,1098282,Yes,1098433,Brigham Young University–Idaho
+1098713,Tester Plate 4,2025-02-20,Tryptic Soy Agar (TSA),10,,28,26,Escherichia coli,1,31,0,0,none,,1098295,Yes,1098527,Brigham Young University–Idaho
+1098726,Tester plate,2025-02-06,Nutrient Agar (NA),100,,28,48,Escherichia coli,2,30,0,0,none,,1098383,Yes,1098543,Brigham Young University–Idaho
+1098744,tester 2 curious,2025-02-13,Tryptic Soy Agar (TSA),50,,,,Pseudomonas putida,1,31,0,0,none,,1098296,Yes,1098373,Brigham Young University–Idaho
+1098773,E. Coli,2025-02-27,Tryptic Soy Agar (TSA),10,,28,24,Escherichia coli,2,30,0,0,none,,1098378,Yes,1098511,Brigham Young University–Idaho
+1098842,Tester 4,2025-03-13,Tryptic Soy Agar (TSA),50,,28,48,Pseudomonas putida,1,31,0,0,none,,1098665,,,Brigham Young University–Idaho
+1098846,proof plate,2025-03-13,Tryptic Soy Agar (TSA),10,,28,48,Acinetobacter baylyi,6,24,0,0,none,,1098364,Yes,1098733,Brigham Young University–Idaho
+1098886,,2025-02-27,Potato Dextrose Agar (PDA),100,,28,,Enterobacter aerogenes,3,28,0,1,none,,1098315,Yes,1098677,Brigham Young University–Idaho
+1099695,antibiotic activity,2025-02-27,Tryptic Soy Agar (TSA),10,,28,24,Acinetobacter baylyi,3,0,0,0,none,,1099106,Yes,1099487,Brigham Young University–Idaho
+1099715,Akira,2025-03-06,Potato Dextrose Agar (PDA),100,,28,48,Enterobacter aerogenes,1,31,0,0,none,,1099108,Yes,1099620,Brigham Young University–Idaho
+1099759,Tester 2,2025-03-06,Tryptic Soy Agar (TSA),10,,28,24,Pseudomonas putida,4,28,0,0,none,,1099115,Yes,1099493,Brigham Young University–Idaho
+1099767,Tester Plate,2025-03-13,Nutrient Agar (NA),100,,20,,Pseudomonas putida,0,0,0,5,none,,1099121,Inconclusive,1099673,Brigham Young University–Idaho
+1099777,Tester 3,2025-03-06,Tryptic Soy Agar (TSA),50,,28,24,Enterobacter aerogenes,2,30,0,0,none,,1099115,Yes,1099493,Brigham Young University–Idaho
+1099778,tester 3,2025-03-06,Tryptic Soy Agar (TSA),50,,28,24,Enterobacter aerogenes,2,30,0,0,none,,1099319,,,Brigham Young University–Idaho
+1099802,Tester Bob,2025-02-27,Tryptic Soy Agar (TSA),10,,28,168,Escherichia coli,1,31,0,0,none,,1099686,Yes,1099749,Brigham Young University–Idaho
+1099815,Isolates,2025-03-06,Potato Dextrose Agar (PDA),100,,28,48,Enterobacter aerogenes,1,31,0,0,none,,1099484,Yes,1099780,Brigham Young University–Idaho
+1100416,Tester1,2025-02-27,Potato Dextrose Agar (PDA),100,,28,24,Pseudomonas putida,3,29,0,0,none,,1099895,,,Brigham Young University–Idaho
+1100819,Tester Plate LB,2025-02-20,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Staphylococcus epidermidis,13,19,0,0,none,,1099978,Yes,1100384,Brigham Young University–Idaho
+1100819,Tester Plate LB,2025-02-20,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Staphylococcus epidermidis,13,19,0,0,none,,1099978,Yes,1100489,Brigham Young University–Idaho
+1100820,tester plate LB,2025-02-20,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Staphylococcus epidermidis,13,19,0,0,none,,1099928,Yes,1100479,Brigham Young University–Idaho
+1100821,Tester Plate LB,2025-02-20,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Staphylococcus epidermidis,13,19,0,0,none,,1099908,Yes,1100468,Brigham Young University–Idaho
+1100824,Ace,2025-02-27,Potato Dextrose Agar (PDA),100,,28,80,Acinetobacter baylyi,2,30,0,0,none,,1100013,Yes,1100644,Brigham Young University–Idaho
+1100824,Ace,2025-02-27,Potato Dextrose Agar (PDA),100,,28,80,Acinetobacter baylyi,2,30,0,0,none,,1100013,Yes,1100692,Brigham Young University–Idaho
+1100886,,2025-03-13,Potato Dextrose Agar (PDA),100,,20,168,Acinetobacter baylyi,1,31,0,0,none,,1100855,,,Brigham Young University–Idaho
+1101512,Test Plate 2,2025-02-12,Potato Dextrose Agar (PDA),100,,28,168,Staphylococcus epidermidis,0,32,0,0,none,,1095481,,,Brigham Young University–Idaho
+1101672,nutrient psudo,2025-02-12,Nutrient Agar (NA),100,,37,336,Pseudomonas putida,0,28,0,4,none,,1096221,,,Brigham Young University–Idaho
+1103027,test,2025-03-18,Reasoner’s 2A Agar (R2A),100,,28,24,Escherichia coli,1,0,0,0,none,,1102983,,,Brigham Young University–Idaho
+1103031,Tester Plates,2025-03-18,Nutrient Agar (NA),100,,20,24,Staphylococcus epidermidis,3,29,0,0,none,,1093228,Yes,1093939,Brigham Young University–Idaho
+1103108,,2025-03-18,Nutrient Agar (NA),100,,20,48,Acinetobacter baylyi,1,1,0,0,none,,1093244,,,Brigham Young University–Idaho
+1103126,#5 LB Epidermis,2025-01-21,Luria Bertani/Lysogeny Agar (LBA),100,,28,168,Staphylococcus epidermidis,1,31,0,0,none,,1093231,Yes,1093694,Brigham Young University–Idaho
+1103139,Tester Plate 1093899,2025-03-18,Tryptic Soy Agar (TSA),50,,20,48,Acinetobacter baylyi,2,30,0,0,none,,1093248,Yes,1103133,Brigham Young University–Idaho
+1103147,#22 PD E.Coli,2025-01-21,Potato Dextrose Agar (PDA),100,,28,168,Escherichia coli,1,31,0,0,none,,1093231,Yes,1093854,Brigham Young University–Idaho
+1103156,#28 PD E.Coli,2025-01-21,Potato Dextrose Agar (PDA),100,,28,168,Escherichia coli,1,31,0,0,none,,1093231,Yes,1093892,Brigham Young University–Idaho
+1103161,#15 10%TSA E.Aerogen,2025-01-21,Tryptic Soy Agar (TSA),10,,28,168,Enterobacter aerogenes,1,31,0,0,none,,1093231,Yes,1093907,Brigham Young University–Idaho
+1103168,#16 50%TSA A.Bay,2025-01-21,Tryptic Soy Agar (TSA),50,,28,168,Acinetobacter baylyi,1,31,0,0,none,,1093231,Yes,1093935,Brigham Young University–Idaho
+1103186,,2025-03-18,Tryptic Soy Agar (TSA),10,,28,168,Enterobacter aerogenes,2,30,0,0,none,,1103141,Yes,1103180,Brigham Young University–Idaho
+1103186,,2025-03-18,Tryptic Soy Agar (TSA),10,,28,168,Enterobacter aerogenes,2,30,0,0,none,,1103141,Yes,1103180,Brigham Young University–Idaho
+1103192,Trial 2 (staph),2025-02-26,Nutrient Agar (NA),100,,28,168,Staphylococcus epidermidis,1,31,0,0,none,,1096629,Yes,1096937,Brigham Young University–Idaho
+1103197,Trial 2 (E. Coli),2025-03-18,Tryptic Soy Agar (TSA),50,,28,168,Escherichia coli,8,24,0,0,none,,1096629,Yes,1096937,Brigham Young University–Idaho
+1103294,Tester plate,2025-03-04,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Staphylococcus epidermidis,2,0,0,0,none,,1094239,Yes,1094362,Brigham Young University–Idaho
+1103294,Tester plate,2025-03-04,Luria Bertani/Lysogeny Agar (LBA),100,,28,48,Staphylococcus epidermidis,2,0,0,0,none,,1094239,Yes,1094377,Brigham Young University–Idaho
+1103297,Tester Plate (A. ba),2025-03-11,Tryptic Soy Agar (TSA),10,,20,48,Acinetobacter baylyi,4,28,0,0,none,,1094230,Yes,1103240,Brigham Young University–Idaho
+1103297,Tester Plate (A. ba),2025-03-11,Tryptic Soy Agar (TSA),10,,20,48,Acinetobacter baylyi,4,28,0,0,none,,1094230,Yes,1103249,Brigham Young University–Idaho
+1103297,Tester Plate (A. ba),2025-03-11,Tryptic Soy Agar (TSA),10,,20,48,Acinetobacter baylyi,4,28,0,0,none,,1094230,Yes,1103254,Brigham Young University–Idaho
+1103297,Tester Plate (A. ba),2025-03-11,Tryptic Soy Agar (TSA),10,,20,48,Acinetobacter baylyi,4,28,0,0,none,,1094230,Yes,1103257,Brigham Young University–Idaho
+1103345,Mi tester plate,2025-02-11,Reasoner’s 2A Agar (R2A),100,,28,168,Acinetobacter baylyi,1,31,0,0,none,,1094244,No,1103272,Brigham Young University–Idaho
+1103381,tester plate a. bayl,2025-02-11,Reasoner’s 2A Agar (R2A),100,,28,65,Acinetobacter baylyi,2,30,0,0,none,,1094237,Yes,1103271,Brigham Young University–Idaho
+1103381,tester plate a. bayl,2025-02-11,Reasoner’s 2A Agar (R2A),100,,28,65,Acinetobacter baylyi,2,30,0,0,none,,1094237,Yes,1103279,Brigham Young University–Idaho
+1103386,Potato 3rd attempt,2025-03-04,Potato Dextrose Agar (PDA),100,,28,168,Escherichia coli,1,31,0,0,none,,1094232,Yes,1103314,Brigham Young University–Idaho
+1103387,Staph Potato,2025-02-11,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,4,28,0,0,none,,1094240,Yes,1103301,Brigham Young University–Idaho
+1103387,Staph Potato,2025-02-11,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,4,28,0,0,none,,1094240,Yes,1103313,Brigham Young University–Idaho
+1103387,Staph Potato,2025-02-11,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,4,28,0,0,none,,1094240,Yes,1103318,Brigham Young University–Idaho
+1103387,Staph Potato,2025-02-11,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,4,28,0,0,none,,1094240,Yes,1103323,Brigham Young University–Idaho
+1103388,StaphPotato.N.AB,2025-02-11,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,4,28,0,0,none,,1094344,Yes,1103302,Brigham Young University–Idaho
+1103388,StaphPotato.N.AB,2025-02-11,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,4,28,0,0,none,,1094344,Yes,1103315,Brigham Young University–Idaho
+1103388,StaphPotato.N.AB,2025-02-11,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,4,28,0,0,none,,1094344,Yes,1103333,Brigham Young University–Idaho
+1103388,StaphPotato.N.AB,2025-02-11,Potato Dextrose Agar (PDA),100,,28,48,Staphylococcus epidermidis,4,28,0,0,none,,1094344,Yes,1103326,Brigham Young University–Idaho
+1103394,tester 1,2025-03-04,Tryptic Soy Agar (TSA),100,,28,168,Escherichia coli,2,34,0,0,none,,1094235,No,1103334,Brigham Young University–Idaho
+1103412,50% E.Aerogenes,2025-03-04,Tryptic Soy Agar (TSA),50,,28,48,Enterobacter aerogenes,1,31,0,0,none,,1094365,Yes,1103348,Brigham Young University–Idaho
+1103436,tester plate,2025-02-25,Tryptic Soy Agar (TSA),100,,28,168,Staphylococcus epidermidis,1,0,0,0,none,,1094250,Yes,1103408,Brigham Young University–Idaho
+1103495,tester plate,2025-03-04,Tryptic Soy Agar (TSA),50,,28,24,Escherichia coli,1,0,0,0,none,,1094231,Yes,1103462,Brigham Young University–Idaho
+1103845,,2025-03-19,Tryptic Soy Agar (TSA),10,,20,45,Bacillus subtilis,2,0,0,0,none,,1097698,,,Brigham Young University–Idaho
+1104405,iDaho potatoo,2025-03-06,Potato Dextrose Agar (PDA),100,,28,24,Acinetobacter baylyi,2,30,0,0,none,,1100064,Yes,1104381,Brigham Young University–Idaho
+1104405,iDaho potatoo,2025-03-06,Potato Dextrose Agar (PDA),100,,28,24,Acinetobacter baylyi,2,30,0,0,none,,1100064,Yes,1104389,Brigham Young University–Idaho
+1104408,the TSA,2025-03-06,Tryptic Soy Agar (TSA),10,,28,24,Escherichia coli,2,30,0,0,none,,1100064,Yes,1104392,Brigham Young University–Idaho
+1104408,the TSA,2025-03-06,Tryptic Soy Agar (TSA),10,,28,24,Escherichia coli,2,30,0,0,none,,1100064,Yes,1104396,Brigham Young University–Idaho
+1105361,MIA 30ºC B. subtilis,2025-02-21,Reasoner’s 2A Agar (R2A),100,,30,120,Bacillus subtilis,0,20,0,0,cycloheximide,50,1104136,,,Lewis and Clark College
+1105367,MIA 30ºC P. Putida,2025-02-21,Reasoner’s 2A Agar (R2A),100,,30,120,Pseudomonas putida,0,20,0,0,cycloheximide,50,1104136,,,Lewis and Clark College
+1105372,MIA 20ºC B. subtilis,2025-03-06,Reasoner’s 2A Agar (R2A),100,,20,48,Bacillus subtilis,0,20,0,0,cycloheximide,50,1104136,,,Lewis and Clark College
+1105376,MIA 20ºC P. putida,2025-03-06,Reasoner’s 2A Agar (R2A),100,,20,48,Pseudomonas putida,0,20,0,0,cycloheximide,50,1104136,,,Lewis and Clark College
+1107240,50% TSA,2025-02-25,Tryptic Soy Agar (TSA),50,,28,36,Enterobacter aerogenes,3,29,0,0,none,,1094238,Yes,1107196,Brigham Young University–Idaho
+1107240,50% TSA,2025-02-25,Tryptic Soy Agar (TSA),50,,28,36,Enterobacter aerogenes,3,29,0,0,none,,1094238,Yes,1107210,Brigham Young University–Idaho
+1107240,50% TSA,2025-02-25,Tryptic Soy Agar (TSA),50,,28,36,Enterobacter aerogenes,3,29,0,0,none,,1094238,Yes,1107215,Brigham Young University–Idaho
+1107261,LB,2025-02-25,Luria Bertani/Lysogeny Agar (LBA),100,,28,36,Staphylococcus epidermidis,3,29,0,0,none,,1094238,Yes,1107215,Brigham Young University–Idaho
+1107261,LB,2025-02-25,Luria Bertani/Lysogeny Agar (LBA),100,,28,36,Staphylococcus epidermidis,3,29,0,0,none,,1094238,Yes,1107196,Brigham Young University–Idaho
+1107261,LB,2025-02-25,Luria Bertani/Lysogeny Agar (LBA),100,,28,36,Staphylococcus epidermidis,3,29,0,0,none,,1094238,Yes,1107220,Brigham Young University–Idaho
+1108775,Rick the tester,2025-03-11,Reasoner’s 2A Agar (R2A),100,,28,168,Enterococcus raffinosus,1,31,0,0,none,,1108368,Yes,1108662,Brigham Young University–Idaho
+1112923,master library plate,2025-03-11,Luria Bertani/Lysogeny Agar (LBA),100,,,48,Staphylococcus epidermidis,2,18,0,0,none,,1108629,,,Madison College
+1113717,juliarg library,2025-03-27,Potato Dextrose Agar (PDA),100,,37,,Staphylococcus epidermidis,2,16,0,0,none,,1113273,Yes,1113713,Madison College
+1115949,,2025-04-02,Luria Bertani/Lysogeny Agar (LBA),100,,30,24,Bacillus subtilis,3,18,0,0,none,,1115920,Yes,1115939,Madison College
+1115949,,2025-04-02,Luria Bertani/Lysogeny Agar (LBA),100,,30,24,Bacillus subtilis,3,18,0,0,none,,1115920,Yes,1115943,Madison College
+1115949,,2025-04-02,Luria Bertani/Lysogeny Agar (LBA),100,,30,24,Bacillus subtilis,3,18,0,0,none,,1115920,No,1115946,Madison College
+1119669,A10,2025-04-17,Reasoner’s 2A Agar (R2A),10,,20,48,Enterococcus raffinosus,0,0,0,0,cycloheximide,50,1104174,,,Lewis and Clark College
+1122417,F3 S.epidermis,2025-03-13,Luria Bertani/Lysogeny Agar (LBA),100,,30,48,Staphylococcus epidermidis,2,3,2,4,cycloheximide,,1113187,,,Madison College
+1122986,B1,2025-04-17,Reasoner’s 2A Agar (R2A),10,,20,48,Acinetobacter baylyi,0,0,0,0,cycloheximide,50,1104152,,,Lewis and Clark College
+1122990,B4,2025-04-17,Reasoner’s 2A Agar (R2A),10,,20,48,Acinetobacter baylyi,0,0,0,0,cycloheximide,50,1104152,,,Lewis and Clark College
+1122994,B11,2025-04-17,Reasoner’s 2A Agar (R2A),10,,48,48,Acinetobacter baylyi,0,0,0,0,cycloheximide,50,1104152,,,Lewis and Clark College
+1122998,B6,2025-04-17,Reasoner’s 2A Agar (R2A),10,,20,48,Acinetobacter baylyi,0,0,0,0,cycloheximide,50,1104152,,,Lewis and Clark College
+1127005,,2025-04-24,Reasoner’s 2A Agar (R2A),100,none,20,48,Bacillus cereus,2,18,0,0,none,,1125797,,,Lewis and Clark College
+1127037,,2025-04-24,,100,none,20,48,Bacillus subtilis,0,20,0,0,none,,1125785,,,Lewis and Clark College
+1135668,,2025-02-19,Reasoner’s 2A Agar (R2A),100,,28,48,Erwinia carotovora,1,23,0,0,none,,1076162,Yes,1092404,"California State University, Sacramento"
+1135675,,2025-02-19,Reasoner’s 2A Agar (R2A),100,,28,48,Pseudomonas putida,0,24,0,0,none,,1076162,,,"California State University, Sacramento"
+1135679,,2025-02-19,Reasoner’s 2A Agar (R2A),100,,28,48,Bacillus subtilis,2,22,0,0,none,,1076162,Yes,1092404,"California State University, Sacramento"
+1135679,,2025-02-19,Reasoner’s 2A Agar (R2A),100,,28,48,Bacillus subtilis,2,22,0,0,none,,1076162,Yes,1092400,"California State University, Sacramento"
+1135685,,2025-02-19,Reasoner’s 2A Agar (R2A),100,,28,48,Enterococcus raffinosus,0,24,0,0,none,,1076162,,,"California State University, Sacramento"
+1135690,,2025-02-24,Reasoner’s 2A Agar (R2A),100,,28,48,Staphylococcus epidermidis,0,23,0,1,none,,1076162,Inconclusive,1092400,"California State University, Sacramento"
+1135699,,2025-02-12,Reasoner’s 2A Agar (R2A),100,,28,48,Enterobacter aerogenes,0,24,0,0,none,,1076162,,,"California State University, Sacramento"
+1135706,,2025-02-12,Reasoner’s 2A Agar (R2A),100,,28,48,Acinetobacter baylyi,0,24,0,0,none,,1076162,,,"California State University, Sacramento"
+1135710,,2025-02-12,Reasoner’s 2A Agar (R2A),100,,28,48,Escherichia coli,0,24,0,0,none,,1076162,,,"California State University, Sacramento"
+1225107,Control 18,2025-12-04,Tryptic Soy Agar (TSA),10,,,48,Bacillus subtilis,1,5,0,0,cycloheximide,,1222663,,,University of Wisconsin–Madison
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229488,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229556,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229552,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229548,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229544,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229540,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229536,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229532,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229528,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229524,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229519,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229515,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229511,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229507,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229503,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229499,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229495,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229803,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229811,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229818,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229826,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229830,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229837,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229842,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229846,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229853,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229857,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229866,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1229898,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1233307,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1233361,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1233365,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1233369,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1233375,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1233381,College of Marin
+1229486,Fall 2025 COM screen,2025-12-09,Tryptic Soy Agar (TSA),10,,25,72,Staphylococcus epidermidis,21,963,0,0,none,,1229481,Yes,1233385,College of Marin

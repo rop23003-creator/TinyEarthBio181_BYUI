@@ -1,0 +1,137 @@
+id,date,media_used,media_used_concentration,temperature,duration,number_of_isolates,nickname,additives,additive_concentration,sample_id,morphology_color,morphology_edge,morphology_elevation,morphology_surface,morphology_whole_colony,isolate_id,institution_name
+1046051,2024-10-01,Luria Bertani/Lysogeny Agar (LBA),100,28,48,18,LH Land #1,none,,1045844,,,,,,1045995,University of Wisconsin–Madison
+1046214,2024-10-01,Luria Bertani/Lysogeny Agar (LBA),100,28,48,17,LH Land #2,none,,1045844,,,,,,1046015,University of Wisconsin–Madison
+1046214,2024-10-01,Luria Bertani/Lysogeny Agar (LBA),100,28,48,17,LH Land #2,none,,1045844,,,,,,1045894,University of Wisconsin–Madison
+1081091,2025-02-12,Reasoner’s 2A Agar (R2A),100,28,48,26,R2A W4 Library,cycloheximide,100,1076113,,,,,,,"California State University, Sacramento"
+1082569,2025-02-05,Reasoner’s 2A Agar (R2A),100,28,72,17,,cycloheximide,100,1076161,,,,,,,"California State University, Sacramento"
+1083650,2025-02-24,Reasoner’s 2A Agar (R2A),100,28,48,26,R2A W6 Library,cycloheximide,100,1076113,,,,,,,"California State University, Sacramento"
+1083659,2025-02-12,Tryptic Soy Agar (TSA),50,28,48,26,TSBA L1 Wk4,cycloheximide,100,1076113,,,,,,,"California State University, Sacramento"
+1083666,2025-02-17,Tryptic Soy Agar (TSA),50,28,48,33,TSBA L2 Wk5,cycloheximide,100,1076113,,,,,,,"California State University, Sacramento"
+1083674,2025-02-19,Tryptic Soy Agar (TSA),50,28,48,26,TSBA L3 Wk6,none,,1076113,,,,,,,"California State University, Sacramento"
+1087634,2025-03-03,Reasoner’s 2A Agar (R2A),100,30,24,21,,none,,1081154,,,,,,,University of St. Thomas
+1087637,2025-03-03,Potato Dextrose Agar (PDA),100,30,24,24,,none,,1081154,,,,,,,University of St. Thomas
+1087641,2025-03-03,Reasoner’s 2A Agar (R2A),100,30,24,24,,none,,1081153,,,,,,,University of St. Thomas
+1087643,2025-03-03,Potato Dextrose Agar (PDA),100,30,24,24,,none,,1081163,,,,,,,University of St. Thomas
+1087644,2025-03-03,Potato Dextrose Agar (PDA),100,30,24,1,,none,,1081153,,,,,,,University of St. Thomas
+1087655,2025-03-03,Reasoner’s 2A Agar (R2A),100,30,24,24,,none,,1081157,,,,,,,University of St. Thomas
+1087657,2025-03-03,Reasoner’s 2A Agar (R2A),100,30,24,24,,none,,1081163,,,,,,,University of St. Thomas
+1087659,2025-03-03,Potato Dextrose Agar (PDA),100,30,24,17,,none,,1081157,,,,,,,University of St. Thomas
+1093557,2025-02-04,Nutrient Agar (NA),100,20,,32,Master Plate,none,,1093255,,,,,,,Brigham Young University–Idaho
+1093577,2025-03-11,,100,20,,30,master plate,none,,1093241,,,,,,,Brigham Young University–Idaho
+1093593,2025-03-11,Luria Bertani/Lysogeny Agar (LBA),100,20,,32,Master Plate,none,,1093230,,,,,,,Brigham Young University–Idaho
+1093596,2025-03-11,Reasoner’s 2A Agar (R2A),100,20,48,32,Master Plate,none,,1093240,,,,,,,Brigham Young University–Idaho
+1093612,2025-03-11,Luria Bertani/Lysogeny Agar (LBA),100,28,,32,,none,,1093239,,,,,,,Brigham Young University–Idaho
+1093666,2025-01-21,Nutrient Agar (NA),100,28,168,32,MP 1,none,,1093231,,,,,,,Brigham Young University–Idaho
+1093681,2025-03-11,Reasoner’s 2A Agar (R2A),100,20,168,32,Master Plate,none,,1093289,,,,,,,Brigham Young University–Idaho
+1093735,2025-03-11,Luria Bertani/Lysogeny Agar (LBA),100,28,24,1,master,none,,1093235,,,,,,,Brigham Young University–Idaho
+1093821,2025-02-04,Reasoner’s 2A Agar (R2A),100,20,168,32,Masterplate,none,,1093247,,,,,,,Brigham Young University–Idaho
+1093909,2025-03-11,Reasoner’s 2A Agar (R2A),100,20,,32,Masta plate,none,,1093245,,,,,,,Brigham Young University–Idaho
+1093917,2025-03-11,Potato Dextrose Agar (PDA),100,20,168,32,My very cool M plate,none,,1093233,,,,,,,Brigham Young University–Idaho
+1094002,2025-02-11,Nutrient Agar (NA),100,20,48,32,Master Plate,none,,1093236,,,,,,,Brigham Young University–Idaho
+1094116,2025-03-11,Tryptic Soy Agar (TSA),50,20,,1,Master Plate,none,,1093246,,,,,,,Brigham Young University–Idaho
+1094335,2025-02-11,Nutrient Agar (NA),100,20,,32,Master plate,none,,1094239,,,,,,,Brigham Young University–Idaho
+1094801,2025-03-12,Nutrient Agar (NA),100,28,168,64,,none,0.0099999997764826,1094730,,,,,,,Brigham Young University–Idaho
+1094827,2025-01-28,Nutrient Agar (NA),100,28,168,,Master Plate #1,none,,1094754,,,,,,,Brigham Young University–Idaho
+1094899,2025-01-28,Tryptic Soy Agar (TSA),100,28,168,,Master Plate #2,none,,1094754,,,,,,,Brigham Young University–Idaho
+1094912,2025-03-12,Nutrient Agar (NA),100,28,168,,,none,,1094824,,,,,,,Brigham Young University–Idaho
+1094916,2025-03-12,Reasoner’s 2A Agar (R2A),100,28,168,,King Bob,none,,1094781,,,,,,,Brigham Young University–Idaho
+1094949,2025-02-11,Luria Bertani/Lysogeny Agar (LBA),100,28,168,,Human pathogen #1,none,,1094754,,,,,,,Brigham Young University–Idaho
+1094950,2025-03-12,Tryptic Soy Agar (TSA),50,28,168,,King Bob,none,,1094781,,,,,,,Brigham Young University–Idaho
+1094964,2025-03-12,Reasoner’s 2A Agar (R2A),100,28,168,,HP Bacteria #2,none,,1094754,,,,,,,Brigham Young University–Idaho
+1094972,2025-02-18,Tryptic Soy Agar (TSA),100,28,168,,Lab #6,none,,1094754,,,,,,,Brigham Young University–Idaho
+1094983,2025-02-18,Potato Dextrose Agar (PDA),100,28,168,,Lab #6 Plate 2,none,,1094754,,,,,,,Brigham Young University–Idaho
+1094990,2025-03-12,Luria Bertani/Lysogeny Agar (LBA),100,28,168,,Lab #7 Plate 1,none,,1094754,,,,,,,Brigham Young University–Idaho
+1095000,2025-02-25,Nutrient Agar (NA),100,28,168,,Lab #7 Plate 2,none,,1094754,,,,,,,Brigham Young University–Idaho
+1095009,2025-03-05,Tryptic Soy Agar (TSA),100,28,168,,Lab #7 Plate 3,none,,1094754,,,,,,,Brigham Young University–Idaho
+1095116,2025-03-12,,100,28,168,32,Booger of BYUI,none,,1094835,,,,,,,Brigham Young University–Idaho
+1095293,2025-03-12,Tryptic Soy Agar (TSA),50,28,48,20,Library Plate,cycloheximide,100,1076114,,,,,,,"California State University, Sacramento"
+1095727,2025-03-12,Tryptic Soy Agar (TSA),100,28,48,,Experiment 1 pt 2,none,,1095413,,,,,,,Brigham Young University–Idaho
+1095735,2025-03-12,,100,20,72,3,,none,0,1095390,,,,,,,Brigham Young University–Idaho
+1095810,2025-02-05,Tryptic Soy Agar (TSA),50,20,168,32,Master Plate 1,none,,1095402,,,,,,,Brigham Young University–Idaho
+1095828,2025-02-05,Nutrient Agar (NA),100,28,168,32,master plate,none,,1095388,,,,,,,Brigham Young University–Idaho
+1095839,2025-02-05,Nutrient Agar (NA),100,20,168,32,Master Plate 2,none,,1095402,,,,,,,Brigham Young University–Idaho
+1096097,2025-01-29,Nutrient Agar (NA),100,28,72,3,collections,none,,1095426,,,,,,,Brigham Young University–Idaho
+1096103,2025-02-05,Tryptic Soy Agar (TSA),100,28,168,32,master plate 2,none,,1095388,,,,,,,Brigham Young University–Idaho
+1096233,2025-03-12,Nutrient Agar (NA),100,28,168,32,Master Plate,none,,1096223,,,,,,,Brigham Young University–Idaho
+1096390,2025-02-05,Tryptic Soy Agar (TSA),50,28,168,,,none,,1096266,,,,,,,Brigham Young University–Idaho
+1096498,2025-03-12,Tryptic Soy Agar (TSA),50,,,6,,none,,1096259,,,,,,,Brigham Young University–Idaho
+1096518,2025-02-05,Reasoner’s 2A Agar (R2A),100,20,168,32,,none,,1096363,,,,,,,Brigham Young University–Idaho
+1096524,2025-03-12,Luria Bertani/Lysogeny Agar (LBA),100,20,48,1,Master Plate,none,,1096346,,,,,,,Brigham Young University–Idaho
+1096536,2025-02-05,Reasoner’s 2A Agar (R2A),100,20,168,4,Bibble & friends,none,,1096241,,,,,,,Brigham Young University–Idaho
+1096549,2025-02-19,Nutrient Agar (NA),100,20,168,32,master plate,none,,1096262,,,,,,,Brigham Young University–Idaho
+1096610,2025-02-05,Reasoner’s 2A Agar (R2A),100,20,168,,Master Plates,none,0,1096222,,,,,,,Brigham Young University–Idaho
+1096617,2025-02-05,Potato Dextrose Agar (PDA),100,20,168,32,,none,,1096363,,,,,,,Brigham Young University–Idaho
+1096618,2025-03-12,Tryptic Soy Agar (TSA),100,20,168,32,Master Plate,none,,1096218,,,,,,,Brigham Young University–Idaho
+1096662,2025-03-12,Reasoner’s 2A Agar (R2A),100,20,168,,Master Plate,none,,1096472,,,,,,,Brigham Young University–Idaho
+1097070,2025-03-12,Tryptic Soy Agar (TSA),50,20,168,32,Master Plate 50%,none,,1096629,,,,,,,Brigham Young University–Idaho
+1097300,2025-02-11,Potato Dextrose Agar (PDA),100,28,168,1,Plate 1,none,,1097268,,,,,,,Brigham Young University–Idaho
+1097305,2025-01-29,Nutrient Agar (NA),100,20,168,,Master Plate,none,,1097244,,,,,,,Brigham Young University–Idaho
+1097315,2025-02-05,Nutrient Agar (NA),100,20,168,32,Yosts Yummies Master,none,,1097240,,,,,,,Brigham Young University–Idaho
+1097353,2025-03-12,Reasoner’s 2A Agar (R2A),100,28,168,1,inhibition success,none,,1097235,,,,,,,Brigham Young University–Idaho
+1097426,2025-03-12,Luria Bertani/Lysogeny Agar (LBA),100,20,168,1,plate,none,,1097242,,,,,,,Brigham Young University–Idaho
+1097460,2025-03-12,Luria Bertani/Lysogeny Agar (LBA),100,20,168,3,"#1,5,12",none,,1097239,,,,,,,Brigham Young University–Idaho
+1097463,2025-03-12,Tryptic Soy Agar (TSA),50,20,168,2,master,none,,1097292,,,,,,,Brigham Young University–Idaho
+1097481,2025-01-29,Nutrient Agar (NA),100,28,168,1,Master Plate,none,,1097366,,,,,,,Brigham Young University–Idaho
+1097494,2025-03-12,Tryptic Soy Agar (TSA),100,,,32,Lame Dirt Master,none,,1097379,,,,,,,Brigham Young University–Idaho
+1097497,2025-03-12,Potato Dextrose Agar (PDA),100,20,168,32,Library collection,none,,1097405,,,,,,,Brigham Young University–Idaho
+1097515,2025-02-05,Reasoner’s 2A Agar (R2A),100,20,168,32,Master Plate,none,,1097232,,,,,,,Brigham Young University–Idaho
+1097531,2025-03-12,Reasoner’s 2A Agar (R2A),100,20,504,32,master plate,none,,1097233,,,,,,,Brigham Young University–Idaho
+1097571,2025-03-12,,100,,,,,none,,1097405,,,,,,,Brigham Young University–Idaho
+1097577,2025-02-12,Nutrient Agar (NA),100,20,168,32,1,none,,1097301,,,,,,,Brigham Young University–Idaho
+1097689,2025-02-05,Reasoner’s 2A Agar (R2A),100,20,168,32,,none,,1097457,,,,,,,Brigham Young University–Idaho
+1097738,2025-03-12,Nutrient Agar (NA),100,20,168,32,Tanner's library,none,,1097565,,,,,,,Brigham Young University–Idaho
+1097746,2025-03-12,Nutrient Agar (NA),100,20,168,32,Jar of Dirt,none,,1097649,,,,,,,Brigham Young University–Idaho
+1097806,2025-02-05,Nutrient Agar (NA),100,20,168,,Master Jedi,none,,1097752,,,,,,,Brigham Young University–Idaho
+1097826,2025-03-05,Tryptic Soy Agar (TSA),50,20,168,32,,none,,1097234,,,,,,,Brigham Young University–Idaho
+1098823,2025-02-27,Tryptic Soy Agar (TSA),50,20,,32,Birch Test Plates,none,,1098366,,,,,,,Brigham Young University–Idaho
+1098863,2025-02-06,Tryptic Soy Agar (TSA),10,20,,32,Master Plate - 1,none,,1098517,,,,,,,Brigham Young University–Idaho
+1098878,2025-02-06,Nutrient Agar (NA),100,20,,32,The Velvet Room,none,,1098292,,,,,,,Brigham Young University–Idaho
+1099776,2025-02-06,Nutrient Agar (NA),100,20,168,32,Matt's Boi,none,,1099686,,,,,,,Brigham Young University–Idaho
+1100187,2025-03-13,Nutrient Agar (NA),100,20,,32,master plate 1,none,,1100065,,,,,,,Brigham Young University–Idaho
+1100188,2025-02-06,Nutrient Agar (NA),100,20,,32,Master Plate 1,none,,1099905,,,,,,,Brigham Young University–Idaho
+1100189,2025-03-13,Tryptic Soy Agar (TSA),50,20,168,1,Master Plate 1,none,,1099927,,,,,,,Brigham Young University–Idaho
+1100208,2025-02-13,Tryptic Soy Agar (TSA),50,20,168,1,master plate 1,none,,1099920,,,,,,,Brigham Young University–Idaho
+1100210,2025-02-06,Potato Dextrose Agar (PDA),100,20,,32,PD Master Plate,none,,1099894,,,,,,,Brigham Young University–Idaho
+1100224,2025-02-06,Luria Bertani/Lysogeny Agar (LBA),10,20,168,32,Mater Plate,none,,1099895,,,,,,,Brigham Young University–Idaho
+1100415,2025-02-13,Nutrient Agar (NA),100,20,168,32,Master plates,none,,1099993,,,,,,,Brigham Young University–Idaho
+1100875,2025-03-13,Tryptic Soy Agar (TSA),50,20,168,32,Master plate one,none,,1100855,,,,,,,Brigham Young University–Idaho
+1101102,2025-03-14,Tryptic Soy Agar (TSA),50,28,168,,,none,,1094824,,,,,,,Brigham Young University–Idaho
+1101298,2025-02-11,Nutrient Agar (NA),100,28,168,32,Hannah's Bacteria,none,,1101286,,,,,,,Brigham Young University–Idaho
+1101673,2025-02-12,Tryptic Soy Agar (TSA),50,20,168,4,Master Plates,none,,1096774,,,,,,,Brigham Young University–Idaho
+1101772,2025-03-15,,100,28,120,4,,none,,1076162,,,,,,,"California State University, Sacramento"
+1102344,2025-03-11,Reasoner’s 2A Agar (R2A),100,20,48,32,1093596(MasterPlate),none,,1093248,,,,,,,Brigham Young University–Idaho
+1103068,2025-02-11,Nutrient Agar (NA),10,20,,32,14,none,,1093237,,,,,,,Brigham Young University–Idaho
+1103102,2025-02-04,Nutrient Agar (NA),100,20,168,1,,none,,1093244,,,,,,,Brigham Young University–Idaho
+1103183,2025-03-18,Tryptic Soy Agar (TSA),10,20,,32,,none,,1103141,,,,,,,Brigham Young University–Idaho
+1103262,2025-03-04,Tryptic Soy Agar (TSA),10,20,,32,Master Plate,none,,1094230,,,,,,,Brigham Young University–Idaho
+1103280,2025-02-04,Reasoner’s 2A Agar (R2A),100,20,,32,H-dawg's master plat,none,,1094244,,,,,,,Brigham Young University–Idaho
+1103287,2025-02-04,Tryptic Soy Agar (TSA),10,20,,,ugly children,none,,1094237,,,,,,,Brigham Young University–Idaho
+1103339,2025-02-04,Luria Bertani/Lysogeny Agar (LBA),100,20,,32,Master Plate - LBA,none,,1094240,,,,,,,Brigham Young University–Idaho
+1103349,2025-02-11,Luria Bertani/Lysogeny Agar (LBA),100,20,,32,MasterLB.NeighborAB,none,,1094344,,,,,,,Brigham Young University–Idaho
+1103352,2025-02-11,Luria Bertani/Lysogeny Agar (LBA),100,20,,32,master plate 1,none,,1094235,,,,,,,Brigham Young University–Idaho
+1103355,2025-02-04,Tryptic Soy Agar (TSA),50,20,,32,Master Plate,none,,1094232,,,,,,,Brigham Young University–Idaho
+1103389,2025-02-04,Luria Bertani/Lysogeny Agar (LBA),50,20,,32,LB 50% Master,none,,1094365,,,,,,,Brigham Young University–Idaho
+1103423,2025-03-04,Reasoner’s 2A Agar (R2A),100,20,,32,master plate,none,,1094250,,,,,,,Brigham Young University–Idaho
+1103468,2025-02-04,Tryptic Soy Agar (TSA),50,20,,32,Master Plates,none,,1094231,,,,,,,Brigham Young University–Idaho
+1103833,2025-03-19,Tryptic Soy Agar (TSA),10,20,45,2,,none,,1097698,,,,,,,Brigham Young University–Idaho
+1104397,2025-02-11,Reasoner’s 2A Agar (R2A),100,20,,30,master plate,none,,1103877,,,,,,,Brigham Young University–Idaho
+1104400,2025-02-06,Tryptic Soy Agar (TSA),10,20,,32,PINK,none,,1100064,,,,,,,Brigham Young University–Idaho
+1107223,2025-02-04,Reasoner’s 2A Agar (R2A),100,20,,32,Master Plate,none,,1094238,,,,,,,Brigham Young University–Idaho
+1108686,2025-02-11,Tryptic Soy Agar (TSA),10,20,,32,RickMasterPlate,none,,1108368,,,,,,,Brigham Young University–Idaho
+1110638,2025-03-25,Luria Bertani/Lysogeny Agar (LBA),100,,,1,Tester plate 1 LB,none,,1094363,,,,,,,Brigham Young University–Idaho
+1110647,2025-03-25,Luria Bertani/Lysogeny Agar (LBA),100,20,,,Master,none,,1094363,,,,,,,Brigham Young University–Idaho
+1112921,2025-03-27,Luria Bertani/Lysogeny Agar (LBA),100,,48,24,,none,,1109763,,,,,,,Madison College
+1115926,2025-04-02,Luria Bertani/Lysogeny Agar (LBA),100,30,24,21,NMH Library Plate,none,,1115920,,,,,,,Madison College
+1122367,2025-02-25,Luria Bertani/Lysogeny Agar (LBA),100,30,48,2,F3,none,,1113187,,,,,,,Madison College
+1122933,2025-04-17,Luria Bertani/Lysogeny Agar (LBA),100,30,48,,,none,,1115321,,,,,,,Madison College
+1128301,2025-04-28,,100,30,48,,,none,,1081154,,,,,,,University of St. Thomas
+1134881,2025-02-10,Tryptic Soy Agar (TSA),10,28,48,18,1st TSA Library,none,,1076165,,,,,,,"California State University, Sacramento"
+1134891,2025-02-10,Reasoner’s 2A Agar (R2A),100,28,48,21,Oopsie R2A Library,none,,1076165,,,,,,,"California State University, Sacramento"
+1134902,2025-02-12,Reasoner’s 2A Agar (R2A),100,28,48,21,Another R2A Library,none,,1076165,,,,,,,"California State University, Sacramento"
+1134926,2025-02-12,Tryptic Soy Agar (TSA),10,28,48,7,2nd TSA library,none,,1076165,,,,,,,"California State University, Sacramento"
+1134950,2025-02-17,Reasoner’s 2A Agar (R2A),100,28,48,15,A whopping 3rd R2A,none,,1076165,,,,,,,"California State University, Sacramento"
+1134974,2025-02-26,Tryptic Soy Agar (TSA),10,28,48,11,Actual final TSA,none,,1076165,,,,,,,"California State University, Sacramento"
+1135714,2025-03-05,Reasoner’s 2A Agar (R2A),100,28,168,24,,none,,1076162,,,,,,,"California State University, Sacramento"
+1135725,2025-05-08,Tryptic Soy Agar (TSA),50,28,120,,Prod Library 1,none,,1076113,,,,,,,"California State University, Sacramento"
+1135748,2025-03-19,,50,28,120,5,Prod Library 2,none,,1076113,,,,,,,"California State University, Sacramento"
+1135753,2025-04-07,,50,28,120,5,Prod Library 3,none,,1076113,,,,,,,"California State University, Sacramento"

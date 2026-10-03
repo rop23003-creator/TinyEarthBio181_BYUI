@@ -1,0 +1,167 @@
+id,date,media_used,media_used_concentration,media_mod,temperature,duration,nickname,additives,additive_concentration,morphology_color,morphology_edge,morphology_elevation,morphology_surface,morphology_whole_colony,isolate_id,sample_id,institution_name
+1001726,2024-06-14,Potato Dextrose Agar (PDA),100,,30,,,,,pale yellow,undulate,,glistening,circular,1001719,1001720,Madison College
+1012589,2024-09-25,Tryptic Soy Agar (TSA),10,,28,120,,,,"gray, off-white","entire, irregular",convex,"dry/powdery, rough",circular,1012540,1004460,Salisbury University
+1014680,2024-10-07,Potato Dextrose Agar (PDA),100,,28,48,,,,white,entire,pulvinate,dry/powdery,circular,1014668,1004610,Salisbury University
+1014967,2024-09-30,Tryptic Soy Agar (TSA),10,,28,120,,,,red,undulate,raised,"dry/powdery, rough",irregular,1014662,1004587,Salisbury University
+1015045,2024-09-30,Tryptic Soy Agar (TSA),10,,28,48,,,,pale yellow,entire,raised,dry/powdery,circular,1015041,1004499,Salisbury University
+1015100,2024-10-07,Potato Dextrose Agar (PDA),100,,28,48,,,,off-white,entire,flat,smooth,circular,1015096,1004403,Salisbury University
+1015118,2024-09-25,Potato Dextrose Agar (PDA),100,,28,48,,,,off-white,undulate,flat,smooth,irregular,1015111,1004595,Salisbury University
+1015169,2024-09-25,Tryptic Soy Agar (TSA),10,,28,120,,,,white,entire,convex,rough,circular,1015165,1004496,Salisbury University
+1015480,2024-09-25,Tryptic Soy Agar (TSA),10,,28,120,,,,off-white,entire,"convex, pulvinate",rough,punctiform,1015068,1004587,Salisbury University
+1015757,2024-09-30,Tryptic Soy Agar (TSA),10,,28,48,,,,off-white,entire,flat,smooth,"circular, punctiform",1015746,1004719,Salisbury University
+1017396,2024-09-30,Potato Dextrose Agar (PDA),100,,28,96,,,,off-white,curled,flat,smooth,circular,1017134,1004384,Salisbury University
+1044793,2024-09-11,Luria Bertani/Lysogeny Agar (LBA),100,,22,48,,,,tan/light brown,undulate,flat,smooth,irregular,1043557,1043493,The College of St. Scholastica
+1044853,2024-09-11,Luria Bertani/Lysogeny Agar (LBA),100,,22,48,,,,tan/light brown,undulate,flat,smooth,irregular,1043524,1043493,The College of St. Scholastica
+1044891,2024-11-21,Tryptic Soy Agar (TSA),100,,22,48,,,,off-white,undulate,flat,glistening,circular,1043510,1043488,The College of St. Scholastica
+1045810,2024-10-17,Potato Dextrose Agar (PDA),100,,28,48,,,,red,undulate,flat,dry/powdery,irregular,1045742,1045647,University of Wisconsin–Madison
+1045815,2024-10-17,Potato Dextrose Agar (PDA),100,,48.799999237061,,,,,off-white,undulate,flat,dry/powdery,irregular,1045774,1045655,University of Wisconsin–Madison
+1045873,2024-10-31,Tryptic Soy Agar (TSA),100,,28,48,,,,"off-white, pale yellow",,,"glistening, smooth",circular,1045795,1045636,University of Wisconsin–Madison
+1045916,2024-10-31,Tryptic Soy Agar (TSA),100,,28,,,,,"off-white, white",,flat,glistening,circular,1045877,1045646,University of Wisconsin–Madison
+1045936,2024-10-31,Tryptic Soy Agar (TSA),100,,28,48,,,,"off-white, white",,,smooth,,1045821,1045642,University of Wisconsin–Madison
+1045961,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,250ppm Colloidal Silver,28,48,,,,"off-white, orange, pale yellow","entire, filamentous, undulate","flat, raised",,"circular, biofilm",1045753,1045643,University of Wisconsin–Madison
+1045973,2024-10-17,Potato Dextrose Agar (PDA),100,,26.60000038147,48,,,,,undulate,flat,smooth,irregular,1045774,1045655,University of Wisconsin–Madison
+1045988,2024-10-31,Tryptic Soy Agar (TSA),100,,28,48,,,,"off-white, white",,,rough,circular,1045891,1045642,University of Wisconsin–Madison
+1046001,2024-10-21,Tryptic Soy Agar (TSA),100,,28,48,,,,white,undulate,flat,smooth,irregular,1045993,1045634,University of Wisconsin–Madison
+1046022,2024-10-31,Tryptic Soy Agar (TSA),100,,28,,,,,white,,"flat, raised",glistening,circular,1045830,1045646,University of Wisconsin–Madison
+1046023,2024-10-31,Tryptic Soy Agar (TSA),100,,28,48,,,,"bright yellow, orange",,flat,smooth,,1045913,1045642,University of Wisconsin–Madison
+1046048,2024-10-17,Potato Dextrose Agar (PDA),100,,28,48,,,,pale yellow,undulate,flat,dry/powdery,irregular,1045996,1045647,University of Wisconsin–Madison
+1046065,2024-10-31,Tryptic Soy Agar (TSA),100,,,,,,,white,,raised,glistening,circular,1045899,1045646,University of Wisconsin–Madison
+1046114,2024-11-17,Potato Dextrose Agar (PDA),100,,26.60000038147,48,,,,off-white,undulate,flat,dry/powdery,circular,1045774,1045655,University of Wisconsin–Madison
+1046167,2024-10-17,Potato Dextrose Agar (PDA),100,,28,48,,,,off-white,undulate,flat,dry/powdery,irregular,1046016,1045647,University of Wisconsin–Madison
+1046324,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,"off-white, tan/light brown",entire,raised,glistening,circular,1046280,1045637,University of Wisconsin–Madison
+1046498,2024-10-31,Tryptic Soy Agar (TSA),100,Maple Syrup,28,48,,,,"off-white, pale yellow",,flat,smooth,circular,1046441,1045636,University of Wisconsin–Madison
+1046602,2024-11-21,,100,,,,,,,"off-white, pale yellow, tan/light brown",entire,raised,glistening,circular,1046594,1045637,University of Wisconsin–Madison
+1046767,2024-11-21,,100,,,,,,,"off-white, pale yellow, tan/light brown",entire,raised,glistening,,1046691,1045637,University of Wisconsin–Madison
+1046782,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,control,28,48,,,,,,,,,1046756,1045643,University of Wisconsin–Madison
+1046808,2024-10-31,Tryptic Soy Agar (TSA),100,Maple Syrup,28,48,,,,"off-white, pale yellow",,flat,smooth,,1046692,1045636,University of Wisconsin–Madison
+1046924,2024-11-21,,100,maple syrup. concentration is 0.05,28,48,,,,white,filamentous,flat,smooth,irregular,1046913,1046872,University of Wisconsin–Madison
+1046967,2024-11-21,Luria Bertani/Lysogeny Agar (LBA),100,control,28,48,,,,,,,,,1046952,1046891,University of Wisconsin–Madison
+1047176,2024-11-07,MacConkey Agar,100,,28,48,,,,"red, tan/light brown",,,,,1046345,1045740,University of Wisconsin–Madison
+1047708,2024-11-12,MacConkey Agar,100,,28,48,,,,did not grow,,,,,1046721,1045654,University of Wisconsin–Madison
+1047716,2024-11-12,MacConkey Agar,100,,28,48,,,,tan/light brown,,,,,1046641,1045654,University of Wisconsin–Madison
+1048034,2024-11-01,Tryptic Soy Agar (TSA),100,,30,168,,,,off-white,lobate,flat,wrinkled,irregular,1010964,1010807,University of Guelph
+1048039,2024-11-23,Tryptic Soy Agar (TSA),100,,30,168,,,,pale yellow,entire,flat,wrinkled,circular,1011138,1010807,University of Guelph
+1052962,2024-12-03,,100,,,,,,,"off-white, pale yellow",,,glistening,,1045367,1045201,The College of St. Scholastica
+1053508,2024-12-05,,100,,22,48,,,,off-white,undulate,raised,glistening,circular,1053497,1053474,The College of St. Scholastica
+1053577,2024-12-03,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,off-white,undulate,raised,"glistening, smooth",irregular,1044730,1043508,The College of St. Scholastica
+1053747,2024-10-03,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,off-white,entire,flat,"glistening, smooth",circular,1053744,1043508,The College of St. Scholastica
+1054380,2024-12-04,,100,,,,,,,off-white,undulate,raised,smooth,circular,1053558,1043499,The College of St. Scholastica
+1054450,2024-12-04,Potato Dextrose Agar (PDA),100,,,,,,,off-white,curled,convex,glistening,circular,1054384,1043499,The College of St. Scholastica
+1057698,2024-12-06,Tryptic Soy Agar (TSA),100,,25,120,,,,,,,,,1056737,1055152,College of Marin
+1057752,2024-12-06,Tryptic Soy Agar (TSA),100,,25,120,,,,,,,,,1057080,1057073,College of Marin
+1057794,2024-12-06,Tryptic Soy Agar (TSA),100,,25,120,,,,,,,,,1056729,1055152,College of Marin
+1058342,2024-09-19,,100,,0,,,,,"orange, pale yellow",entire,flat,smooth,circular,1049344,1043509,The College of St. Scholastica
+1060553,2024-12-10,Tryptic Soy Agar (TSA),100,,25,120,,,,,,,,,1057102,1057095,College of Marin
+1060573,2024-12-10,Tryptic Soy Agar (TSA),100,,25,120,,,,,,,,,1057045,1055152,College of Marin
+1060594,2024-12-10,Tryptic Soy Agar (TSA),100,,25,120,,,,,,,,,1057023,1055152,College of Marin
+1060611,2024-12-10,Tryptic Soy Agar (TSA),100,,25,120,,,,,,,,,1056995,1055152,College of Marin
+1060648,2024-12-10,Tryptic Soy Agar (TSA),100,,25,120,,,,,,,,,1056991,1055152,College of Marin
+1092293,2025-03-10,Potato Dextrose Agar (PDA),100,,30,24,,,,dark brown,,,,,1087942,1081154,University of St. Thomas
+1092295,2025-03-10,Potato Dextrose Agar (PDA),100,,30,24,,,,white,entire,"convex, umbonate",smooth,"circular, spindle",1087914,1081163,University of St. Thomas
+1092297,2025-03-10,Reasoner’s 2A Agar (R2A),100,,30,24,,,,"bright yellow, orange",entire,convex,"glistening, smooth",circular,1087909,1081163,University of St. Thomas
+1092307,2025-03-10,Reasoner’s 2A Agar (R2A),100,,30,24,,,,"off-white, pale yellow",entire,"flat, raised",glistening,circular,1087940,1081153,University of St. Thomas
+1092309,2025-03-10,Reasoner’s 2A Agar (R2A),100,,30,24,,,,"off-white, pale yellow",entire,"flat, raised","glistening, smooth",circular,1087934,1081153,University of St. Thomas
+1092328,2025-03-10,Reasoner’s 2A Agar (R2A),100,,30,24,,,,pale yellow,entire,flat,glistening,circular,1087916,1081154,University of St. Thomas
+1092340,2025-03-10,Reasoner’s 2A Agar (R2A),100,,30,24,,,,pale yellow,entire,flat,smooth,circular,1087905,1081165,University of St. Thomas
+1092349,2025-03-10,Reasoner’s 2A Agar (R2A),100,,30,24,,,,off-white,entire,flat,smooth,circular,1087929,1081157,University of St. Thomas
+1092374,2025-03-10,Reasoner’s 2A Agar (R2A),100,,30,24,,,,off-white,entire,convex,"glistening, smooth",circular,1087920,1081158,University of St. Thomas
+1092606,2025-02-24,Potato Dextrose Agar (PDA),100,,28,48,,,,tan/light brown,entire,flat,glistening,irregular,1092428,1076151,"California State University, Sacramento"
+1092611,2025-02-24,Potato Dextrose Agar (PDA),100,,28,48,,,,off-white,entire,flat,smooth,circular,1092436,1076151,"California State University, Sacramento"
+1092616,2025-02-24,Potato Dextrose Agar (PDA),100,,28,48,,,,white,entire,flat,,,1092440,1076151,"California State University, Sacramento"
+1092619,2025-02-24,Potato Dextrose Agar (PDA),100,,28,48,,,,white,entire,flat,"glistening, smooth",circular,1092444,1076151,"California State University, Sacramento"
+1092623,2025-02-24,Potato Dextrose Agar (PDA),100,,28,48,,,,"orange, tan/light brown",entire,,glistening,circular,1092448,1076151,"California State University, Sacramento"
+1092626,2025-02-24,Potato Dextrose Agar (PDA),100,,28,48,,,,white,entire,flat,smooth,circular,1092452,1076151,"California State University, Sacramento"
+1092632,2025-02-24,Potato Dextrose Agar (PDA),100,,28,48,,,,white,entire,flat,"glistening, smooth",circular,1092464,1076151,"California State University, Sacramento"
+1092841,2025-03-04,Potato Dextrose Agar (PDA),100,,30,24,,,,off-white,,convex,glistening,irregular,1088547,1082043,University of St. Thomas
+1092961,2025-03-11,Nutrient Agar (NA),100,,28,48,,,,off-white,,flat,dry/powdery,circular,1092958,1092938,Brigham Young University–Idaho
+1092980,2025-03-11,Nutrient Agar (NA),100,,28,48,,,,beige,undulate,raised,"glistening, smooth",irregular,1092971,1092937,Brigham Young University–Idaho
+1093005,2025-03-11,Actinomycete Isolation Agar (AIA),100,,28,24,,,,pale yellow,lobate,umbonate,smooth,irregular,1093002,1092939,Brigham Young University–Idaho
+1094828,2025-03-12,Nutrient Agar (NA),100,,28,48,,,,dark brown,undulate,raised,wrinkled,irregular,1094821,1094730,Brigham Young University–Idaho
+1094863,2025-03-12,Nutrient Agar (NA),100,,28,72,,,,tan/light brown,lobate,flat,rough,irregular,1094744,1094735,Brigham Young University–Idaho
+1095098,2025-03-12,Potato Dextrose Agar (PDA),100,,28,,,,,"off-white, orange, pale yellow, white",,"convex, flat, raised","dry/powdery, smooth, wrinkled","circular, irregular",1095065,1094778,Brigham Young University–Idaho
+1095159,2025-03-12,Nutrient Agar (NA),,,28,168,,,,"off-white, orange, white",lobate,raised,"glistening, smooth, wrinkled",irregular,1095099,1094777,Brigham Young University–Idaho
+1095370,2025-03-03,Reasoner’s 2A Agar (R2A),100,,28,48,,,,off-white,entire,convex,"glistening, smooth",circular,1092220,1076113,"California State University, Sacramento"
+1095381,2025-03-03,Reasoner’s 2A Agar (R2A),100,,28,48,,,,off-white,lobate,flat,smooth,irregular,1083643,1076113,"California State University, Sacramento"
+1095732,2025-03-12,Tryptic Soy Agar (TSA),10,,20,72,,,,off-white,entire,flat,wrinkled,circular,1095656,1095386,Brigham Young University–Idaho
+1096182,2025-03-12,,100,,28,48,,,,bright yellow,entire,raised,smooth,circular,1094176,1092949,Brigham Young University–Idaho
+1097543,2025-03-12,Nutrient Agar (NA),100,,20,168,,,,orange,entire,raised,smooth,circular,1097534,1097439,Brigham Young University–Idaho
+1097611,2025-03-05,Tryptic Soy Agar (TSA),50,,37,168,,,,tan/light brown,undulate,umbonate,rough,irregular,1097556,1097457,Brigham Young University–Idaho
+1098064,2025-03-03,Tryptic Soy Agar (TSA),50,,28,48,,,,off-white,entire,flat,rough,circular,1090348,1076113,"California State University, Sacramento"
+1098078,2025-02-26,Tryptic Soy Agar (TSA),50,,28,48,,,,"off-white, opaque",entire,raised,"glistening, smooth",circular,1090355,1076113,"California State University, Sacramento"
+1098103,2025-02-26,Tryptic Soy Agar (TSA),50,,28,48,,,,white,entire,convex,glistening,circular,1090363,1076113,"California State University, Sacramento"
+1098110,2025-02-26,Tryptic Soy Agar (TSA),50,,28,48,,,,white,entire,flat,glistening,circular,1090371,1076113,"California State University, Sacramento"
+1098116,2025-02-26,Tryptic Soy Agar (TSA),100,,28,48,,,,"off-white, white",undulate,flat,rough,circular,1090374,1076113,"California State University, Sacramento"
+1101565,2025-03-12,Potato Dextrose Agar (PDA),100,,28,48,,,,off-white,lobate,flat,dry/powdery,irregular,1101553,1095907,Brigham Young University–Idaho
+1110652,2025-03-25,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,pale yellow,"curled, undulate",flat,smooth,circular,1110649,1094363,Brigham Young University–Idaho
+1110664,2025-03-25,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,"off-white, pale yellow",entire,flat,smooth,circular,1110659,1094363,Brigham Young University–Idaho
+1111494,2025-03-26,Potato Dextrose Agar (PDA),100,,28,168,,,,orange,entire,flat,smooth,circular,1111528,1094741,Brigham Young University–Idaho
+1119264,2025-04-09,Potato Dextrose Agar (PDA),100,,,,,,,"off-white, white",entire,flat,"glistening, smooth",circular,1118356,1118230,The College of St. Scholastica
+1119354,2025-04-10,Tryptic Soy Agar (TSA),10,,28,48,,,,"off-white, white",entire,"convex, flat",rough,circular,1095313,1076114,"California State University, Sacramento"
+1119392,2025-02-17,Tryptic Soy Agar (TSA),10,,28,48,,,,bright yellow,entire,convex,rough,circular,1095304,1076114,"California State University, Sacramento"
+1119407,2025-04-10,Tryptic Soy Agar (TSA),10,,28,48,,,,white,entire,convex,"dry/powdery, rough",circular,1095297,1076114,"California State University, Sacramento"
+1119423,2025-04-10,Tryptic Soy Agar (TSA),10,,28,48,,,,"off-white, white",entire,convex,"dry/powdery, rough",circular,1095291,1076114,"California State University, Sacramento"
+1119745,2025-02-11,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,white,lobate,flat,rough,irregular,1119738,1119732,The College of St. Scholastica
+1120336,2025-04-14,Reasoner’s 2A Agar (R2A),100,,28,48,,,,"gray, off-white","curled, filamentous",raised,"dry/powdery, glistening","circular, irregular",1096127,1076165,"California State University, Sacramento"
+1120338,2025-04-14,Reasoner’s 2A Agar (R2A),100,,37,48,,,,violet,curled,crateriform,rough,irregular,1096076,1076165,"California State University, Sacramento"
+1120363,2025-03-03,,100,,,,,,,"off-white, white",entire,"convex, raised","glistening, smooth",circular,1095283,1076161,"California State University, Sacramento"
+1120711,2025-01-22,,100,,,,,,,,,,,,1120707,1118225,The College of St. Scholastica
+1120839,2025-04-15,Potato Dextrose Agar (PDA),100,,30,48,,,,"off-white, pale yellow",entire,"flat, raised",smooth,"circular, irregular",1120729,1104133,Lewis and Clark College
+1120901,2025-04-15,,100,,,,,,,"gray, off-white, pale yellow, tan/light brown",,,,,1119775,1118692,The College of St. Scholastica
+1125264,2025-04-21,Tryptic Soy Agar (TSA),10,,28,48,,,,white,filamentous,flat,dry/powdery,filamentous,1094548,1076151,"California State University, Sacramento"
+1125269,2025-04-21,Tryptic Soy Agar (TSA),10,,28,48,,,,white,filamentous,flat,dry/powdery,filamentous,1094544,1076151,"California State University, Sacramento"
+1125272,2025-04-21,Potato Dextrose Agar (PDA),100,,28,48,,,,pale yellow,entire,flat,"glistening, smooth",circular,1092456,1076151,"California State University, Sacramento"
+1125314,2025-04-21,Reasoner’s 2A Agar (R2A),100,,28,120,,,,tan/light brown,entire,raised,smooth,circular,1092353,1076162,"California State University, Sacramento"
+1125325,2025-04-21,Reasoner’s 2A Agar (R2A),100,,28,120,,,,off-white,entire,raised,"glistening, smooth",circular,1092400,1076162,"California State University, Sacramento"
+1125331,2025-04-21,Reasoner’s 2A Agar (R2A),100,,28,120,,,,off-white,entire,raised,smooth,filamentous,1092404,1076162,"California State University, Sacramento"
+1125662,2025-04-22,Potato Dextrose Agar (PDA),100,,30,36,,,,bright yellow,entire,flat,glistening,circular,1125655,1104133,Lewis and Clark College
+1125666,2025-04-22,Potato Dextrose Agar (PDA),100,,30,36,,,,"off-white, pale yellow",entire,flat,"glistening, smooth",circular,1125657,1104133,Lewis and Clark College
+1126202,2025-04-23,Tryptic Soy Agar (TSA),50,,28,48,,,,off-white,entire,raised,smooth,"circular, irregular",1094921,1076114,"California State University, Sacramento"
+1127781,2025-02-13,Reasoner’s 2A Agar (R2A),100,,20,48,,,,off-white,entire,umbonate,smooth,circular,1127057,1125797,Lewis and Clark College
+1127801,2025-02-13,Reasoner’s 2A Agar (R2A),100,,20,48,,,,"off-white, pale yellow",undulate,raised,"glistening, smooth",irregular,1127054,1125797,Lewis and Clark College
+1133480,2025-03-04,Tryptic Soy Agar (TSA),10,0,28,48,,,,bright yellow,undulate,raised,smooth,circular,1128706,1128648,Innovation Academy High School
+1133484,2025-03-04,Tryptic Soy Agar (TSA),10,0,28,48,,,,"bright yellow, gray, tan/light brown",entire,flat,smooth,circular,1128717,1128648,Innovation Academy High School
+1134656,2025-05-06,Tryptic Soy Agar (TSA),30,,28,24,,,,off-white,entire,raised,dry/powdery,circular,1128897,1128845,Innovation Academy High School
+1134666,2025-05-07,Tryptic Soy Agar (TSA),10,,28,24,,,,off-white,undulate,flat,smooth,irregular,1128913,1128839,Innovation Academy High School
+1134678,2025-05-06,Tryptic Soy Agar (TSA),100,,28,24,,,,off-white,undulate,raised,smooth,circular,1128970,1128837,Innovation Academy High School
+1134687,2025-03-04,Tryptic Soy Agar (TSA),10,,28,24,,,,"off-white, pale yellow","curled, undulate","flat, raised","smooth, wrinkled","circular, irregular",1128857,1128836,Innovation Academy High School
+1134725,2025-03-03,Tryptic Soy Agar (TSA),10,,,,,,,dark green,entire,flat,smooth,circular,1128876,1128833,Innovation Academy High School
+1134731,2025-05-07,Tryptic Soy Agar (TSA),30,,28,48,,,,off-white,undulate,flat,dry/powdery,irregular,1128882,1128845,Innovation Academy High School
+1134877,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,,,,white,undulate,"flat, umbonate","glistening, smooth","filamentous, irregular",1095354,1076165,"California State University, Sacramento"
+1135274,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,,,,off-white,filamentous,"flat, umbonate","glistening, smooth",filamentous,1095350,1076165,"California State University, Sacramento"
+1135278,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,,,,white,filamentous,"flat, umbonate",smooth,filamentous,1095344,1076165,"California State University, Sacramento"
+1135282,2025-02-24,,10,,28,48,,,,white,filamentous,"flat, umbonate",smooth,filamentous,1095340,1076165,"California State University, Sacramento"
+1135286,2025-04-21,Tryptic Soy Agar (TSA),10,,28,48,,,,"orange, tan/light brown",undulate,flat,"dry/powdery, rough",circular,1095334,1076165,"California State University, Sacramento"
+1135290,2025-02-24,Tryptic Soy Agar (TSA),10,,28,48,,,,"orange, tan/light brown",undulate,flat,"dry/powdery, rough",circular,1095330,1076165,"California State University, Sacramento"
+1135296,2025-04-21,Tryptic Soy Agar (TSA),10,,28,48,,,,tan/light brown,undulate,flat,"dry/powdery, rough",circular,1095325,1076165,"California State University, Sacramento"
+1135346,2025-05-07,Tryptic Soy Agar (TSA),50,,28,48,,,,off-white,lobate,raised,glistening,irregular,1095019,1076114,"California State University, Sacramento"
+1135354,2025-05-07,Tryptic Soy Agar (TSA),50,,28,48,,,,off-white,lobate,raised,glistening,irregular,1095047,1076114,"California State University, Sacramento"
+1135373,2025-05-07,Tryptic Soy Agar (TSA),50,,28,48,,,,off-white,lobate,raised,glistening,irregular,1095131,1076114,"California State University, Sacramento"
+1135390,2025-05-07,Tryptic Soy Agar (TSA),50,,28,48,,,,off-white,lobate,raised,glistening,irregular,1095138,1076114,"California State University, Sacramento"
+1135400,2025-05-07,Tryptic Soy Agar (TSA),50,,28,48,,,,off-white,lobate,flat,dry/powdery,circular,1096150,1076114,"California State University, Sacramento"
+1135405,2025-05-07,Tryptic Soy Agar (TSA),50,,28,48,,,,off-white,"lobate, undulate",flat,dry/powdery,"circular, filamentous",1096155,1076114,"California State University, Sacramento"
+1135995,2025-02-19,Tryptic Soy Agar (TSA),10,,28,48,,,,"off-white, white",entire,convex,glistening,"circular, irregular",1126120,1076161,"California State University, Sacramento"
+1137711,2024-11-28,Potato Dextrose Agar (PDA),100,,30,168,,,,,,,,,1137705,1136980,Spokane Community College
+1139075,2025-05-15,Reasoner’s 2A Agar (R2A),100,,28,48,,,,"off-white, pale yellow","filamentous, Irregular","raised, Crateriform","dry/powdery, rough","filamentous, irregular",1096092,1076165,"California State University, Sacramento"
+1139099,2025-05-15,Reasoner’s 2A Agar (R2A),100,,,,,,,white,entire,flat,"dry/powdery, rough",circular,1096109,1076165,"California State University, Sacramento"
+1201839,2025-11-18,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,bright yellow,entire,flat,glistening,circular,1201775,1201669,The College of St. Scholastica
+1201896,2025-11-13,Tryptic Soy Agar (TSA),100,,,,,,,off-white,entire,raised,glistening,circular,1201728,1201665,The College of St. Scholastica
+1202782,2025-11-13,Actinomycete Isolation Agar (AIA),100,,,,,,,pale yellow,"curled, entire",flat,glistening,circular,1202712,1202629,The College of St. Scholastica
+1202837,2025-11-13,Tryptic Soy Agar (TSA),100,,,,,,,"off-white, pale yellow, tan/light brown, white",,flat,smooth,circular,1202708,1202627,The College of St. Scholastica
+1202902,2025-09-25,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,pale yellow,entire,flat,"glistening, smooth",circular,1201813,1201674,The College of St. Scholastica
+1203509,2025-09-25,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,off-white,undulate,raised,wrinkled,circular,1201803,1201674,The College of St. Scholastica
+1206292,2025-11-16,Actinomycete Isolation Agar (AIA),100,,,,,,,tan/light brown,filamentous,flat,rough,punctiform,1205868,1202629,The College of St. Scholastica
+1206773,2025-11-17,Actinomycete Isolation Agar (AIA),100,,,,,,,bright yellow,entire,flat,smooth,circular,1206766,1202629,The College of St. Scholastica
+1208327,2025-11-18,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,"off-white, pale yellow, tan/light brown",entire,raised,glistening,circular,1201807,1201681,The College of St. Scholastica
+1208350,2025-11-18,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,pale yellow,undulate,flat,dry/powdery,irregular,1201767,1201669,The College of St. Scholastica
+1208380,2025-11-18,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,bright yellow,undulate,raised,dry/powdery,irregular,1201752,1201669,The College of St. Scholastica
+1213549,2025-11-20,Tryptic Soy Agar (TSA),100,,,,,,,"off-white, pale yellow",entire,flat,glistening,circular,1201855,1201673,The College of St. Scholastica
+1213610,2025-11-20,Tryptic Soy Agar (TSA),100,,,,,,,off-white,undulate,flat,glistening,irregular,1201740,1201673,The College of St. Scholastica
+1213648,2025-11-20,Actinomycete Isolation Agar (AIA),100,,,,,,,off-white,undulate,flat,glistening,circular,1201829,1201673,The College of St. Scholastica
+1213678,2025-11-20,Actinomycete Isolation Agar (AIA),100,,,,,,,off-white,curled,convex,"dry/powdery, glistening",circular,1201841,1201673,The College of St. Scholastica
+1214824,2025-11-20,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,"off-white, pale yellow",entire,flat,glistening,circular,1202722,1202628,The College of St. Scholastica
+1216788,2025-11-11,Potato Dextrose Agar (PDA),100,,23,24,,,,pale yellow,entire,convex,smooth,circular,1216779,1216765,Lewis and Clark College
+1216792,2025-11-11,Potato Dextrose Agar (PDA),100,,23,24,,,,off-white,entire,convex,smooth,circular,1216775,1216765,Lewis and Clark College
+1221744,2025-12-02,Tryptic Soy Agar (TSA),100,,,,,,,pale pink/peach,entire,raised,glistening,circular,1214144,1214098,The College of St. Scholastica
+1221761,2025-12-02,Luria Bertani/Lysogeny Agar (LBA),100,,,,,,,pale yellow,undulate,flat,"dry/powdery, smooth",,1214136,1214098,The College of St. Scholastica
+1221774,2025-12-02,Tryptic Soy Agar (TSA),100,,,,,,,"off-white, pale yellow",entire,flat,glistening,circular,1214120,1214098,The College of St. Scholastica
+1224827,2025-12-04,Actinomycete Isolation Agar (AIA),100,,4,,,,,pale yellow,,,,,1190331,1190059,University of Wisconsin–Madison
