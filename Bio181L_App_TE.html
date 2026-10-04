@@ -112,6 +112,8 @@ ul.task-list li input[type="checkbox"] {
   /* ---------- Results page ---------- */
   .results-bar  { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
   .results-bar .spacer { flex: 1; }
+  .reg-setup    { background: var(--mint); border: 1px solid #CDE7DF; border-radius: 8px; padding: 10px 14px; margin: 8px 0 12px; }
+  .reg-setup .form-group { margin-bottom: 4px; }
   .results-page h2   { color: var(--sea-dark); margin: 6px 0 2px; }
   .sec-title    { color: var(--sea-dark); border-bottom: 2px solid var(--cyan-light); padding-bottom: 3px;
                   margin: 22px 0 10px; font-size: 1.15rem; }
@@ -617,9 +619,11 @@ selector_section <- function(title, keys, current) {
 #   table    : the table currently selected
 #   prev     : the variables currently ticked (kept so Back/forward keeps them)
 #   analysis : the table + two variables sent to the results page
+#   reg_y    : (regression only) the response variable chosen when "Go" was pressed;
+#              NULL means the regression has not been run yet
 rv <- reactiveValues(page = "viewer", mode = "browse", view = "table",
                      table = if (length(individual_keys)) individual_keys[1] else all_keys[1],
-                     prev = character(0), analysis = NULL)
+                     prev = character(0), analysis = NULL, reg_y = NULL)
 
 current_df   <- reactive({ req(rv$table); load_table(rv$table) })
 table_label  <- reactive({ req(rv$table); paste0(pretty_name(rv$table), if (grepl("_combined$", rv$table)) " (Combined)" else " (Individual)") })
@@ -758,7 +762,13 @@ observeEvent(input$sel_vars, {
 observeEvent(input$btn_analyse, {                     # go to the results page
   req(length(input$sel_vars) == 2)
   rv$analysis <- list(table = rv$table, vars = input$sel_vars)
+  rv$reg_y    <- NULL            # a new analysis starts with the regression NOT yet run
   rv$page <- "results"
+})
+# "Go" (regression page only): lock in the chosen response variable, which runs the test
+observeEvent(input$reg_go, {
+  req(rv$analysis, input$reg_response %in% rv$analysis$vars)
+  rv$reg_y <- input$reg_response
 })
 observeEvent(input$btn_results_back, { rv$page <- "viewer" })
 
@@ -792,7 +802,7 @@ result <- reactive({
   v  <- a$vars
   t  <- vapply(v, function(nm) var_type(df[[nm]]), character(1))
   if (all(t == "Quantitative")) {
-    resp <- if (!is.null(input$reg_response) && input$reg_response %in% v) input$reg_response else v[1]
+    resp <- req(rv$reg_y)                 # wait until the student presses "Go"
     analyse_regression(df, yvar = resp, xvar = setdiff(v, resp))
   } else if (any(t == "Quantitative")) {
     analyse_anova(df, yvar = v[t == "Quantitative"], gvar = v[t == "Qualitative"])
@@ -801,11 +811,17 @@ result <- reactive({
   }
 })
 
+# TRUE when both chosen variables are quantitative (i.e. a regression)
+both_quant <- reactive({
+  a  <- req(rv$analysis)
+  df <- load_table(a$table)
+  all(vapply(a$vars, function(nm) var_type(df[[nm]]) == "Quantitative", logical(1)))
+})
+
 # Top bar (Back / Learn More / Save PDF) - built once per analysis
 output$results_ui <- renderUI({
   a  <- req(rv$analysis)
   df <- load_table(a$table)
-  both_quant <- all(vapply(a$vars, function(nm) var_type(df[[nm]]) == "Quantitative", logical(1)))
   div(class = "panel-card results-page",
       div(class = "results-bar no-print",
           actionButton("btn_results_back", "\u2190 Back to Data", class = "btn-te btn-outline"),
@@ -814,12 +830,25 @@ output$results_ui <- renderUI({
           # "Save PDF" uses the browser's print window - choose "Save as PDF" as the printer
           tags$button(type = "button", class = "btn btn-te", onclick = "window.print();", "Save PDF")),
       p(class = "hint", paste("Table:", pretty_name(a$table), "\u00b7 Variables:", paste(a$vars, collapse = " & "))),
-      if (both_quant) div(class = "no-print",
-          selectInput("reg_response", "Which variable is the response (y)?", choices = a$vars, selected = a$vars[1], width = "320px")),
+      # Regression set-up: choose which variable is y, then press Go to run the test
+      if (both_quant()) div(class = "no-print reg-setup",
+          selectInput("reg_response", "Which variable is the response (y)?", choices = a$vars, selected = a$vars[1], width = "320px"),
+          uiOutput("reg_x_label"),
+          actionButton("reg_go", "Go", class = "btn-te btn-glow")),
       uiOutput("results_body"))
 })
 
+# Shows which variable will be the explanatory (x) variable, updating as y is changed
+output$reg_x_label <- renderUI({
+  v <- req(rv$analysis)$vars
+  y <- if (!is.null(input$reg_response) && input$reg_response %in% v) input$reg_response else v[1]
+  p(class = "hint", "Explanatory variable (x): ", tags$strong(setdiff(v, y)))
+})
+
 output$results_body <- renderUI({
+  # Regression: show a prompt until "Go" has been pressed
+  if (both_quant() && is.null(rv$reg_y))
+    return(p(class = "hint no-print", "Choose the response (y) variable above, then press Go to run the regression."))
   r <- result()
   div(
     h2(r$title),
@@ -855,7 +884,8 @@ for (i in 1:2) local({
 
 # ---- Learn More window ----------------------------------------
 observeEvent(input$btn_learn, {
-  current <- tryCatch(result()$type, error = function(e) "anova")
+  current <- if (isTRUE(tryCatch(both_quant(), error = function(e) FALSE))) "regression"
+             else tryCatch(result()$type, error = function(e) "anova")
   order   <- c(current, setdiff(names(test_info), current))     # show the test you ran first
   showModal(modalDialog(
     title = "Learn More: The Three Tests", size = "l", easyClose = TRUE, footer = modalButton("Close"),
