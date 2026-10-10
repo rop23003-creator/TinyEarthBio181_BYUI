@@ -1,13 +1,15 @@
 # ============================================================
-# 01_clean_data.R
+# Data_Clean.R
 #
 # PURPOSE
 #   Reads the raw Excel exports for the bacteria/antibiotics
 #   project, fixes a couple of known data-quality issues, and
-#   saves one clean R object that the app script (file #2) can
-#   load in a single line -- no re-cleaning needed every time
-#   the app starts. (Output is now one .csv file per table in
-#   the "Data" folder, instead of the old .rds files.)
+#   saves each cleaned table as its own .rds file in the "Data"
+#   folder. The app script (Bio181L_App_TE) loads these files
+#   with readRDS() -- no re-cleaning needed every time the app
+#   starts. An .rds file stores the table exactly as R holds it,
+#   so column types (numbers, Dates, TRUE/FALSE) come back
+#   unchanged -- nothing has to be re-guessed like with a .csv.
 #
 # BEFORE YOU RUN THIS
 #   1. Open this project through its .Rproj file (not by double-
@@ -26,13 +28,13 @@ library(readxl)     # reads .xlsx files into R
 library(dplyr)      # data-cleaning verbs: mutate(), rename(), across()
 library(purrr)      # lets us repeat the same steps across many files at once
 library(stringr)    # tools for cleaning up text
-library(readr)      # type_convert(): re-guesses column types below
+library(readr)      # type_convert(): re-guesses column types below (reading only; nothing is written as .csv)
 library(lubridate)  # ymd(): parses the "date" columns properly
 
 # ------------------------------------------------------------
 # 0. Folder name check -- makes the project folders match the
 #    names in the planning file EXACTLY: "Data_Raw" (raw .xlsx
-#    pulls) and "Data" (cleaned .csv files). If a folder still
+#    pulls) and "Data" (cleaned .rds files). If a folder still
 #    has an older name, it is renamed in place; if it already
 #    has the right name, nothing happens, so this is safe to
 #    re-run any time.
@@ -289,33 +291,33 @@ tep_data_combined <- tep_data[combinable_tables] %>%
 # country, all in one table, ready for the app to display directly.
 
 # ------------------------------------------------------------
-# 8. Save everything as .csv files in the "Data" folder.
-#    A .csv file can hold only ONE table, so unlike the old
-#    saveRDS() (which stored the whole list of tables in a single
-#    file), we write one file per table:
-#      Data/isolates.csv            <- individual table
-#      Data/isolates_combined.csv   <- same table + sample/institution info
+# 8. Save everything as .rds files in the "Data" folder.
+#    An .rds file holds ONE R object, so we write one file per table
+#    (rather than one file for the whole list of tables):
+#      Data/isolates.rds            <- individual table
+#      Data/isolates_combined.rds   <- same table + sample/institution info
 #    The "_combined" ending is how the app can tell the two groups
 #    apart for its "Individual" and "Combined" selector sections.
 #
-#    na = "" writes missing values as empty cells (the default is the
-#    text "NA", which other programs would read as a real word).
-#    Dates are written as YYYY-MM-DD, which read_csv() turns back
-#    into real Dates automatically.
+#    Unlike a .csv, an .rds keeps every column's type and missing
+#    values (NA) exactly as they are in R, so nothing is re-guessed
+#    when the table is read back in.
 #
-#    TO LOAD THEM BACK (e.g. in the app) -- read_csv() re-guesses each
-#    column's type, so guess_max = Inf makes it scan the WHOLE file:
-#    Read a table by name:
-#      read_csv("Data/isolates.csv", guess_max = Inf, show_col_types = FALSE)
-#      read_csv("Data/isolates_combined.csv", guess_max = Inf, show_col_types = FALSE)
+#    TO LOAD THEM BACK (e.g. in the app), read a table by name:
+#      readRDS("Data/isolates.rds")
+#      readRDS("Data/isolates_combined.rds")
+#
+#    NOTE: Data/data_dictionary.csv (the variable descriptions shown in
+#    the app) is a hand-written file, NOT made by this script. It stays
+#    a .csv so it can be edited in Excel.
 # ------------------------------------------------------------
 dir.create("Data", showWarnings = FALSE)
 
-# Writes every table in a named list to Data/<name><suffix>.csv.
+# Writes every table in a named list to Data/<name><suffix>.rds.
 # iwalk() hands us each table (df) and its name (tbl_name) in turn.
 write_table_list <- function(tbl_list, suffix = "") {
   iwalk(tbl_list, function(df, tbl_name) {
-    write_csv(df, file.path("Data", paste0(tbl_name, suffix, ".csv")), na = "")
+    saveRDS(df, file.path("Data", paste0(tbl_name, suffix, ".rds")))
   })
 }
 
@@ -323,4 +325,4 @@ write_table_list(tep_data)                         # individual tables
 write_table_list(tep_data_combined, "_combined")   # combined tables
 
 message("\nDone. Saved ", length(tep_data), " individual and ",
-        length(tep_data_combined), " combined .csv files to the Data folder.")
+        length(tep_data_combined), " combined .rds files to the Data folder.")
