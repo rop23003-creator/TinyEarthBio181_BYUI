@@ -36,25 +36,27 @@ Project Constraints:
 
   This project must be able to be used by multiple users and contributors.
   The Bio181L_App_TE must be able to be use by multiple users on the web simultaneously.These users should not need to download the project files but rather need to input an .html link.
-  The preferred data file should be .csv format.
+  The preferred data file should be .rds format.
   
   The code should have detailed annotations that explain the function of each part of the code so that new students and professors working on the project can easily understand the code.
-  Between a .Rmd (R Mark Down) file or a .qmd (Quarto Mark Down), it is preferred that a .qmd is used for this project.
-  Most of the statistics tests code should be written by the project designer as well as the explanations.
+  Between a .rmd (R Mark Down) file or a .qmd (Quarto Mark Down), it is preferred that a .qmd is used for this project.
+  Most of the statistics tests code should be written by the project designer as well as the explanations but the app - and by extension the .html and .css or JavaScript to build it, should be mainly handled by the agent with accompanying explanation.
+  
+  MAJOR PROJECT NOTE: This app should be able to run within the folders of the project on any user's device that has R-studio and the github repo downloaded. Any code that causes the app to work out of that - for this app - is not necessary. Keep code simple.
   
 Project App Design:
   
   The Bio181L_App_TE application should serve two functions:
     To view the cleaned data files in the Data folder. This should filter and search functions as well as a directory explaining each factor (variable - the columns) and factor level (variable data point - the rows) in the data.
-    To run one of the three analysis on the two variables selected by the app user and then visualized with bother graphical and numerical summaries so that the user can easily draw inferences on the data.
+    To run one of the three analysis on the two variables selected by the app user and then visualized with both graphical and numerical summaries so that the user can easily draw inferences on the data.
   Idea on what the layout should look like in the Data Viewer:
     Viewed Data table should be anchored to the right hand side of the page with filter option directly above the table. The number of data points should be listed at the bottom of the table. A Scroll should be added for both vertical and horizontal input and viewing. This should be called the "Table Viewer" section.
-    A table selector should be anchored to the top-left side of the page and categorized as: Individual - for all individual tables (The same number as Tiny Earth Database); Combined - For all combined tables; Description - A description of all variables on the currently selected table. The selected table should be indicated.
+    A table selector should be anchored to the top-left side of the page and categorized as: Individual - for all individual tables (The same number as Tiny Earth Database); Combined - For all combined tables; Description - A description of all variables on the currently selected table. The selected table should be indicated. These sections should be collapsible.
     A "Background" button should be placed at the top of this table selector section that explains the Tiny Earth Database as well as the apps purpose. This can be viewed in a new window or perhaps in the table viewer.
-    A "Run Analysis" button should be placed at the bottom-left side of this section and aligned evenly with the Selector. When interacted with this will bring up a new selection menu that has the same layout as the Table Selector in the viewer. The selector to the top-left hand side will now list the variables of the currently selected table (The table is still viable in the table viewer at this time) with check boxes and a message above that says select two variables. A "Back" button that goes back to the table selector and an "Analyse" button that will light up when two variables are selected should be at the bottom of the selector section.
+    A "Run Analysis" button should be placed at the bottom-left side of this section and aligned evenly with the Selector. When interacted with this will bring up a new selection menu that has the same layout as the Table Selector in the viewer. The selector to the top-left hand side will now list the variables of the currently selected table (The table is still viable in the table viewer at this time) with check boxes and a message above that says select two variables.Two columns of these check boxes will be displayed side by side next to each variable, one column for the Response Variable and Explanatory Variable with an indicator that shows which columns are which. A "Back" button that goes back to the table selector and an "Analyse" button that will light up when two variables are selected should be at the bottom of the selector section.
     When that "Analyse" button is clicked, a new window will be opened with a graph, and numerical summary table. Two buttons should appear at the top of the page, "Learn More" and "Save PDF". At the bottom of the page, a drop down section should read "View More on Test" to which a new section includes the statistics tests for the type of variables selected and the proper diagnostics test for that given statistics test (i.e. QQ-Plot for ANOVA). Give a brief summary of the purpose of the statistics test as well mathematical models and hypothesis tests.
     "Learn More" will bring up another window that explains each statistics test.
-    "Save PDF" will print the analysis page and save the files as a PDF tot he users computer.
+    "Save PDF" will print the analysis page and save the files as a PDF to the users computer.
   All of this should run on the web using .html format. This should be ran independently by multiple users simultaneously.
   
 AI Response and Planning:
@@ -65,6 +67,7 @@ AI Response and Planning:
   Before Response, the agent should plan the response out and confirmed with the project designer.
   There should be no agent involvement in the project itself - meaning that an agent should not be running the actual analysis or cleaning the data directly but rather having that R scripts to perform those functions.
   Outside internet use is accepted, especially any links provided in this file or by the project designer, however, use outside sources sparingly in response.
+  The AI agent should build upon the files given instead of heavy rewriting, especially the physical UI of the app. Ask designer for any changes in this part.
   
 Final Design Thoughts:
 
