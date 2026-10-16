@@ -91,14 +91,50 @@ table_files <- c(
   # aa_screen_extracts = "Data_Raw/aa-screen-extracts.xlsx",  # add once you have it
 )
 
+# Input check (added in Update 2): confirm every raw file in table_files
+# really exists BEFORE reading anything. Without this, a missing file or a
+# wrong working directory only shows up later as a confusing read_excel()
+# error. file.exists() returns TRUE/FALSE for each path in the vector.
+missing_files <- table_files[!file.exists(table_files)]
+if (length(missing_files) > 0) {
+  stop("These raw files were not found:\n  ",
+       paste(missing_files, collapse = "\n  "),
+       "\nCheck that (1) the project was opened through its .Rproj file ",
+       "and (2) the files are in the Data_Raw folder.",
+       call. = FALSE)  # call. = FALSE keeps the error message short and clean
+}
+
 # ------------------------------------------------------------
 # 2. A function that cleans ONE table.
 #    We write the cleaning logic once, then apply it to every
 #    file in the loop below. If we find another issue later, we
 #    only have to fix it in this one place.
 # ------------------------------------------------------------
+# tidy_names() (added in Update 2): makes every column name tidy snake_case
+# so names look the same in every table and in the app. It only changes
+# NAMES, never values, and "id" / "*_id" columns stay "id" / "*_id" (just
+# lower-cased), so the joins below keep working.
+tidy_names <- function(df) {
+  new_names <- names(df) %>%
+    str_trim() %>%                          # remove stray spaces at the ends
+    str_to_lower() %>%                      # "Sample_ID" -> "sample_id"
+    str_replace_all("[^a-z0-9]+", "_") %>%  # spaces/dashes/symbols -> one "_"
+    str_replace_all("^_+|_+$", "")          # no leading or trailing "_"
+
+  # An empty name would break later steps, so give it a placeholder.
+  new_names[new_names == ""] <- "unnamed_column"
+
+  # make.unique() adds _1, _2 ... if two columns ended up with the same
+  # name (e.g. "Sample ID" and "sample_id"), so nothing is overwritten.
+  names(df) <- make.unique(new_names, sep = "_")
+  df
+}
+
 clean_table <- function(df) {
   df <- df %>%
+    # Tidy the column names FIRST so every later step (such as renaming
+    # "name" below) can rely on lower-case snake_case names.
+    tidy_names() %>%
     # The exported files use a single space " " for missing
     # values instead of leaving the cell truly blank. That means
     # R's is.na() misses them entirely. This line finds every
@@ -179,82 +215,98 @@ iwalk(tep_data, function(df, tbl_name) {
 # 5. Join helpers -- attach related-table context onto any table
 #    that carries the matching foreign key, without repeating the
 #    same left_join() everywhere it's needed later.
+#
+#    HOW THE TABLES LINK (from the Tiny Earth schema diagram):
+#      institutions --(institution_name)--> samples
+#      samples  --(sample_id)--> isolates, dilutions,
+#                                library_collections, aa_screen_libraries
+#      isolates --(isolate_id)--> streaks, gram_stains, other_tests,
+#                                 rrna_analyses, antibio_suscepts,
+#                                 eukaryotics, aa_screen_isolates, extracts
+#    So any table can be traced up the chain: isolate -> sample -> institution.
 # ------------------------------------------------------------
 
-# join_with_sample(): attach columns from `samples` onto any table
-# that already has a sample_id column (antibio_suscepts, streaks, etc.)
-join_with_sample <- function(child_df) {
-  sample_info <- tep_data$samples %>%
-    # institution_name already exists on every child table (we renamed
-    # it there earlier), so drop it here rather than bringing in a
-    # second, identical copy.
-    select(-institution_name) %>%
-    # Prefix every OTHER column with "sample_". rename_with()'s second
-    # argument is a tidyselect expression -- "-id" means "every column
-    # except id" -- so id is left alone (it's about to become the join
-    # key) while things like date/nickname/sample_type become
-    # sample_date/sample_nickname/sample_sample_type. That guarantees
-    # nothing here can ever collide with the child table's own columns,
-    # even ones that happen to share a name but mean something different.
-    rename_with(~ paste0("sample_", .x), -id)
+# join_parent() (added in Update 2): the ONE function that does the work
+# for the three helpers below, so the naming rules live in a single place.
+#   child_df   the table we are adding columns TO
+#   parent_df  the table the new columns come FROM
+#   prefix     text put in front of the parent's columns (e.g. "sample_")
+#   child_key  the column in child_df used to match
+#   parent_key the matching column in parent_df (default "id")
+#   carry      "link" columns in the parent (e.g. sample_id inside isolates)
+#              that should keep their plain name. If the child already has
+#              its own copy it is dropped; if not, it is brought along
+#              so the NEXT join in the chain has a key to use.
+#   drop       parent columns to throw away (not needed in the child)
+join_parent <- function(child_df, parent_df, prefix, child_key,
+                        parent_key = "id", carry = character(0),
+                        drop = character(0)) {
+  child_names <- names(child_df)
 
+  # Only look at link columns the parent really has.
+  carry      <- intersect(carry, names(parent_df))
+  carry_drop <- intersect(carry, child_names)  # child already has its own copy
+  carry_keep <- setdiff(carry, child_names)    # child lacks it -> bring it along
+
+  parent_df <- parent_df %>%
+    select(-any_of(c(drop, carry_drop))) %>%
+    # Prefix every OTHER parent column so it cannot collide with a column
+    # of the child table. A name that ALREADY starts with the prefix
+    # (e.g. sample_type) is left alone, which avoids names like
+    # sample_sample_type -- unless the child has a column with that exact
+    # name, in which case it is prefixed anyway to stay unique.
+    rename_with(
+      ~ if_else(str_starts(.x, prefix) & !(.x %in% child_names),
+                .x, paste0(prefix, .x)),
+      -all_of(c(parent_key, carry_keep))
+    )
+
+  # setNames(parent_key, child_key) builds c(child_key = parent_key),
+  # which is how left_join() is told "match these two differently named columns".
   child_df %>%
-    left_join(sample_info, by = c("sample_id" = "id"))
+    left_join(parent_df, by = setNames(parent_key, child_key))
 }
 
-# Quick test -- run these two lines by hand in the console (not part of
-# the automatic pipeline) to confirm the join behaves correctly:
-#   combined <- join_with_sample(tep_data$antibio_suscepts)
-#   nrow(combined) == nrow(tep_data$antibio_suscepts)  # should be TRUE
-#   names(combined)                                    # new sample_* columns
+# join_with_isolate(): attach columns from `isolates` onto any table that
+# has an isolate_id column (streaks, gram_stains, antibio_suscepts, etc.).
+# The isolate's own sample_id / dilution_id / institution_name are carried
+# along unprefixed so the sample and institution joins can follow.
+join_with_isolate <- function(child_df) {
+  join_parent(child_df, tep_data$isolates, prefix = "isolate_",
+              child_key = "isolate_id",
+              carry = c("sample_id", "dilution_id", "institution_name"))
+}
 
-# join_with_institution(): attach columns from `institutions` onto any
-# table that already has an institution_name column (basically all of
-# them). Unlike sample_id/id, institution_name is a text match rather
-# than a numeric foreign key -- worth spot-checking once with:
+# join_with_sample(): attach columns from `samples` onto any table that
+# has a sample_id column. institution_name is carried (only if the table
+# does not already have it) so the institution join can follow.
+join_with_sample <- function(child_df) {
+  join_parent(child_df, tep_data$samples, prefix = "sample_",
+              child_key = "sample_id", carry = "institution_name")
+}
+
+# join_with_institution(): attach columns from `institutions` onto any table
+# that has an institution_name column. Unlike sample_id/id, institution_name
+# is a text match rather than a numeric foreign key -- worth spot-checking
+# once with:
 #   anti_join(tep_data$samples, tep_data$institutions, by = "institution_name")
 # which should return zero rows if every name lines up cleanly.
+# The institutions table's own "id" is dropped: nothing else refers to it.
 join_with_institution <- function(child_df) {
-  institution_info <- tep_data$institutions %>%
-    # id is that table's own internal row number -- nothing else refers
-    # to it, so it's safe to drop (unlike institution_name, which is the
-    # actual join key and has to stay).
-    select(-id) %>%
-    # Prefix everything EXCEPT the join key, same idea as
-    # join_with_sample: country_name becomes institution_country_name,
-    # so it's unambiguous which table it came from and it can never
-    # collide with a same-named column elsewhere.
-    rename_with(~ paste0("institution_", .x), -institution_name)
-
-  child_df %>%
-    left_join(institution_info, by = "institution_name")
+  if (!"institution_name" %in% names(child_df)) {
+    stop("join_with_institution(): table has no institution_name column.",
+         call. = FALSE)
+  }
+  join_parent(child_df, tep_data$institutions, prefix = "institution_",
+              child_key = "institution_name", parent_key = "institution_name",
+              drop = "id")
 }
 
-# ------------------------------------------------------------
-# 7. build_display_table() -- a "dressed up" version of any table,
-#    ready to show in the app. It checks which join keys a table
-#    actually has, and attaches sample_* / institution_* context
-#    accordingly. Since both joins are many-to-one (many streaks
-#    per sample, many samples per institution), this only ADDS
-#    columns -- it never multiplies rows, so row counts stay exactly
-#    what they were in the original table.
-# ------------------------------------------------------------
-build_display_table <- function(tbl_name) {
-  df <- tep_data[[tbl_name]]
-
-  if ("sample_id" %in% names(df)) {
-    df <- df %>% join_with_sample()
-  }
-  if ("institution_name" %in% names(df)) {
-    df <- df %>% join_with_institution()
-  }
-
-  df
-}
-
-# Try it out -- compare the original to the "dressed up" version:
-#   View(tep_data$isolates)
-#   View(build_display_table("isolates"))
+# Quick test -- run these lines by hand in the console (not part of the
+# automatic pipeline) to confirm a join behaves correctly:
+#   combined <- join_with_context(tep_data$antibio_suscepts)
+#   nrow(combined) == nrow(tep_data$antibio_suscepts)  # should be TRUE
+#   names(combined)                                    # new isolate_*, sample_*, institution_* columns
 
 # ------------------------------------------------------------
 # 6. Build ready-to-use combined views.
@@ -265,23 +317,27 @@ build_display_table <- function(tbl_name) {
 #    only happens once instead of every time someone opens the app.
 # ------------------------------------------------------------
 
-# Chains both helpers: sample context, then institution context
-# (institution_name survives the first join, so the second one still
-# has something to match against).
+# Chains the helpers in the order the schema diagram shows (Update 2):
+# isolate context first, then sample context, then institution context.
+# Each step only runs if the table has the key it needs, so one function
+# works for every table. The earlier steps carry along the keys that the
+# later steps need (sample_id, then institution_name).
 join_with_context <- function(child_df) {
-  child_df %>%
-    join_with_sample() %>%
-    join_with_institution()
+  if ("isolate_id" %in% names(child_df)) child_df <- join_with_isolate(child_df)
+  if ("sample_id"  %in% names(child_df)) child_df <- join_with_sample(child_df)
+  join_with_institution(child_df)
 }
 
-# Only tables that actually have a sample_id column can go through
-# join_with_sample() -- institutions and samples themselves are the
-# "parent" tables here, not children, so they're left out of this list.
-# map_lgl() checks each table in tep_data and keeps just the TRUE ones
-# (the "_lgl" means it expects each check to return one TRUE/FALSE).
-combinable_tables <- names(tep_data)[
-  map_lgl(tep_data, ~ "sample_id" %in% names(.x))
-]
+# Every table except `institutions` (the top "parent" of the chain, with
+# nothing above it to join) gets a combined version. We keep tables that
+# have at least one link column. any() asks "does it have ANY of these?",
+# and setdiff() removes institutions from the result.
+combinable_tables <- setdiff(
+  names(tep_data)[
+    map_lgl(tep_data, ~ any(c("isolate_id", "sample_id", "institution_name") %in% names(.x)))
+  ],
+  "institutions"
+)
 
 tep_data_combined <- tep_data[combinable_tables] %>%
   map(join_with_context)
@@ -289,6 +345,44 @@ tep_data_combined <- tep_data[combinable_tables] %>%
 # e.g. tep_data_combined$antibio_suscepts now has the antibiotic
 # results AND the sample's site/environment info AND the institution's
 # country, all in one table, ready for the app to display directly.
+
+# ------------------------------------------------------------
+# 7. Row-count check on the joins (added in Update 2).
+#    The joins above are meant to ADD columns only. If samples$id or
+#    institution_name ever contained a duplicate, a left_join() would
+#    quietly copy the matching rows and inflate the table, which would
+#    skew every statistic in the app. This section stops the script
+#    before anything is saved if that happens.
+# ------------------------------------------------------------
+
+# Step A: the three join keys must be unique in their parent tables.
+# anyDuplicated() returns 0 when there are no repeats, so "> 0" means
+# at least one key value appears more than once.
+if (anyDuplicated(tep_data$samples$id) > 0) {
+  stop("samples$id has duplicate values, so joins would add extra rows.",
+       call. = FALSE)
+}
+if (anyDuplicated(tep_data$isolates$id) > 0) {
+  stop("isolates$id has duplicate values, so joins would add extra rows.",
+       call. = FALSE)
+}
+if (anyDuplicated(tep_data$institutions$institution_name) > 0) {
+  stop("institutions$institution_name has duplicate values, so joins would add extra rows.",
+       call. = FALSE)
+}
+
+# Step B: each combined table must have exactly as many rows as its
+# original. imap_lgl() runs the comparison once per table and returns
+# one TRUE/FALSE per table, named by table (.y is the table name).
+rows_match <- imap_lgl(tep_data_combined, function(df, tbl_name) {
+  nrow(df) == nrow(tep_data[[tbl_name]])
+})
+if (!all(rows_match)) {
+  stop("Row count changed after joining for: ",
+       paste(names(rows_match)[!rows_match], collapse = ", "),
+       call. = FALSE)
+}
+message("Join check passed: every combined table kept its original row count.")
 
 # ------------------------------------------------------------
 # 8. Save everything as .rds files in the "Data" folder.

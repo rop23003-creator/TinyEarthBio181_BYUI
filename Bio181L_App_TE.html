@@ -52,10 +52,12 @@ ul.task-list li input[type="checkbox"] {
 
 
 <!-- ==========================================================
-     STYLE SHEET  -  clean, professional sea-green + cyan theme.
+     [B] STYLE SHEET (CSS)  -  clean, professional sea-green + cyan theme.
      All colours are defined once below so they are easy to change.
      ========================================================== -->
 <style>
+  /* [B1] Colour palette: each colour is defined once here and used below as var(--name). Change */
+  /* a colour here and it changes everywhere. */
   :root {
     --sea:        #2E8B57;   /* sea green (primary)            */
     --sea-dark:   #1B5E4B;   /* deep sea green (headings)      */
@@ -64,134 +66,194 @@ ul.task-list li input[type="checkbox"] {
     --mint:       #EAF6F0;   /* pale sea green (backgrounds)   */
     --grey:       #5F7470;
   }
+  /* Page background and default text colour. */
   body                 { background: #F4FAF8; color: #25403A; }
+  /* Remove Quarto's default page-width limit so the app uses the whole window. */
   #quarto-content, main.content { max-width: 100% !important; padding: 0 14px 20px 14px !important; }
 
-  /* ---------- Banner at the very top ---------- */
+  /* ---------- [B2] Banner at the very top ---------- */
+  /* Green-to-cyan gradient bar across the top of the page. */
   .te-banner { background: linear-gradient(90deg, var(--sea), var(--cyan)); color: #fff;
                padding: 14px 22px; border-radius: 0 0 12px 12px; margin: 0 -14px 14px -14px; }
+  /* Banner title and the line of text under it. */
   .te-banner h1 { font-size: 1.45rem; margin: 0; font-weight: 700; color: #fff; }
   .te-banner p  { margin: 2px 0 0 0; opacity: .92; font-size: .9rem; }
 
-  /* ---------- Viewer layout: selector (left) + table (right) ---------- */
+  /* ---------- [B3] Viewer layout: selector (left) + table (right) ---------- */
+  /* Two-column grid: a 310px selector on the left, the table fills the rest on the right. */
   .app-grid  { display: grid; grid-template-columns: 310px minmax(0, 1fr); gap: 14px; }
+  /* The white rounded 'card' that every panel sits on. */
   .panel-card { background: #fff; border: 1px solid #CDE7DF; border-radius: 10px; padding: 14px;
                 box-shadow: 0 1px 4px rgba(27,94,75,.08); }
+  /* Left card: fixed height, children stacked top-to-bottom so the buttons stay at the bottom. */
   .left-card  { display: flex; flex-direction: column; height: 80vh; }
+  /* Middle of the left card: takes the spare space and scrolls when the list is long. */
   .selector-scroll { flex: 1 1 auto; overflow-y: auto; margin: 10px 0; padding-right: 4px; }
+  /* Bold heading at the top of a panel. */
   .sel-title  { font-weight: 700; color: var(--sea-dark); font-size: 1.05rem; margin-bottom: 6px; }
+  /* Small uppercase section heading (Individual / Combined). */
   .sel-head   { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700;
                 color: var(--cyan); border-bottom: 2px solid var(--cyan-light); margin: 12px 0 4px; padding-bottom: 2px; }
+  /* One clickable table name in the selector; .active (below) marks the selected table. */
   .te-item    { display: block; padding: 5px 10px; margin: 1px 0; border-radius: 6px; color: var(--sea-dark);
                 text-decoration: none !important; font-size: .93rem; }
   .te-item:hover  { background: var(--cyan-light); }
   .te-item.active { background: var(--sea); color: #fff !important; font-weight: 600; }
+  /* Small grey helper text. */
   .hint       { color: var(--grey); font-size: .88rem; margin: 2px 0 6px; }
+  /* Small grey '(Quantitative)' tag shown after a variable name. */
   .vtype      { color: var(--grey); font-size: .8rem; margin-left: 6px; }
+  /* Title row above the Table Viewer / Variable Directory. */
   .viewer-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline;
                  border-bottom: 2px solid var(--cyan-light); margin-bottom: 10px; padding-bottom: 4px; }
   .viewer-head h3 { margin: 0; color: var(--sea-dark); font-size: 1.2rem; }
   .viewer-head .current { color: var(--grey); font-size: .9rem; }
+  /* Line of text under the table (row and column counts). */
   .table-foot { color: var(--grey); font-size: .85rem; margin-top: 6px; }
 
-  /* ---------- Buttons ---------- */
+  /* ---------- [B4] Buttons ---------- */
+  /* Main green button style; every button in the app starts from this. */
   .btn-te        { background: var(--sea); color: #fff; border: 1px solid var(--sea); border-radius: 8px;
                    font-weight: 600; padding: 7px 16px; }
   .btn-te:hover  { background: #247549; color: #fff; }
+  /* Cyan variant of the button. */
   .btn-cyan      { background: var(--cyan); border-color: var(--cyan); }
   .btn-cyan:hover{ background: #0090a3; }
+  /* White outlined variant, used for secondary actions (Back, Description). */
   .btn-outline   { background: #fff; color: var(--sea-dark); border: 1px solid var(--sea); }
   .btn-outline:hover { background: var(--mint); color: var(--sea-dark); }
+  /* Makes a button fill the full width of its panel. */
   .btn-wide      { width: 100%; }
+  /* Greyed-out look for a disabled button (Analyse before a valid pair is chosen). */
   .btn-te[disabled] { background: #D5DFDC; border-color: #D5DFDC; color: #8A9A96; cursor: not-allowed; }
+  /* Glowing cyan look for the Analyse button once a valid pair is chosen. */
   .btn-glow      { box-shadow: 0 0 0 3px rgba(0,172,193,.25), 0 0 14px rgba(0,172,193,.85);
                    background: var(--cyan); border-color: var(--cyan); }
+  /* A row of buttons that share the width evenly (Description + Run Analysis, Back + Analyse). */
   .btn-row       { display: flex; justify-content: space-between; gap: 8px; }
   .btn-row .btn  { flex: 1; }
   .btn-row > *   { flex: 1; }                 /* Back and Analyse share the row evenly */
   .btn-row .shiny-html-output .btn { width: 100%; }
 
-  /* ---------- Collapsible selector sections (<details> / <summary>) ---------- */
+  /* ---------- [B5] Collapsible selector sections (<details> / <summary>) ---------- */
+  /* The heading is clickable; hide the browser's default triangle. */
   details.sel-details > summary.sel-head { cursor: pointer; list-style: none; }
   details.sel-details > summary.sel-head::-webkit-details-marker { display: none; }
+  /* Draw our own arrow; it turns 90 degrees when the section is open. */
   details.sel-details > summary.sel-head::before { content: "\25B8"; display: inline-block; width: 1em;
                                                     transition: transform .15s; }
   details.sel-details[open] > summary.sel-head::before { transform: rotate(90deg); }
 
-  /* ---------- Variable picker: name + Response box + Explanatory box ---------- */
+  /* ---------- [B6] Variable picker: name + Response box + Explanatory box ---------- */
+  /* Header and every row share one 3-column grid (name, Response, Explanatory) so the checkboxes */
+  /* line up. */
   .pick-head, .pick-row { display: grid; grid-template-columns: minmax(0, 1fr) 64px 64px; gap: 4px; align-items: center; }
+  /* Column headings stay visible (sticky) while the variable list scrolls underneath. */
   .pick-head  { position: sticky; top: 0; z-index: 1; background: #fff; padding: 2px 4px 5px;
                 border-bottom: 2px solid var(--cyan-light); font-size: .78rem; font-weight: 700; text-align: center; }
   .pick-head span:first-child { text-align: left; color: var(--sea-dark); }
   .pick-head .h-resp { color: var(--sea); }
   .pick-head .h-expl { color: var(--cyan); }
+  /* One variable row in the picker (highlights on hover just below). */
   .pick-row   { padding: 3px 4px; border-radius: 6px; font-size: .93rem; }
   .pick-row:hover { background: var(--cyan-light); }
   .pick-name  { overflow-wrap: anywhere; color: var(--sea-dark); }
   .pick-row input { justify-self: center; width: 17px; height: 17px; cursor: pointer; }
+  /* Response checkboxes are sea green; Explanatory checkboxes (next rule) are cyan. */
   .pick-row input.pick-resp { accent-color: var(--sea); }
   .pick-row input.pick-expl { accent-color: var(--cyan); }
 
-  /* ---------- Results page ---------- */
+  /* ---------- [B7] Results page ---------- */
+  /* Top bar of the results page (Back on the left; Learn More and Save PDF on the right). */
   .results-bar  { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
   .results-bar .spacer { flex: 1; }
+  /* Test title at the top of the results. */
   .results-page h2   { color: var(--sea-dark); margin: 6px 0 2px; }
+  /* Section headings on the results page (Graph, Numerical Summary, ...). */
   .sec-title    { color: var(--sea-dark); border-bottom: 2px solid var(--cyan-light); padding-bottom: 3px;
                   margin: 22px 0 10px; font-size: 1.15rem; }
+  /* Wrapper that lets a wide table scroll sideways instead of stretching the page. */
   .tbl-wrap     { overflow-x: auto; margin: 6px 0 14px; }
   .tbl-cap      { font-weight: 600; color: var(--sea-dark); margin-bottom: 3px; font-size: .92rem; }
+  /* Style for the summary and test tables built by html_table(). */
   .te-table     { border-collapse: collapse; font-size: .88rem; min-width: 40%; }
   .te-table th  { background: var(--cyan-light); color: var(--sea-dark); padding: 5px 10px; text-align: left;
                   border-bottom: 2px solid var(--cyan); white-space: nowrap; }
   .te-table td  { padding: 4px 10px; border-bottom: 1px solid #E1EEEA; }
   .te-table tr:nth-child(even) td { background: #F7FBFA; }
+  /* Shaded boxes used for equations and hypotheses. */
   .formula      { font-family: "Cambria Math", "Times New Roman", serif; background: var(--mint);
                   border-left: 4px solid var(--sea); padding: 6px 12px; margin: 4px 0; border-radius: 0 6px 6px 0; }
+  /* Cyan box for written conclusions and warnings. */
   .concl        { background: var(--cyan-light); border-left: 4px solid var(--cyan); padding: 8px 12px;
                   border-radius: 0 6px 6px 0; }
+  /* Small italic grey notes. */
   .note         { color: var(--grey); font-size: .85rem; font-style: italic; }
+  /* Friendly box for the message shown when a test cannot run (replaces Shiny's faint grey */
+  /* text). */
   .results-page .shiny-output-error-validation { color: var(--sea-dark); background: var(--cyan-light);
                   border-left: 4px solid var(--cyan); padding: 10px 14px; border-radius: 0 6px 6px 0;
                   font-size: .95rem; margin: 10px 0; }
+  /* Space above the View More on Test button. */
   .more-toggle  { margin-top: 22px; }
+  /* The test details are hidden until the button adds the class 'open' to .more (next rule). */
   .more-body    { display: none; }
   .more.open .more-body { display: block; }
+  /* Diagnostic plots sit side by side and wrap onto the next line on narrow screens. */
   .diag-row     { display: flex; flex-wrap: wrap; gap: 14px; }
+  /* Never let a plot be wider than the page. */
   .shiny-plot-output img { max-width: 100%; height: auto !important; }
 
-  /* ---------- DataTable touches ---------- */
+  /* ---------- [B8] DataTable touches ---------- */
+  /* Cyan header cells in the data tables. */
   table.dataTable thead th { background: var(--cyan-light); color: var(--sea-dark); }
+  /* Green highlight on the current page button of a data table. */
   .dataTables_wrapper .dataTables_paginate .paginate_button.current { background: var(--sea) !important;
         color: #fff !important; border: 1px solid var(--sea) !important; }
 
-  /* ---------- "Save PDF" = browser print. These rules clean up the printout ---------- */
+  /* ---------- [B9] Print ("Save PDF") and small-screen rules ---------- */
   @media print {
+    /* Printing: hide anything marked no-print (buttons). */
     .no-print  { display: none !important; }
+    /* Printing: always show the test details. */
     .more-body { display: block !important; }        /* always show the test details */
+    /* Printing: plain white page. */
     body       { background: #fff; }
+    /* Printing: keep the banner colours. */
     .te-banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    /* Printing: hide pop-up notifications. */
     .shiny-notification-panel { display: none !important; }
   }
+  /* Narrow screens (phones): stack the selector above the table and let the card grow. */
   @media (max-width: 900px) { .app-grid { grid-template-columns: 1fr; } .left-card { height: auto; } }
 </style>
 
+<!-- [C] JAVASCRIPT: one small function, tePick(), that controls the Response / Explanatory -->
+<!-- checkboxes in the variable picker. -->
 <script>
   // Called by every checkbox in the variable picker (see pick_row() in the setup code).
   //  - only ONE box may be ticked in each column (Response / Explanatory)
   //  - one variable cannot be both Response and Explanatory
   // It then tells the server which variable is in each column (input$sel_pair).
   function tePick(col, box) {
+    // 'other' = the opposite column (if this box is in Response, other is Explanatory).
     var other = (col === 'resp') ? 'expl' : 'resp';
+    // Untick every other box in this column, so only one is ticked per column.
     document.querySelectorAll('input.pick-' + col).forEach(function (b) { if (b !== box) b.checked = false; });
+    // If this variable is ticked in the other column too, untick it there (a variable cannot be
+    // both).
     if (box.checked) {
       document.querySelectorAll('input.pick-' + other).forEach(function (b) {
         if (b.dataset.v === box.dataset.v) b.checked = false;
       });
     }
+    // chosen(c): the variable ticked in column c, or '' if none is ticked.
     var chosen = function (c) {
       var b = document.querySelector('input.pick-' + c + ':checked');
       return b ? b.dataset.v : '';
     };
+    // Send both choices to R; the server receives them as input$sel_pair$resp and
+    // input$sel_pair$expl.
     Shiny.setInputValue('sel_pair', { resp: chosen('resp'), expl: chosen('expl') }, { priority: 'event' });
   }
 </script>
@@ -207,10 +269,11 @@ ul.task-list li input[type="checkbox"] {
 <p>
 <script type="application/shiny-prerendered" data-context="server-start">
 # ==============================================================
-# SETUP  -  runs once when the app starts (shared by all users).
+# [D] SETUP  -  runs once when the app starts (shared by all users).
 # Loads packages, finds the cleaned .rds files, and defines every
 # helper function the app needs.
 # ==============================================================
+# ---- [D1] Packages and settings  (search for [D1]...[D9] to jump between the parts of this setup section). ----
 library(shiny)     # the web-app framework
 library(DT)        # interactive, filterable data tables
 library(ggplot2)   # graphs
@@ -222,7 +285,7 @@ MAX_LEVELS <- 30       # text variables with MORE distinct values than this are 
 TOP_LEVELS <- 10       # in an analysis, only the 10 most common groups are kept; the rest become "Other"
 ALPHA      <- 0.05     # significance level used in the written conclusions
 
-# ---- Find the cleaned tables --------------------------------
+# ---- [D2] Find the cleaned tables ---------------------------
 # Every .rds in Data/ is one table. Files ending in "_combined"
 # are the "Combined" tables; everything else is "Individual".
 # (data_dictionary.csv is not an .rds, so it is never mistaken for a table.)
@@ -231,42 +294,57 @@ all_keys        <- sub("\\.rds$", "", rds_files)
 combined_keys   <- all_keys[grepl("_combined$", all_keys)]
 individual_keys <- setdiff(all_keys, combined_keys)
 
+# ---- [D3] Table order and display names ----------------------------
 # Show tables in the same order as the Tiny Earth database; anything
 # not in this list is placed at the end (alphabetical).
 preferred_order <- c("institutions", "samples", "dilutions", "library_collections",
                      "aa_screen_libraries", "isolates", "streaks", "aa_screen_isolates",
                      "gram_stains", "other_tests", "rrna_analyses", "antibio_suscepts",
                      "eukaryotics", "extracts", "aa_screen_extracts")
+# sort_keys(): puts table names in the preferred order; tables not in the list go last,
+# alphabetically.
 sort_keys <- function(keys) {
+  # Drop '_combined' so a combined table sorts right beside its individual version.
   base <- sub("_combined$", "", keys)
+  # match() = position in preferred_order; nomatch = 99 sends unknown tables to the end.
   keys[order(match(base, preferred_order, nomatch = 99L), keys)]
 }
+# Apply the ordering to both groups of tables.
 individual_keys <- sort_keys(individual_keys)
 combined_keys   <- sort_keys(combined_keys)
 
 # "antibio_suscepts_combined" -> "Antibio Suscepts"  (label shown to students)
 pretty_name <- function(key) tools::toTitleCase(gsub("_", " ", sub("_combined$", "", key)))
 
-# ---- Load a table (once), then remember it ------------------
+# ---- [D4] Load a table (once), then remember it -------------
 # `table_cache` is shared by all users, so each file is read from
 # disk only the first time anyone opens it. readRDS() returns the table
 # exactly as Data_Clean saved it, with every column type intact.
+# An environment acts like a shared lookup list: name of table -> data frame.
 table_cache <- new.env()
+# load_table('isolates') returns that table, reading the file only the first time anyone asks for
+# it.
 load_table <- function(key) {
+  # Not in the cache yet? Then read it from disk.
   if (!exists(key, envir = table_cache, inherits = FALSE)) {
     path <- file.path(DATA_DIR, paste0(key, ".rds"))
+    # Read the saved table (types such as Date and TRUE/FALSE come back unchanged).
     df   <- readRDS(path)
+    # Store it as a plain data.frame (what DT and the statistics functions expect).
     assign(key, as.data.frame(df), envir = table_cache)
   }
+  # Return the cached copy.
   get(key, envir = table_cache, inherits = FALSE)
 }
 
-# ---- Variable descriptions (the "Description" directory) ----
+# ---- [D5] Variable descriptions (the "Description" directory) ----
 # OPTIONAL file: Data/data_dictionary.csv with 3 columns:
 #   table, variable, description
 # Whatever you write there is shown in the Variable Directory.
+# Start with an empty dictionary so the app still works when the file is missing.
 dictionary <- data.frame(table = character(), variable = character(), description = character())
 dict_path  <- file.path(DATA_DIR, "data_dictionary.csv")
+# If the dictionary file exists, read it with every column as text ('c').
 if (file.exists(dict_path)) {
   dictionary <- as.data.frame(readr::read_csv(dict_path, col_types = readr::cols(.default = "c"),
                                               progress = FALSE))
@@ -278,21 +356,31 @@ if (file.exists(dict_path)) {
 #  3. combined-table columns that start with "sample_" or "institution_"
 #     (look them up in the samples / institutions table without the prefix)
 lookup_description <- function(key, var) {
+  # Dictionary entries use the plain table name, so drop '_combined'.
   tbl  <- sub("_combined$", "", key)
+  # pick(): the first non-blank description in a vector, or NA if there is none.
   pick <- function(d) { d <- d[!is.na(d) & nzchar(d)]; if (length(d)) d[1] else NA_character_ }
+  # Rule 1: same table and same variable name.
   out  <- pick(dictionary$description[dictionary$table == tbl & dictionary$variable == var])
+  # Rule 2: same variable name in any table.
   if (is.na(out)) out <- pick(dictionary$description[dictionary$variable == var])
+  # Rule 3: columns joined in from the samples table start with 'sample_', so look them up without
+  # the prefix.
   if (is.na(out) && grepl("^sample_", var))
     out <- pick(dictionary$description[dictionary$table == "samples" & dictionary$variable == sub("^sample_", "", var)])
+  # Rule 4: same idea for columns joined in from the institutions table.
   if (is.na(out) && grepl("^institution_", var))
     out <- pick(dictionary$description[dictionary$table == "institutions" & dictionary$variable == sub("^institution_", "", var)])
+  # Nothing found: show a reminder instead of a blank.
   if (is.na(out)) "(not yet documented - add it to Data/data_dictionary.csv)" else out
 }
 
-# ---- Variable types -----------------------------------------
+# ---- [D6] Variable types and test choice --------------------
 # Quantitative = numbers. Qualitative = categories (text or TRUE/FALSE).
 # These two types decide which test is run.
 var_type <- function(x) {
+  # Dates are excluded from analysis; numbers (including counts) are Quantitative; everything else
+  # (text, TRUE/FALSE) is Qualitative.
   if (inherits(x, c("Date", "POSIXct"))) "Date"
   else if (is.numeric(x))                "Quantitative"
   else                                   "Qualitative"
@@ -311,9 +399,12 @@ pick_test <- function(resp_type, expl_type) {
 }
 
 # A more detailed label used only in the Variable Directory.
+# describe_type(): the label shown in the Type column of the Variable Directory.
 describe_type <- function(name, x) {
+  # ID columns only link tables together; label them so students don't analyse them.
   if (name == "id" || grepl("_id$", name)) return("ID (row link)")
   t <- var_type(x)
+  # Text with a huge number of different values is flagged (the picker hides these).
   if (t == "Qualitative" && length(unique(stats::na.omit(x))) > MAX_LEVELS) return("Text (many values)")
   t
 }
@@ -322,35 +413,52 @@ describe_type <- function(name, x) {
 # dates, constant columns, and text columns with too many different values
 # (a chi-squared table with hundreds of rows is unreadable).
 analysis_vars <- function(df) {
+  # keep: one TRUE/FALSE per column = should this column be offered in the picker?
   keep <- vapply(names(df), function(v) {
     x <- df[[v]]
+    # Drop ID columns.
     if (v == "id" || grepl("_id$", v))      return(FALSE)
+    # Drop dates.
     if (var_type(x) == "Date")              return(FALSE)
+    # Number of different non-missing values in the column.
     n_unique <- length(unique(stats::na.omit(x)))
+    # Drop columns with 0 or 1 different values: nothing to compare.
     if (n_unique < 2)                       return(FALSE)
+    # Drop text columns with too many categories.
     if (!is.numeric(x) && n_unique > MAX_LEVELS) return(FALSE)
     TRUE
   }, logical(1))
+  # Return the names of the columns that were kept.
   names(df)[keep]
 }
 
 # Keeps the TOP_LEVELS most common categories and lumps the rest into "Other".
 lump_levels <- function(x, top = TOP_LEVELS) {
+  # Work with text so numbers, TRUE/FALSE and factors all behave the same way.
   x      <- as.character(x)
+  # Count each category, most common first.
   counts <- sort(table(x), decreasing = TRUE)
+  # Only lump when there are more categories than the limit.
   if (length(counts) > top) {
+    # The names of the most common categories.
     keep <- names(counts)[seq_len(top)]
+    # Everything else becomes 'Other' (missing values stay missing).
     x[!is.na(x) & !(x %in% keep)] <- "Other"
   }
+  # Return a factor (R's type for categories).
   factor(x)
 }
 
-# ---- Small formatting helpers -------------------------------
+# ---- [D7] Formatting, table and graph helpers ---------------
+# fmt_p(): a p-value as text: blank if missing, '< 0.0001' if tiny, otherwise 4 decimals.
 fmt_p <- function(p) ifelse(is.na(p), "", ifelse(p < 0.0001, "< 0.0001", formatC(p, format = "f", digits = 4)))
+# fmt_n(): a number as text with d decimals (default 3).
 fmt_n <- function(x, d = 3) formatC(x, format = "f", digits = d)
 
 # Turns a data.frame into a tidy HTML table (used in the results page).
 html_table <- function(df, caption = NULL) {
+  # fmt_col(): formats one column. Numbers: rounded to 3 decimals with thousands commas, NA shown
+  # blank. Anything else: shown as text.
   fmt_col <- function(col) {
     if (is.numeric(col)) {
       out <- format(round(col, 3), trim = TRUE, scientific = FALSE, big.mark = ",")
@@ -360,7 +468,9 @@ html_table <- function(df, caption = NULL) {
     }
     out
   }
+  # Apply fmt_col to every column (df[] keeps the data.frame shape).
   df[] <- lapply(df, fmt_col)
+  # Build the HTML: optional caption, then a <table> with a header row and one row per data row.
   tags$div(class = "tbl-wrap",
     if (!is.null(caption)) tags$div(class = "tbl-cap", caption),
     tags$table(class = "te-table",
@@ -369,7 +479,9 @@ html_table <- function(df, caption = NULL) {
 }
 
 # ---- Graph theme + sea-green -> cyan colour ramp ------------
+# te_cols(n): n colours blending from sea green to cyan (used to colour groups in graphs).
 te_cols  <- function(n) grDevices::colorRampPalette(c("#2E8B57", "#20B2AA", "#00BCD4"))(max(n, 1))
+# te_theme(): the common graph look (clean white background, bold green title).
 te_theme <- function() {
   theme_minimal(base_size = 13) +
     theme(plot.title = element_text(face = "bold", colour = "#1B5E4B"),
@@ -379,31 +491,44 @@ te_theme <- function() {
 
 # Diagnostic graphs shared by ANOVA and regression
 qq_plot <- function(res, title = "Normal Q-Q Plot of Residuals") {
+  # Q-Q plot: if the residuals are normal, the points follow the line.
   ggplot(data.frame(r = res), aes(sample = r)) +
     stat_qq(colour = "#20B2AA", alpha = .6) + stat_qq_line(colour = "#2E8B57", linewidth = 1) +
     labs(title = title, x = "Theoretical Quantiles", y = "Sample Quantiles (Residuals)") + te_theme()
 }
 resid_plot <- function(fitted, res, jitter = FALSE) {
+  # Sideways jitter width = 3% of the fitted-value range (fallback value if the range is 0).
   w <- 0.03 * diff(range(fitted)); if (!is.finite(w) || w == 0) w <- 0.01
+  # Residuals vs. fitted values, with a dashed line at 0.
   p <- ggplot(data.frame(f = fitted, r = res), aes(f, r)) +
     geom_hline(yintercept = 0, linetype = "dashed", colour = "#1B5E4B")
+  # ANOVA fitted values repeat for each group, so jitter spreads the points sideways; regression
+  # uses plain points.
   p <- p + if (jitter) geom_jitter(width = w, height = 0, colour = "#20B2AA", alpha = .45)
            else        geom_point(colour = "#20B2AA", alpha = .45)
+  # Add labels and the theme, then return the plot.
   p + labs(title = "Residuals vs. Fitted Values", x = "Fitted Values", y = "Residuals") + te_theme()
 }
 
 # Shapiro-Wilk normality test that never crashes (it only accepts 3-5000 values)
 safe_shapiro <- function(x) {
+  # Remove missing and infinite values.
   x <- x[is.finite(x)]
+  # shapiro.test() accepts at most 5000 values, so use a reproducible random sample of 5000.
   if (length(x) > 5000) { set.seed(1); x <- sample(x, 5000) }
+  # Return NULL instead of an error if the test cannot run (e.g. all values identical).
   tryCatch(stats::shapiro.test(x), error = function(e) NULL)
 }
+# interp(): plain-English reading of a diagnostic p-value (p at or above ALPHA = no evidence the
+# assumption is broken).
 interp <- function(p) ifelse(is.na(p), "Could not be computed",
                       ifelse(p >= ALPHA, "No evidence of a violation", "Possible violation - interpret with caution"))
 
 # Written conclusion shown under each test:
 # reject_txt is shown when p < ALPHA, fail_txt when it is not.
 conclusion_ui <- function(p, reject_txt, fail_txt) {
+  # Choose the sentence: p missing / reject H0 (p < ALPHA) / fail to reject H0. Subscript zero is
+  # written as a Unicode escape.
   txt <- if (is.na(p)) "The p-value could not be computed."
          else if (p < ALPHA) sprintf("The p-value (%s) is less than %.2f, so we reject H\u2080. %s", fmt_p(p), ALPHA, reject_txt)
          else sprintf("The p-value (%s) is not less than %.2f, so we fail to reject H\u2080. %s", fmt_p(p), ALPHA, fail_txt)
@@ -411,7 +536,7 @@ conclusion_ui <- function(p, reject_txt, fail_txt) {
 }
 
 # ==============================================================
-# >>>>>>>>>>>>>>>>  DESIGNER SECTION  (statistics)  <<<<<<<<<<<<<<<
+# >>>>>>>>>>>>  [D8] DESIGNER SECTION  (statistics)  <<<<<<<<<<<<
 # Per the project plan, the statistics code and the test
 # explanations are meant to be written/owned by the project
 # designer. What follows is a working, plain-R starting point:
@@ -421,19 +546,31 @@ conclusion_ui <- function(p, reject_txt, fail_txt) {
 # ==============================================================
 
 # ---------- 1. ANOVA: quantitative response + qualitative explanatory ----------
+# yvar = quantitative response column name; gvar = qualitative grouping column name. Returns a named
+# list (type, title, main_plot, summary_ui, test_ui, diag_plots, diag_ui): the 'contract' the
+# results page expects from every analyse_* function.
 analyse_anova <- function(df, yvar, gvar) {
+  # Number of groups before lumping (used for the note below).
   n_orig <- length(unique(stats::na.omit(df[[gvar]])))
+  # Working table: y = the numbers, g = the group (rare groups lumped into 'Other').
   d <- data.frame(y = df[[yvar]], g = lump_levels(df[[gvar]]))
+  # Keep only rows where both values are present.
   d <- d[stats::complete.cases(d), ]
   # a group needs at least 2 observations to estimate spread
   d <- d[d$g %in% names(which(table(d$g) >= 2)), ]
+  # Forget group labels that no longer have any rows.
   d$g <- droplevels(d$g)
+  # validate(need()) stops with a friendly on-screen message when ANOVA cannot be run.
   validate(need(nlevels(d$g) >= 2 && nrow(d) > nlevels(d$g),
                 "ANOVA needs at least two groups that each have 2 or more observations."))
 
+  # Fit the ANOVA model: y explained by group.
   fit  <- stats::aov(y ~ g, data = d)
+  # The ANOVA table as a data frame.
   tab  <- summary(fit)[[1]]
+  # p-value of the F-test.
   pval <- tab$`Pr(>F)`[1]
+  # Residuals (each value minus its group mean); the diagnostics use these.
   res  <- stats::resid(fit)
 
   # Graph: boxplots + (thinned) raw points + white diamond = group mean
@@ -448,10 +585,13 @@ analyse_anova <- function(df, yvar, gvar) {
     theme(axis.text.x = element_text(angle = 40, hjust = 1))
 
   # Numerical summary by group
+  # One row per group: n, mean, sd, median, min, max.
   by_g <- do.call(rbind, lapply(split(d$y, d$g), function(v)
     data.frame(n = length(v), mean = mean(v), sd = stats::sd(v), median = stats::median(v),
                min = min(v), max = max(v))))
+  # Put the group names into their own column.
   by_g <- cbind(Group = rownames(by_g), by_g)
+  # A note is only shown when groups were lumped into 'Other'.
   note <- NULL
   if (n_orig > TOP_LEVELS) note <- sprintf("%s has %d different values; only the %d most common are kept and the rest are grouped as \"Other\".", gvar, n_orig, TOP_LEVELS)
 
@@ -460,9 +600,12 @@ analyse_anova <- function(df, yvar, gvar) {
                           Df = tab$Df, `Sum Sq` = tab$`Sum Sq`, `Mean Sq` = tab$`Mean Sq`,
                           `F value` = c(tab$`F value`[1], NA), `p-value` = c(fmt_p(pval), ""),
                           check.names = FALSE)
+  # Shapiro-Wilk: are the residuals normal?
   sw  <- safe_shapiro(res)
   z   <- abs(d$y - stats::ave(d$y, d$g, FUN = stats::median))      # Brown-Forsythe = Levene using medians
+  # An ANOVA on those distances is the Brown-Forsythe test: do the groups have equal spread?
   bf  <- stats::anova(stats::lm(z ~ d$g))
+  # Table of the two assumption checks, each with a plain-English reading.
   diag_tbl <- data.frame(
     Test = c("Shapiro-Wilk (residuals are normal)", "Brown-Forsythe / Levene (equal variances)"),
     Statistic = c(if (is.null(sw)) NA else unname(sw$statistic), bf$`F value`[1]),
@@ -470,6 +613,7 @@ analyse_anova <- function(df, yvar, gvar) {
     Interpretation = interp(c(if (is.null(sw)) NA else sw$p.value, bf$`Pr(>F)`[1])),
     check.names = FALSE)
 
+  # Hand everything back to the results page (see the 'contract' note at the top of this function).
   list(type = "anova", title = paste("ANOVA:", yvar, "by", gvar),
        main_plot = main_plot,
        summary_ui = tagList(html_table(by_g, paste("Summary of", yvar, "for each", gvar, "group")),
@@ -483,39 +627,57 @@ analyse_anova <- function(df, yvar, gvar) {
 }
 
 # ---------- 2. Simple linear regression: quantitative + quantitative ----------
+# yvar = response column name; xvar = explanatory column name (both quantitative). Returns the same
+# named list as analyse_anova().
 analyse_regression <- function(df, yvar, xvar) {
+  # Working table: y = response, x = explanatory.
   d <- data.frame(y = df[[yvar]], x = df[[xvar]])
   d <- d[stats::complete.cases(d), ]
+  # Need at least 3 complete rows, and both variables must vary, or a line cannot be fitted.
   validate(need(nrow(d) >= 3 && stats::sd(d$x) > 0 && stats::sd(d$y) > 0,
                 "Regression needs at least 3 complete observations where both variables vary."))
+  # Fit the straight-line model.
   fit <- stats::lm(y ~ x, data = d)
+  # Summary of the fit: coefficients, R-squared, F-statistic.
   s   <- summary(fit)
+  # Coefficient table (estimate, std. error, t, p) for the intercept and slope.
   cf  <- s$coefficients
+  # 95% confidence intervals for the coefficients.
   ci  <- stats::confint(fit)
+  # Residuals (observed minus predicted).
   res <- stats::resid(fit)
+  # p-value of the overall F-test.
   fp  <- stats::pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3], lower.tail = FALSE)
 
+  # Graph: scatterplot (fainter when there are many points) with the least-squares line and its
+  # confidence band.
   main_plot <- ggplot(d, aes(x, y)) +
     geom_point(colour = "#20B2AA", alpha = if (nrow(d) > 500) .3 else .6) +
     geom_smooth(method = "lm", formula = y ~ x, colour = "#2E8B57", fill = "#00BCD4", alpha = .25) +
     labs(title = paste(yvar, "vs.", xvar), x = xvar, y = yvar,
          caption = "Line = least-squares fit; band = 95% confidence interval for the mean") + te_theme()
 
+  # Descriptive statistics for both variables.
   desc <- do.call(rbind, lapply(c(yvar, xvar), function(nm) {
     v <- d[[if (nm == yvar) "y" else "x"]]
     data.frame(Variable = paste0(nm, if (nm == yvar) " (response)" else " (explanatory)"),
                n = length(v), mean = mean(v), sd = stats::sd(v), median = stats::median(v),
                min = min(v), max = max(v))
   }))
+  # Strength of the fit: correlation, R-squared, adjusted R-squared, residual standard error.
   fit_tbl <- data.frame(Statistic = c("Correlation (r)", "R\u00b2", "Adjusted R\u00b2", "Residual standard error"),
                         Value = c(stats::cor(d$x, d$y), s$r.squared, s$adj.r.squared, s$sigma))
+  # Coefficient table for display (Greek letters are written as Unicode escapes).
   coef_tbl <- data.frame(Term = c("Intercept (\u03b2\u2080)", paste0("Slope (\u03b2\u2081): ", xvar)),
                          Estimate = cf[, 1], `Std. Error` = cf[, 2], `t value` = cf[, 3],
                          `p-value` = fmt_p(cf[, 4]), `95% CI Lower` = ci[, 1], `95% CI Upper` = ci[, 2],
                          check.names = FALSE)
+  # Shapiro-Wilk: are the residuals normal?
   sw <- safe_shapiro(res)
+  # Spearman correlation of |residuals| with fitted values: near 0 means the spread is constant.
   sp <- tryCatch(suppressWarnings(stats::cor.test(abs(res), stats::fitted(fit), method = "spearman", exact = FALSE)),
                  error = function(e) NULL)
+  # Table of the two assumption checks, each with a plain-English reading.
   diag_tbl <- data.frame(
     Test = c("Shapiro-Wilk (residuals are normal)", "Spearman: |residuals| vs fitted (constant spread)"),
     Statistic = c(if (is.null(sw)) NA else unname(sw$statistic), if (is.null(sp)) NA else unname(sp$estimate)),
@@ -523,6 +685,7 @@ analyse_regression <- function(df, yvar, xvar) {
     Interpretation = interp(c(if (is.null(sw)) NA else sw$p.value, if (is.null(sp)) NA else sp$p.value)),
     check.names = FALSE)
 
+  # Hand everything back to the results page.
   list(type = "regression", title = paste("Simple Linear Regression:", yvar, "on", xvar),
        main_plot = main_plot,
        summary_ui = tagList(html_table(desc, "Descriptive statistics"), html_table(fit_tbl, "Strength of the linear relationship")),
@@ -537,11 +700,16 @@ analyse_regression <- function(df, yvar, xvar) {
 }
 
 # ---------- 3. Chi-squared test of independence: qualitative + qualitative ----------
+# v1 = ROW variable (the app passes the explanatory variable); v2 = COLUMN variable (the response).
+# Both qualitative. Returns the same named list as analyse_anova().
 analyse_chisq <- function(df, v1, v2) {
+  # Number of categories before lumping (used for the note below).
   n1 <- length(unique(stats::na.omit(df[[v1]]))); n2 <- length(unique(stats::na.omit(df[[v2]])))
+  # Working table: a = first variable, b = second (rare categories lumped into 'Other').
   d  <- data.frame(a = lump_levels(df[[v1]]), b = lump_levels(df[[v2]]))
   n_all <- nrow(d)                                  # every row in the table
   d  <- d[stats::complete.cases(d), ]               # the test only uses rows where BOTH variables are filled in
+  # Forget category labels that no longer have any rows.
   d$a <- droplevels(d$a); d$b <- droplevels(d$b)
   if (nlevels(d$a) < 2 || nlevels(d$b) < 2 || nrow(d) == 0) {
     # Explain WHY: a variable can look varied on its own yet be left with one category once the
@@ -552,15 +720,23 @@ analyse_chisq <- function(df, v1, v2) {
       "The chi-squared test needs at least two categories in each variable, using only rows where both are filled in. Only %s of %s rows have both %s and %s filled in; among those rows, %s and %s.",
       format(nrow(d), big.mark = ","), format(n_all, big.mark = ","), v1, v2, left(d$a, v1), left(d$b, v2))))
   }
+  # Contingency table: the count for every combination of categories.
   tab  <- table(d$a, d$b)
+  # Run the test (no continuity correction). Small-count warnings are reported by our own check
+  # below.
   test <- suppressWarnings(stats::chisq.test(tab, correct = FALSE))
+  # Counts we would expect if the variables were independent.
   expd <- test$expected
+  # How many cells have an expected count below 5.
   low  <- sum(expd < 5)
+  # Total sample size.
   n    <- sum(tab)
   cv   <- sqrt(unname(test$statistic) / (n * min(nrow(tab) - 1, ncol(tab) - 1)))   # Cramer's V
+  # A note is only shown when categories were lumped into 'Other'.
   note <- NULL
   if (max(n1, n2) > TOP_LEVELS) note <- sprintf("Variables with more than %d categories keep only their %d most common; the rest are grouped as \"Other\".", TOP_LEVELS, TOP_LEVELS)
 
+  # Graph: stacked 100% bars; each bar is one category of v1, split by v2.
   plot_df <- as.data.frame(tab, stringsAsFactors = FALSE); names(plot_df) <- c("a", "b", "n")
   main_plot <- ggplot(plot_df, aes(a, n, fill = b)) +
     geom_col(position = "fill", colour = "white") +
@@ -569,29 +745,40 @@ analyse_chisq <- function(df, v1, v2) {
     labs(title = paste(v2, "within each", v1), x = v1, y = "Percent of row", fill = v2) + te_theme() +
     theme(axis.text.x = element_text(angle = 40, hjust = 1))
 
+  # Counts table including row and column totals.
   with_margins <- as.data.frame.matrix(stats::addmargins(tab))
   counts_tbl   <- cbind(Level = rownames(with_margins), with_margins)
+  # Row percentages (each row adds to 100).
   pct          <- as.data.frame.matrix(round(100 * prop.table(tab, 1), 1))
   pct_tbl      <- cbind(Level = rownames(pct), pct)
 
+  # Test results table: statistic, degrees of freedom, p-value, Cramer's V (effect size), n.
   test_tbl <- data.frame(Statistic = c("Chi-squared (\u03c7\u00b2)", "Degrees of freedom", "p-value", "Cram\u00e9r's V (effect size, 0-1)", "Sample size (n)"),
                          Value = c(fmt_n(test$statistic), as.character(test$parameter), fmt_p(test$p.value), fmt_n(cv), as.character(n)))
+  # Optional note with a Monte Carlo (simulation-based) p-value, used when many expected counts are
+  # small.
   mc <- NULL
   if (low / length(expd) > 0.2) {       # too many small expected counts -> also give a simulation-based p-value
     set.seed(1)
     mcp <- stats::chisq.test(tab, simulate.p.value = TRUE, B = 5000)$p.value
     mc  <- tags$p(class = "note", sprintf("Because %d%% of cells have an expected count below 5, a simulation-based (Monte Carlo) p-value is also given: %s.", round(100 * low / length(expd)), fmt_p(mcp)))
   }
+  # Expected counts, formatted for display.
   exp_df  <- as.data.frame.matrix(round(expd, 2));  exp_tbl <- cbind(Level = rownames(exp_df), exp_df)
+  # Standardized residuals: how strongly each cell departs from independence (beyond about 2 = a
+  # lot).
   sres_m  <- test$stdres
   sres_df <- as.data.frame.matrix(round(sres_m, 2)); sres_tbl <- cbind(Level = rownames(sres_df), sres_df)
+  # Reshape the residuals into one row per cell so ggplot can draw them.
   heat_df <- as.data.frame(as.table(sres_m), stringsAsFactors = FALSE); names(heat_df) <- c("a", "b", "z")
+  # Diagnostic graph: heat map of the standardized residuals.
   heat <- ggplot(heat_df, aes(b, a, fill = z)) + geom_tile(colour = "white") +
     geom_text(aes(label = round(z, 1)), size = 3.2) +
     scale_fill_gradient2(low = "#00ACC1", mid = "white", high = "#2E8B57", midpoint = 0, name = "Std.\nresidual") +
     labs(title = "Standardized Residuals", x = v2, y = v1) + te_theme() +
     theme(axis.text.x = element_text(angle = 40, hjust = 1), panel.grid = element_blank())
 
+  # Hand everything back to the results page.
   list(type = "chisq", title = paste("Chi-squared Test of Independence:", v1, "and", v2),
        main_plot = main_plot,
        summary_ui = tagList(html_table(counts_tbl, sprintf("Counts (rows: %s; columns: %s)", v1, v2)),
@@ -610,6 +797,9 @@ analyse_chisq <- function(df, v1, v2) {
 }
 
 # ---------- Explanations (shown under "View More on Test" and in "Learn More") ----------
+# test_info: the text for each test (name, when it is used, purpose, equations, hypotheses,
+# assumptions). Edit it here to change what 'View More on Test' and 'Learn More' show. \uXXXX codes
+# are Unicode symbols (Greek letters, subscripts).
 test_info <- list(
   anova = list(
     name = "Analysis of Variance (ANOVA)",
@@ -642,7 +832,10 @@ test_info <- list(
 
 # Builds the explanation block for one test
 info_ui <- function(type) {
+  # Pick the entry for this test.
   i <- test_info[[type]]
+  # Banner at the top, then an empty placeholder named 'page' that the server fills in (viewer or
+  # results).
   tagList(
     tags$p(tags$strong("When it is used: "), i$when),
     tags$p(tags$strong("Purpose: "), i$purpose),
@@ -653,9 +846,10 @@ info_ui <- function(type) {
 
 # >>>>>>>>>>>>>>>>>>>>>>>>  END DESIGNER SECTION  <<<<<<<<<<<<<<<<<<<<<<<<
 
-# ---- Helpers that build pieces of the page ------------------
+# ---- [D9] Helpers that build pieces of the page -------------
 # One clickable row in the Table Selector. Clicking sends the table's
 # name to the server as input$pick_table. The selected row is highlighted.
+# selector_item(): one table name in the selector.
 selector_item <- function(key, active) {
   tags$a(href = "#", class = paste("te-item", if (active) "active"),
          onclick = sprintf("Shiny.setInputValue('pick_table', '%s', {priority: 'event'}); return false;", key),
@@ -679,6 +873,8 @@ selector_section <- function(id, title, keys, current, open = TRUE) {
 # One row of the variable picker: the variable name, then a checkbox in the
 # Response column and a checkbox in the Explanatory column. Ticking calls tePick() (JavaScript above).
 pick_row <- function(v, type, is_resp, is_expl) {
+  # box(): one checkbox. data-v holds the variable name for tePick(); 'checked' restores an earlier
+  # tick.
   box <- function(col, on) tags$input(type = "checkbox", class = paste0("pick-", col), `data-v` = v,
                                       checked = if (on) NA, onclick = sprintf("tePick('%s', this);", col))
   div(class = "pick-row",
@@ -689,11 +885,11 @@ pick_row <- function(v, type, is_resp, is_expl) {
  
 <script type="application/shiny-prerendered" data-context="server">
 # ==============================================================
-# SERVER  -  runs separately for EACH visitor, so one student's
+# [F] SERVER  -  runs separately for EACH visitor, so one student's
 # clicks never affect another student's session.
 # ==============================================================
 
-# ---- This visitor's app state -------------------------------
+# ---- [F1] This visitor's app state --------------------------
 #   page     : "viewer" (data viewer) or "results" (analysis page)
 #   mode     : "browse" (table selector) or "select" (pick two variables)
 #   view     : "table" (Table Viewer) or "description" (Variable Directory)
@@ -705,24 +901,31 @@ rv <- reactiveValues(page = "viewer", mode = "browse", view = "table",
                      table = if (length(individual_keys)) individual_keys[1] else all_keys[1],
                      resp = "", expl = "", analysis = NULL)
 
+# current_df(): the data frame of the selected table. A reactive re-runs by itself whenever rv$table
+# changes.
 current_df   <- reactive({ req(rv$table); load_table(rv$table) })
+# table_label(): text such as 'Samples (Individual)' used in headings.
 table_label  <- reactive({ req(rv$table); paste0(pretty_name(rv$table), if (grepl("_combined$", rv$table)) " (Combined)" else " (Individual)") })
 
-# ---- Which page is showing ----------------------------------
+# ---- [F2] Which page is showing -----------------------------
 output$page <- renderUI({
+  # No .rds files found: show instructions instead of the app.
   if (length(all_keys) == 0)
     return(div(class = "panel-card", h4("No data found"),
                p("The Data folder has no .rds files yet. Run the Data_Clean script first, then restart the app.")))
+  # Viewer: selector / picker card on the left (left_ui), table card on the right (right_ui).
   if (rv$page == "viewer")
     div(class = "app-grid",
         div(uiOutput("left_ui")),
         div(uiOutput("right_ui")))
   else
+    # Otherwise show the analysis page.
     uiOutput("results_ui")
 })
 
-# ---- LEFT PANEL: table selector  OR  variable picker ---------
+# ---- [F3] LEFT PANEL: table selector  OR  variable picker ----
 output$left_ui <- renderUI({
+  # browse = Table Selector; select = variable picker (the else branch below).
   if (rv$mode == "browse") {
     # ---- Table Selector ----
     # Each table section is collapsible. Whether it is open is remembered in input$sec_<id>
@@ -745,6 +948,7 @@ output$left_ui <- renderUI({
     # Two checkbox columns sit beside every variable: Response (y) and Explanatory (x).
     # isolate() restores earlier ticks without re-drawing the panel on every click.
     df   <- current_df()
+    # Columns worth analysing (see analysis_vars()).
     vars <- analysis_vars(df)
     div(class = "panel-card left-card",
         div(class = "sel-title", "Select two variables"),
@@ -760,6 +964,7 @@ output$left_ui <- renderUI({
   }
 })
 
+# ---- [F4] Variable picker status and Analyse button ----------------
 # Which test fits the ticked pair? NA until both columns have a variable (or if no test fits).
 pair_test <- reactive({
   df <- current_df()
@@ -769,6 +974,7 @@ pair_test <- reactive({
 
 # Message under the variable list: progress, a warning for a pair with no test, or the test that will run
 output$sel_status <- renderUI({
+  # How many columns have a tick: 0, 1 or 2.
   n <- (nzchar(rv$resp)) + (nzchar(rv$expl))
   if (n < 2)                p(class = "hint", sprintf("%d of 2 selected", n))
   else if (is.na(pair_test())) p(class = "concl", "A qualitative response with a quantitative explanatory variable has no matching test in this app. Swap the columns or choose different variables.")
@@ -781,12 +987,14 @@ output$analyse_btn <- renderUI({
   else actionButton("btn_analyse", "Analyse", class = "btn-te", disabled = "disabled")
 })
 
-# ---- RIGHT PANEL: Table Viewer  OR  Variable Directory -------
+# ---- [F5] RIGHT PANEL: Table Viewer  OR  Variable Directory --
 output$right_ui <- renderUI({
+  # Table Viewer (the data) or Variable Directory (what each column means).
   if (rv$view == "table") {
     div(class = "panel-card",
         div(class = "viewer-head", h3("Table Viewer"),
             span(class = "current", "Currently viewing: ", tags$strong(table_label()))),
+        # Placeholder for the interactive table defined in output$data_table below.
         DTOutput("data_table"),
         div(class = "table-foot", textOutput("table_count")))
   } else {
@@ -804,19 +1012,29 @@ output$data_table <- renderDT({
   df <- current_df()
   # long text (e.g. DNA sequences) is shortened in the cell; hover to see all of it
   text_cols <- unname(which(vapply(df, is.character, logical(1)))) - 1
+  # JavaScript that DataTables runs on each text cell: cut text longer than 60 characters and show
+  # the full text as a hover tooltip. esc() makes odd characters safe to show.
   trim_js <- JS(r"(function(data, type, row) {
+      // Only change what is DRAWN; sorting and searching still use the full text.
       if (type === 'display' && data != null && data.length > 60) {
+        // esc(): replace characters that have special meaning in HTML.
         var esc = function(s) { return s.replace(/&/g,'&amp;').replace(/<\u002fg,'&lt;').replace(/"/g,'&quot;'); };
+        // Shortened text; the title attribute is the hover tooltip.
         return '<span title="' + esc(data) + '">' + esc(data.substr(0, 60)) + '&hellip;<\u002fspan>';
       }
+      // Anything short (or not being displayed) is returned unchanged.
       return data; }
   )")
+  # Apply trim_js to the text columns only (nothing if there are none).
   defs <- if (length(text_cols)) list(list(targets = text_cols, render = trim_js)) else list()
+  # filter = 'top' puts a filter box above each column; scrollX/scrollY add scroll bars; dom
+  # 'lfrtip' = length menu, search box, table, 'Showing x to y of N' line, page buttons.
   datatable(df, rownames = FALSE, filter = "top", selection = "none", class = "stripe hover compact",
             options = list(scrollX = TRUE, scrollY = "52vh", scrollCollapse = TRUE,
                            pageLength = 25, lengthMenu = c(10, 25, 50, 100),
                            dom = "lfrtip", columnDefs = defs))
 })
+# Text under the table: number of rows (data points) and columns (factors).
 output$table_count <- renderText({
   df <- current_df()
   sprintf("%s data points (rows) \u00d7 %d factors (columns) in this table.", format(nrow(df), big.mark = ","), ncol(df))
@@ -825,6 +1043,8 @@ output$table_count <- renderText({
 # Variable Directory: name, type, plain-English description, and quick facts
 output$dict_table <- renderDT({
   df <- current_df(); key <- rv$table
+  # One row per column of the table: name, type, description, % missing, distinct values, first 3
+  # example values.
   info <- data.frame(
     Variable = names(df),
     Type = vapply(names(df), function(v) describe_type(v, df[[v]]), character(1)),
@@ -833,11 +1053,12 @@ output$dict_table <- renderDT({
     `Distinct Values` = vapply(df, function(x) length(unique(stats::na.omit(x))), numeric(1)),
     `Example Values` = vapply(df, function(x) substr(paste(utils::head(unique(as.character(stats::na.omit(x))), 3), collapse = "; "), 1, 70), character(1)),
     check.names = FALSE, row.names = NULL)
+  # Show it as a table; dom 'ftip' = search box, table, info line, page buttons.
   datatable(info, rownames = FALSE, selection = "none", class = "stripe hover compact",
             options = list(scrollX = TRUE, scrollY = "52vh", scrollCollapse = TRUE, pageLength = 50, dom = "ftip"))
 })
 
-# ---- Clicks in the viewer ------------------------------------
+# ---- [F6] Clicks in the viewer -------------------------------
 observeEvent(input$pick_table, {                      # chose a different table
   req(input$pick_table %in% all_keys)
   rv$table <- input$pick_table
@@ -862,8 +1083,10 @@ observeEvent(input$btn_analyse, {                     # go to the results page
 })
 observeEvent(input$btn_results_back, { rv$page <- "viewer" })
 
-# ---- Background window ---------------------------------------
+# ---- [F7] Background window ----------------------------------
 observeEvent(input$btn_background, {
+  # showModal() opens a pop-up window; easyClose lets people click outside it to close. The text
+  # inside is ordinary HTML tags and can be edited freely.
   showModal(modalDialog(
     title = "Background", size = "l", easyClose = TRUE, footer = modalButton("Close"),
     h4("What is Tiny Earth?"),
@@ -884,11 +1107,13 @@ observeEvent(input$btn_background, {
     p(class = "note", "All results are intended for academic and learning purposes.")))
 })
 
-# ---- RESULTS PAGE ---------------------------------------------
+# ---- [F8] RESULTS PAGE ---------------------------------------
 # analysis_type(): "anova", "regression" or "chisq", decided by the TYPES of the
 # Response and Explanatory variables chosen in the picker.
 analysis_type <- reactive({
+  # req() waits until an analysis has been requested.
   a  <- req(rv$analysis)
+  # Load the table that was chosen.
   df <- load_table(a$table)
   pick_test(var_type(df[[a$resp]]), var_type(df[[a$expl]]))
 })
@@ -919,7 +1144,9 @@ output$results_ui <- renderUI({
       uiOutput("results_body"))
 })
 
+# results_body: everything under the top bar. result() is calculated once and shared with the plots.
 output$results_body <- renderUI({
+  # r = the named list returned by the matching analyse_* function.
   r <- result()
   div(
     h2(r$title),
@@ -946,14 +1173,16 @@ output$results_body <- renderUI({
 # when the drop-down is opened or the page is printed.
 output$res_plot <- renderPlot(result()$main_plot, width = 780, height = 440, res = 110)
 outputOptions(output, "res_plot", suspendWhenHidden = FALSE)
+# The two diagnostic plots are created in a loop; local() gives each pass its own copy of i.
 for (i in 1:2) local({
   ii <- i; id <- paste0("diag_plot_", ii)
+  # req() skips plot 2 for tests that only have one diagnostic plot (chi-squared).
   output[[id]] <- renderPlot({ r <- result(); req(length(r$diag_plots) >= ii); r$diag_plots[[ii]] },
                              width = 520, height = 360, res = 100)
   outputOptions(output, id, suspendWhenHidden = FALSE)
 })
 
-# ---- Learn More window ----------------------------------------
+# ---- [F9] Learn More window ----------------------------------
 observeEvent(input$btn_learn, {
   current <- analysis_type()
   if (is.na(current)) current <- "anova"
@@ -964,6 +1193,7 @@ observeEvent(input$btn_learn, {
     tags$table(class = "te-table",
       tags$thead(tags$tr(tags$th("Variables chosen"), tags$th("Test used"))),
       tags$tbody(lapply(names(test_info), function(k) tags$tr(tags$td(test_info[[k]]$when), tags$td(test_info[[k]]$name))))),
+    # One explanation block per test, with the test you just ran first.
     lapply(order, function(k) tagList(h4(class = "sec-title", test_info[[k]]$name), info_ui(k)))))
 })
 </script>
