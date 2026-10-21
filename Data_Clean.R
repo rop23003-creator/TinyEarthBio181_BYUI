@@ -24,12 +24,13 @@
 #                            "readr", "lubridate"))
 # ============================================================
 
+library(lubridate)  # ymd(): parses the "date" columns properly
 library(readxl)     # reads .xlsx files into R
+library(stringr)    # tools for cleaning up text
 library(dplyr)      # data-cleaning verbs: mutate(), rename(), across()
 library(purrr)      # lets us repeat the same steps across many files at once
-library(stringr)    # tools for cleaning up text
 library(readr)      # type_convert(): re-guesses column types below (reading only; nothing is written as .csv)
-library(lubridate)  # ymd(): parses the "date" columns properly
+
 
 # ------------------------------------------------------------
 # 0. Folder name check -- makes the project folders match the
@@ -130,7 +131,8 @@ tidy_names <- function(df) {
   df
 }
 
-clean_table <- function(df) {
+# tbl_name is only used to say WHICH table a warning below came from.
+clean_table <- function(df, tbl_name) {
   df <- df %>%
     # Tidy the column names FIRST so every later step (such as renaming
     # "name" below) can rely on lower-case snake_case names.
@@ -153,8 +155,23 @@ clean_table <- function(df) {
   # "2024/09/18") into a real R Date. ymd() reads the digits in
   # year-month-day order regardless of the separator used, so it copes
   # fine if the source ever switches between "/" and "-".
+  # If read_excel() already read the column as real dates, as_date() just
+  # drops any time-of-day part instead of re-parsing it as text.
+  # ymd() turns anything it can't read into NA with only an easy-to-miss
+  # warning, so we count those failures ourselves and report them clearly.
   if ("date" %in% names(df)) {
-    df <- df %>% mutate(date = lubridate::ymd(date))
+    had_value <- !is.na(df$date)
+    df <- df %>%
+      mutate(date = if (inherits(date, c("Date", "POSIXt"))) {
+        lubridate::as_date(date)
+      } else {
+        suppressWarnings(lubridate::ymd(date))
+      })
+    n_failed <- sum(had_value & is.na(df$date))
+    if (n_failed > 0) {
+      warning(tbl_name, ": ", n_failed, " date value(s) could not be read ",
+              "as year-month-day and are now NA.", call. = FALSE)
+    }
   }
 
   # Columns like sample_ph, air_temperature, or duration are genuinely
@@ -172,9 +189,40 @@ clean_table <- function(df) {
   # not "we don't know." So for just these columns, we convert to a real
   # number and fill any remaining blanks with 0 instead of leaving NA.
   # coalesce(x, 0) means "use x if it has a value, otherwise use 0."
+  # But a cell that HAD something non-numeric in it (e.g. "n/a" or "3?")
+  # would also become NA and then 0, hiding a typo as a real zero count --
+  # so we warn about those cells before filling.
   num_cols <- str_subset(names(df), "^num_")
-  df %>%
-    mutate(across(all_of(num_cols), ~ coalesce(as.numeric(.x), 0)))
+  for (col in num_cols) {
+    as_num <- suppressWarnings(as.numeric(df[[col]]))
+    n_bad  <- sum(!is.na(df[[col]]) & is.na(as_num))
+    if (n_bad > 0) {
+      warning(tbl_name, "$", col, ": ", n_bad, " value(s) were not numbers ",
+              "and were set to 0.", call. = FALSE)
+    }
+    df[[col]] <- coalesce(as_num, 0)
+  }
+
+  # In isolates and samples -- the two tables the joins look up by "id" --
+  # each id should appear only once, but the export sometimes lists the
+  # same record twice (e.g. an isolate linked to two dilutions, with only
+  # dilution_id differing). A repeated id there would make the joins below
+  # copy rows, so we keep the FIRST row for each id and warn which ids were
+  # collapsed -- fix those records at the source when you can. Rows with a
+  # blank (NA) id are all kept, since NA isn't a real repeated value.
+  # NOT applied to other tables: in antibio_suscepts, other_tests, etc. a
+  # repeated id is real data (one row per antibiotic or test performed).
+  if (tbl_name %in% c("isolates", "samples")) {
+    is_dup  <- duplicated(df$id) & !is.na(df$id)
+    dup_ids <- unique(df$id[is_dup])
+    if (length(dup_ids) > 0) {
+      warning(tbl_name, ": ", length(dup_ids), " id(s) appeared more than ",
+              "once; kept the first row of each: ",
+              paste(dup_ids, collapse = ", "), call. = FALSE)
+      df <- df[!is_dup, ]
+    }
+  }
+  df
 }
 
 # ------------------------------------------------------------
@@ -191,7 +239,7 @@ tep_data <- imap(table_files, function(path, tbl_name) {
   # silently turned into NA because they don't fit that guess. Since our
   # tables run up to ~24,000 rows, we raise guess_max well past that so
   # it scans the WHOLE sheet before deciding each column's type.
-  read_excel(path, guess_max = 1e5) %>% clean_table()
+  read_excel(path, guess_max = 1e5) %>% clean_table(tbl_name)
 })
 
 # tep_data is now a named list of tibbles (data frames), e.g.
@@ -199,6 +247,318 @@ tep_data <- imap(table_files, function(path, tbl_name) {
 #   tep_data$samples
 # Explore any one of them in the RStudio Viewer with:
 #   View(tep_data$isolates)
+
+# ------------------------------------------------------------
+# 3b. Remove "Legacy" records.
+#     Older records imported into Tiny Earth are marked by a nickname
+#     that starts with "Legacy" (e.g. "Legacy Soil #5859", "Legacy
+#     Isolate #31"). We drop those rows from EVERY table, plus any row
+#     that belongs to a legacy sample or isolate even if its own nickname
+#     doesn't say so -- that way no table is left pointing at a parent
+#     that was removed. The raw files in Data_Raw are not touched.
+#     Set drop_legacy to FALSE to keep legacy records instead.
+# ------------------------------------------------------------
+drop_legacy <- TRUE
+
+if (drop_legacy) {
+  # TRUE for a nickname starting with "Legacy" (any capitalization).
+  # A blank (NA) nickname counts as FALSE, so filter() won't drop it.
+  is_legacy <- function(nickname) {
+    coalesce(str_detect(nickname, regex("^legacy\\b", ignore_case = TRUE)), FALSE)
+  }
+
+  # Find legacy samples first, then legacy isolates (an isolate is legacy
+  # if its own nickname says so OR it came from a legacy sample).
+  legacy_sample_ids <- tep_data$samples %>%
+    filter(is_legacy(nickname)) %>%
+    pull(id)
+  legacy_isolate_ids <- tep_data$isolates %>%
+    filter(is_legacy(nickname) | sample_id %in% legacy_sample_ids) %>%
+    pull(id)
+
+  tep_data <- imap(tep_data, function(df, tbl_name) {
+    # Start with "keep every row", then rule rows out one check at a
+    # time -- each check only runs if the table has that column.
+    drop <- rep(FALSE, nrow(df))
+    if ("nickname" %in% names(df))   drop <- drop | is_legacy(df$nickname)
+    if ("sample_id" %in% names(df))  drop <- drop | df$sample_id %in% legacy_sample_ids
+    if ("isolate_id" %in% names(df)) drop <- drop | df$isolate_id %in% legacy_isolate_ids
+
+    if (any(drop)) {
+      message("Removed ", sum(drop), " legacy row(s) from ", tbl_name)
+    }
+    df[!drop, ]
+  })
+
+  # With legacy samples gone, some institutions have no samples left.
+  # Keep only institutions that still appear in the samples table, so
+  # the app doesn't list schools with nothing to show.
+  n_before <- nrow(tep_data$institutions)
+  tep_data$institutions <- tep_data$institutions %>%
+    filter(institution_name %in% tep_data$samples$institution_name)
+  n_gone <- n_before - nrow(tep_data$institutions)
+  if (n_gone > 0) {
+    message("Removed ", n_gone, " institution(s) with no remaining samples")
+  }
+}
+
+# ------------------------------------------------------------
+# 3c. Fix known data-entry problems.
+#     These came from checking every column for blanks, zeros, and
+#     inconsistent text. Each fix is listed separately so it is easy
+#     to see -- or undo -- what was changed.
+# ------------------------------------------------------------
+
+# Fix 1: zeros that are really "not measured".
+# Outdoor air can't have 0% humidity, and most BYU-Idaho samples have a
+# sample_temperature of exactly 0.0 -- both look like a field left at its
+# default rather than a real reading. Turning them into NA means the app
+# leaves them out of analyses instead of treating them as real values.
+tep_data$samples <- tep_data$samples %>%
+  mutate(air_humidity       = na_if(air_humidity, 0),
+         sample_temperature = na_if(sample_temperature, 0))
+
+# Fix 2: one spelling for "none".
+# In additives/media_mod, "none" is a real answer ("no additive used"),
+# so it stays -- but "None" and "none" would show up as two categories.
+tep_data <- map(tep_data, function(df) {
+  df %>% mutate(across(where(is.character),
+                       ~ if_else(str_to_lower(.x) %in% "none", "none", .x)))
+})
+
+# Fix 3: one name per test in other_tests$test_type.
+# Students typed the same test many ways ("KOH", "KOH test", "KOH Test").
+# First we make a simple "key" from each name: lower-case, dashes to
+# spaces, and a trailing " agar" / " test" removed (so "Citrate Agar
+# Test" and "citrate" both become "citrate"). Then the lookup below
+# gives each key its one official name. Any key NOT in the lookup keeps
+# the name as the student entered it -- add a line here to fix a new one.
+test_type_names <- c(
+  "anaerobic"                         = "Anaerobic Test",
+  "bcp glucose"                       = "BCP Glucose Test",
+  "bgp glucose"                       = "BCP Glucose Test",  # typo
+  "bromocresol purple (bcp)"          = "BCP Glucose Test",
+  "blood"                             = "Blood Agar Test",
+  "casein hydrolysis"                 = "Casein Hydrolysis Test",
+  "catalase"                          = "Catalase Test",
+  "cetramide"                         = "Cetrimide Agar Test",  # typo
+  "cetrimide"                         = "Cetrimide Agar Test",
+  "citrate"                           = "Citrate Test",
+  "citrate permease"                  = "Citrate Test",
+  "cytochrome c oxidase"              = "Oxidase Test",
+  "oxidase"                           = "Oxidase Test",
+  "denitrification"                   = "Denitrification Test",
+  "emb"                               = "EMB Agar Test",
+  "emb agar growth"                   = "EMB Agar Test",
+  "emb lactose fermentation"          = "EMB Agar Test",
+  "florescence"                       = "Fluorescence Test",  # typo
+  "gelatinase"                        = "Gelatinase Test",
+  "koh"                               = "KOH Test",
+  "macconkey"                         = "MacConkey Agar Test",
+  "mannitol salt"                     = "Mannitol Salt Agar Test",
+  "mannitol salt agar growth"         = "Mannitol Salt Agar Test",
+  "mannitol salt agar growth and mannitol fermentation" = "Mannitol Salt Agar Test",
+  "msa"                               = "Mannitol Salt Agar Test",
+  "motility"                          = "Motility Test",
+  "nitrate"                           = "Nitrate Reduction Test",
+  "nitrate reduction"                 = "Nitrate Reduction Test",
+  "pea"                               = "PEA Agar Test",
+  "starch hydrolysis"                 = "Starch Hydrolysis Test",
+  "sulfide, indole, and motility"     = "Sulfide, Indole, and Motility Test",
+  "triple sugar iron"                 = "Triple Sugar Iron Test",
+  "urease"                            = "Urease Test"
+)
+
+tep_data$other_tests <- tep_data$other_tests %>%
+  mutate(
+    test_key  = test_type %>%
+      str_to_lower() %>%
+      str_replace_all("-", " ") %>%
+      str_squish() %>%                          # collapse doubled spaces
+      str_remove("( agar)?( test)?$"),
+    # coalesce(): the official name if the key is in the lookup,
+    # otherwise the original spelling.
+    test_type = coalesce(unname(test_type_names[test_key]), test_type)
+  ) %>%
+  select(-test_key)
+
+# Fix 4: impossible or mis-entered sample values.
+#   lat           A latitude must be between -90 and 90. One sample has
+#                 43081360 -- really 43.08136 with the decimal point lost.
+#                 We move the decimal back so 2 digits stay in front
+#                 (43081360 -> 43.08136); anything still impossible -> NA.
+#   lng           A longitude outside -180..180 can't be fixed safely -> NA.
+#   air_humidity  A value between 0 and 1 (e.g. 0.45) was entered as a
+#                 fraction, so it is converted to a percent (45).
+#   depth         Depth is "how far below the surface", so a negative
+#                 depth (e.g. -3) is stored as positive.
+#   country       A blank country is filled with the institution's country.
+inst_country <- setNames(tep_data$institutions$country_name,
+                         tep_data$institutions$institution_name)
+
+tep_data$samples <- tep_data$samples %>%
+  mutate(
+    lat = if_else(abs(lat) > 90, lat / 10^(floor(log10(abs(lat))) - 1), lat),
+    lat = if_else(abs(lat) > 90, NA_real_, lat),
+    lng = if_else(abs(lng) > 180, NA_real_, lng),
+    air_humidity = if_else(air_humidity > 0 & air_humidity <= 1,
+                           air_humidity * 100, air_humidity),
+    depth   = abs(depth),
+    country = coalesce(country, unname(inst_country[institution_name]))
+  )
+
+# Fix 5: known misspellings that split one group into two.
+# The organism names below were typed ~15 different ways each, so any
+# name starting like "S. scl..." or "Macroph..." gets the one correct
+# name. (Salvia and Saccharomyces start with "Sa", so they aren't caught.)
+tep_data <- map(tep_data, function(df) {
+  if ("test_bacteria" %in% names(df)) {
+    df$test_bacteria <- str_replace(df$test_bacteria, "Staphylococus", "Staphylococcus")
+  }
+  if ("antibiotics" %in% names(df)) {
+    df$antibiotics <- str_replace(df$antibiotics, "Erthromycin", "Erythromycin")
+  }
+  df
+})
+
+tep_data$eukaryotics <- tep_data$eukaryotics %>%
+  mutate(eukaryotic_organism = case_when(
+    str_detect(str_to_lower(eukaryotic_organism), "^(s\\.|scl|scer|sel)") ~ "Sclerotinia sclerotiorum",
+    str_detect(str_to_lower(eukaryotic_organism), "^(m\\.|macroph)")      ~ "Macrophomina phaseolina",
+    TRUE ~ eukaryotic_organism
+  ))
+
+# Fix 6: one spelling for values that differ only by capitals or spaces.
+# "Loam" / "loam" or "Control" / "control" would show up as two groups.
+# unify_case() finds every group of values that match once lower-cased,
+# and gives the whole group its MOST COMMON spelling. Nicknames and DNA
+# sequences are skipped -- those are labels, not categories.
+unify_case <- function(x) {
+  key <- str_to_lower(str_squish(x))
+  spellings <- tibble(x, key) %>%
+    filter(!is.na(x)) %>%
+    count(key, x, sort = TRUE) %>%          # most common spelling first
+    distinct(key, .keep_all = TRUE)         # keep just that one per key
+  spellings$x[match(key, spellings$key)]
+}
+
+tep_data <- map(tep_data, function(df) {
+  df %>% mutate(across(where(is.character) & !any_of(c("nickname", "fasta_text")),
+                       unify_case))
+})
+
+# Fix 7: rows entered twice.
+# A row that matches another row in EVERY column except its id was almost
+# certainly submitted twice, so the extra copy is removed. In samples,
+# isolates, and dilutions, a copy is only removed if no other table points
+# to its id -- otherwise that table's rows would lose their link.
+referenced_ids <- list(
+  samples   = unlist(map(tep_data, ~ .x[["sample_id"]])),
+  isolates  = unlist(map(tep_data, ~ .x[["isolate_id"]])),
+  dilutions = unlist(map(tep_data, ~ .x[["dilution_id"]]))
+)
+
+tep_data <- imap(tep_data, function(df, tbl_name) {
+  is_dup <- duplicated(select(df, -any_of("id")))
+  if (tbl_name %in% names(referenced_ids)) {
+    is_dup <- is_dup & !(df$id %in% referenced_ids[[tbl_name]])
+  }
+  if (any(is_dup)) {
+    message("Removed ", sum(is_dup), " row(s) entered twice from ", tbl_name)
+  }
+  df[!is_dup, ]
+})
+
+# Fix 8: the same test giving opposite answers.
+# Some isolates were tested more than once and recorded BOTH results
+# (e.g. "Yes" and "No" against the same bacterium). We can't know which
+# one is right, so every row in that group is marked inconclusive rather
+# than letting one result be picked by chance.
+tep_data$aa_screen_isolates <- tep_data$aa_screen_isolates %>%
+  group_by(isolate_id, test_bacteria) %>%
+  mutate(conflict = all(c("Yes", "No") %in% antibiotic_activity)) %>%
+  ungroup()
+message("Marked ", sum(tep_data$aa_screen_isolates$conflict),
+        " conflicting aa_screen_isolates row(s) as Inconclusive")
+tep_data$aa_screen_isolates <- tep_data$aa_screen_isolates %>%
+  mutate(antibiotic_activity = if_else(conflict, "Inconclusive", antibiotic_activity)) %>%
+  select(-conflict)
+
+tep_data$gram_stains <- tep_data$gram_stains %>%
+  group_by(isolate_id) %>%
+  mutate(conflict = all(c("gram positive", "gram negative") %in% result)) %>%
+  ungroup()
+message("Marked ", sum(tep_data$gram_stains$conflict),
+        " conflicting gram_stains row(s) as inconclusive")
+tep_data$gram_stains <- tep_data$gram_stains %>%
+  mutate(result = if_else(conflict, "inconclusive", result)) %>%
+  select(-conflict)
+
+# Fix 9: 16S rRNA genus results.
+# "No NCBI BLAST hits" means NO genus was found, so it becomes NA instead
+# of looking like one more kind of bacterium. An isolate given two
+# different genera is set to NA too (same reason as Fix 8). Finally,
+# genus_confident flags each identification: TRUE when the DNA match
+# (percent_identity) is at least 90%, FALSE below that, NA if no match %
+# was recorded -- filter on it to keep only trustworthy genus calls.
+tep_data$rrna_analyses <- tep_data$rrna_analyses %>%
+  mutate(genus = na_if(genus, "No NCBI BLAST hits")) %>%
+  group_by(isolate_id) %>%
+  mutate(genus = if (n_distinct(genus, na.rm = TRUE) > 1) NA_character_ else genus) %>%
+  ungroup() %>%
+  mutate(genus_confident = percent_identity >= 90)
+
+# Fix 10: recount the "num_" columns.
+# Tiny Earth computed these counts over its WHOLE database -- including the
+# legacy records removed above -- so they no longer match our tables.
+# Each count is rebuilt from the rows we actually have. The lookup says
+# which table each count comes from; a num_ column whose table we don't
+# have (e.g. num_aa_screen_extract) can't be recounted, so it is dropped.
+num_sources <- list(
+  isolates = c(num_streak             = "streaks",
+               num_aa_screen_isolate  = "aa_screen_isolates",
+               num_gram_stain_test    = "gram_stains",
+               num_other_test         = "other_tests",
+               num_rrna_analysis      = "rrna_analyses",
+               num_antibio_suscept    = "antibio_suscepts",
+               num_eukaryotic         = "eukaryotics",
+               num_extract            = "extracts",
+               num_library_collection = "library_collections",
+               num_aa_screen_library  = "aa_screen_libraries"),
+  samples  = c(num_dilution           = "dilutions",
+               num_library_collection = "library_collections",
+               num_aa_screen_library  = "aa_screen_libraries",
+               num_isolate            = "isolates"),
+  institutions = c(num_sample  = "samples",
+                   num_isolate = "isolates")
+)
+# How each parent table is matched: (its own key column, the child's key column)
+count_keys <- list(isolates     = c("id", "isolate_id"),
+                   samples      = c("id", "sample_id"),
+                   institutions = c("institution_name", "institution_name"))
+
+tep_data <- imap(tep_data, function(df, tbl_name) {
+  sources <- num_sources[[tbl_name]]
+  for (col in intersect(names(sources), names(df))) {
+    keys   <- count_keys[[tbl_name]]
+    counts <- table(tep_data[[sources[[col]]]][[keys[2]]])  # rows per parent
+    df[[col]] <- as.numeric(coalesce(as.integer(counts[as.character(df[[keys[1]]])]), 0L))
+  }
+  df %>% select(-any_of(setdiff(str_subset(names(df), "^num_"), names(sources))))
+})
+
+# Fix 11: drop columns that are completely empty.
+# Some columns (e.g. gram_stains$cell_shape, rrna_analyses$primers_used)
+# were never filled in by anyone -- not even in the raw files. They only
+# clutter the app, so any column with no values at all is removed.
+tep_data <- imap(tep_data, function(df, tbl_name) {
+  empty_cols <- names(df)[map_lgl(df, ~ all(is.na(.x)))]
+  if (length(empty_cols) > 0) {
+    message("Dropped empty column(s) from ", tbl_name, ": ",
+            paste(empty_cols, collapse = ", "))
+  }
+  df %>% select(-all_of(empty_cols))
+})
 
 # ------------------------------------------------------------
 # 4. Quick sanity check -- print size + missingness for every
@@ -261,10 +621,24 @@ join_parent <- function(child_df, parent_df, prefix, child_key,
       -all_of(c(parent_key, carry_keep))
     )
 
+  # Name-collision check: a parent column like "type" becomes "sample_type"
+  # above, but if the child ALREADY has a "sample_type" column, left_join()
+  # would quietly rename both to sample_type.x / sample_type.y. Stop instead,
+  # so a new or changed table can't slip confusing names into the app.
+  clash <- intersect(setdiff(names(parent_df), parent_key), child_names)
+  if (length(clash) > 0) {
+    stop("join_parent(): these columns would exist twice after joining: ",
+         paste(clash, collapse = ", "), call. = FALSE)
+  }
+
   # setNames(parent_key, child_key) builds c(child_key = parent_key),
   # which is how left_join() is told "match these two differently named columns".
+  # na_matches = "never" stops a blank (NA) key from matching a blank key in
+  # the parent -- by default left_join() treats NA = NA as a match, which
+  # would attach some random parent row's info to every row missing its key.
   child_df %>%
-    left_join(parent_df, by = setNames(parent_key, child_key))
+    left_join(parent_df, by = setNames(parent_key, child_key),
+              na_matches = "never")
 }
 
 # join_with_isolate(): attach columns from `isolates` onto any table that

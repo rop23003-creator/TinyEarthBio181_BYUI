@@ -286,10 +286,11 @@ server: shiny
 # helper function the app needs.
 # ==============================================================
 # ---- [D1] Packages and settings  (search for [D1]...[D9] to jump between the parts of this setup section). ----
-library(shiny)     # the web-app framework
-library(DT)        # interactive, filterable data tables
 library(ggplot2)   # graphs
+library(shiny)     # the web-app framework
 library(readr)     # read_csv(): reads Data/data_dictionary.csv (the tables themselves are .rds)
+library(DT)        # interactive, filterable data tables
+
 
 # ---- Settings you may want to change ------------------------
 DATA_DIR   <- "Data"   # folder holding the cleaned .rds files
