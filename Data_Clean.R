@@ -1,57 +1,22 @@
 # [Data_Clean.R] =====================================================================================================================================
-# PURPOSE
-#   Reads the raw Excel exports for the bacteria/antibiotics project, fixes known data-quality issues, and saves each cleaned table as its own .rds
-#   file in the "Data" folder. The app script (Bio181L_App_TE) loads these files with readRDS() -- no re-cleaning needed every time the app starts. An
-#   .rds file stores the table exactly as R holds it, so column types (numbers, Dates, TRUE/FALSE) come back unchanged -- nothing has to be re-guessed
-#   like with a .csv.
+# PURPOSE:
+#   Reads the raw XLSX exports, fixes known data-quality issues, and saves each cleaned table as its own .rds file in the "Data" folder.
+#   The app script (Bio181L_App_TE) loads these files with readRDS() so no cleaning is needed every time the app starts.
+#   An .rds file stores the table exactly as R holds it, so column types (numbers, Dates, TRUE/FALSE) come back unchanged.
 #
-# BEFORE YOU RUN THIS
-#   1. Open this project through its .Rproj file (not by double-clicking the script directly). That makes RStudio's "working directory" the project
-#      folder automatically, so the relative file paths below just work.
-#   2. Put all the raw .xlsx files, unchanged, in a folder named "Data_Raw" next to this script (Data_Pull.R does this for you). If your folders still
-#      use the old names "data-raw" / "data", section 0 below renames them.
-#   3. Install these packages once, if you haven't already:
-#        install.packages("tidyverse")
-#      (readxl comes with the tidyverse install.)
+# BEFORE YOU RUN THIS:
+#   1. Open this project through its .Rproj file instead of the script itself, making RStudio's "working directory" the project folder automatically
+#   so the relative file paths below work correctly.
+#   2. Run Data_Pull.R in the project first so the Data_Raw folder holds the latest files.
+#   3. Install these packages once, if you haven't already: install.packages("tidyverse") [readxl comes with the tidyverse install.]
 # ====================================================================================================================================================
 
 library(tidyverse)  # dplyr, stringr, purrr, readr (type_convert()), and lubridate (ymd() for dates)
 library(readxl)     # reads .xlsx files into R
 
-# [0. Folder name check] =============================================================================================================================
-# Makes the project folders match the names in the planning file EXACTLY: "Data_Raw" (raw .xlsx pulls) and "Data" (cleaned .rds files). If a folder
-# still has an older name, it is renamed in place; if it already has the right name, nothing happens, so this is safe to re-run any time.
-# ====================================================================================================================================================
-fix_folder_name <- function(old_names, new_name) {
-  # [Why list.dirs()] ================================================================================================================================
-  # list.dirs() reports each folder with the capitalization it truly has on disk. (dir.exists("Data") would say TRUE for a folder named "data" on
-  # Windows/Mac, which would hide a case-only mismatch.)
-  # ==================================================================================================================================================
-  existing <- list.dirs(".", recursive = FALSE, full.names = FALSE)
-
-  if (new_name %in% existing) return(invisible(NULL))  # already correct
-
-  found <- intersect(old_names, existing)              # any old spelling?
-  if (length(found) > 0) {
-    # [Rename in two hops] ===========================================================================================================================
-    # Rename through a temporary name. Windows/Mac treat "data" and "Data" as the same folder, so a direct one-step rename can silently do nothing.
-    # ================================================================================================================================================
-    temp_name <- paste0(new_name, "_temp_rename")
-    file.rename(found[1], temp_name)
-    file.rename(temp_name, new_name)
-    message("Renamed folder '", found[1], "' to '", new_name, "'")
-  } else {
-    dir.create(new_name)                               # nothing there yet
-    message("Created folder '", new_name, "'")
-  }
-}
-
-fix_folder_name(c("data-raw", "data_raw", "Data-Raw", "Data_raw", "DATA_RAW"), "Data_Raw")
-fix_folder_name(c("data", "DATA"), "Data")
-
-# [1. List every table we have, and where its file lives] ============================================================================================
-# All files live inside the Data_Raw folder. A named vector like this means the rest of the script can loop over `table_files` instead of repeating
-# the same code 14 separate times. To add the 15th table once you have it, you'll just add one more line here -- nothing else changes.
+# [1. List every table we have and where its file is located] ========================================================================================
+# All files are held inside the Data_Raw folder. A named vector like this means the rest of the script can loop over `table_files` instead of repeating
+# the same code 14 separate times.
 # ====================================================================================================================================================
 table_files <- c(
   institutions         = "Data_Raw/institutions.xlsx",
@@ -68,44 +33,32 @@ table_files <- c(
   antibio_suscepts     = "Data_Raw/antibio-suscepts.xlsx",
   eukaryotics          = "Data_Raw/eukaryotics.xlsx",
   extracts             = "Data_Raw/extracts.xlsx"
-  # aa_screen_extracts = "Data_Raw/aa-screen-extracts.xlsx",  # add once you have it
+  # aa_screen_extracts = "Data_Raw/aa-screen-extracts.xlsx",  # Currently it cannot be downloaded so we have the code to pull it in for cleaning later.
 )
-
-# [Input check] ======================================================================================================================================
-# Confirm every raw file in table_files really exists BEFORE reading anything. Without this, a missing file or a wrong working directory only shows up
-# later as a confusing read_excel() error. file.exists() returns TRUE/FALSE for each path in the vector.
-# ====================================================================================================================================================
-missing_files <- table_files[!file.exists(table_files)]
+missing_files <- table_files[!file.exists(table_files)]       # Confirms every raw file in table_files really exists before reading anything else.
 if (length(missing_files) > 0) {
   stop("These raw files were not found:\n  ",
        paste(missing_files, collapse = "\n  "),
        "\nCheck that (1) the project was opened through its .Rproj file ",
        "and (2) the files are in the Data_Raw folder.",
-       call. = FALSE)  # call. = FALSE keeps the error message short and clean
+       call. = FALSE)                                         # call. = FALSE keeps the error message short and clean.
 }
 
-# [2. A function that cleans ONE table] ==============================================================================================================
-# We write the cleaning logic once, then apply it to every file in the loop below. If we find another issue later, we only have to fix it in this one
-# place.
+# [2. General cleaning applied to every table] =======================================================================================================
+# Writes the cleaning logic once, then applies it to every file in the loop below.
 # ====================================================================================================================================================
-
-# [tidy_names()] =====================================================================================================================================
-# Makes every column name tidy snake_case so names look the same in every table and in the app. It only changes NAMES, never values, and "id" / "*_id"
-# columns stay "id" / "*_id" (just lower-cased), so the joins below keep working.
-# ====================================================================================================================================================
-tidy_names <- function(df) {
-  new_names <- names(df) %>%
-    str_trim() %>%                          # remove stray spaces at the ends
-    str_to_lower() %>%                      # "Sample_ID" -> "sample_id"
-    str_replace_all("[^a-z0-9]+", "_") %>%  # spaces/dashes/symbols -> one "_"
-    str_replace_all("^_+|_+$", "")          # no leading or trailing "_"
-
-  new_names[new_names == ""] <- "unnamed_column"  # an empty name would break later steps
-  names(df) <- make.unique(new_names, sep = "_")  # repeats get _1, _2 ... so nothing is overwritten
-  df
+tidy_names <- function(data_table) {                      # Makes every column name tidy snake_case so names look the same in every table.
+  new_names <- names(data_table) %>%
+    str_trim() %>%                                        # Removes stray spaces at each end of the name.
+    str_to_lower() %>%                                    # Puts all letters in lower case format.
+    str_replace_all("[^a-z0-9]+", "_") %>%                # Converts all spaces, dashes, and symbols into an underscore.
+    str_replace_all("^_+|_+$", "")                        # Removes underscores at each end of the name.
+  new_names[new_names == ""] <- "unnamed_column"          # An empty name would break later steps of the cleaning process.
+  names(data_table) <- make.unique(new_names, sep = "_")  # Duplicate names get numerated suffixes so data does not get overwritten.
+  data_table
 }
 
-clean_table <- function(df, tbl_name) {  # tbl_name only says WHICH table a warning came from
+clean_table <- function(data_table, tbl_name) {           # tbl_name names the table in warnings and picks out isolates/samples below
   # [First pass: names, blanks, and "name"] ==========================================================================================================
   # tidy_names()  Tidy the column names FIRST so every later step (such as renaming "name" below) can rely on lower-case snake_case names.
   # mutate()      The exported files use a single space " " for missing values instead of leaving the cell truly blank. That means R's is.na() misses
@@ -115,7 +68,7 @@ clean_table <- function(df, tbl_name) {  # tbl_name only says WHICH table a warn
   #               row's own label lives in "nickname"). We rename it here so it's unambiguous every time you see it later. any_of() just means "rename
   #               it if this column exists" so the script won't error on a table that lacks it.
   # ==================================================================================================================================================
-  df <- df %>%
+  data_table <- data_table %>%
     tidy_names() %>%
     mutate(across(where(is.character), ~ na_if(str_trim(.x), ""))) %>%
     rename(any_of(c(institution_name = "name")))
@@ -126,15 +79,15 @@ clean_table <- function(df, tbl_name) {  # tbl_name only says WHICH table a warn
   # real dates, as_date() just drops any time-of-day part instead of re-parsing it as text. ymd() turns anything it can't read into NA with only an
   # easy-to-miss warning, so we count those failures ourselves and report them clearly.
   # ==================================================================================================================================================
-  if ("date" %in% names(df)) {
-    had_value <- !is.na(df$date)
-    df <- df %>%
+  if ("date" %in% names(data_table)) {
+    had_value <- !is.na(data_table$date)
+    data_table <- data_table %>%
       mutate(date = if (inherits(date, c("Date", "POSIXt"))) {
         as_date(date)
       } else {
         suppressWarnings(ymd(date))
       })
-    n_failed <- sum(had_value & is.na(df$date))
+    n_failed <- sum(had_value & is.na(data_table$date))
     if (n_failed > 0) {
       warning(tbl_name, ": ", n_failed, " date value(s) could not be read ",
               "as year-month-day and are now NA.", call. = FALSE)
@@ -147,7 +100,7 @@ clean_table <- function(df, tbl_name) {  # tbl_name only says WHICH table a warn
   # type_convert() re-guesses a sensible type -- numeric, logical, or left as text -- for every remaining character column, the same way it would when
   # reading a fresh CSV.
   # ==================================================================================================================================================
-  df <- suppressMessages(type_convert(df))
+  data_table <- suppressMessages(type_convert(data_table))
 
   # [Count columns: num_] ============================================================================================================================
   # Columns named "num_something" (e.g. num_streak, num_extract) are rollup COUNTS -- "how many streaks does this isolate have?" -- not measurements.
@@ -156,15 +109,15 @@ clean_table <- function(df, tbl_name) {  # tbl_name only says WHICH table a warn
   # non-numeric in it (e.g. "n/a" or "3?") would also become NA and then 0, hiding a typo as a real zero count -- so we warn about those cells before
   # filling.
   # ==================================================================================================================================================
-  num_cols <- str_subset(names(df), "^num_")
+  num_cols <- str_subset(names(data_table), "^num_")
   for (col in num_cols) {
-    as_num <- suppressWarnings(as.numeric(df[[col]]))
-    n_bad  <- sum(!is.na(df[[col]]) & is.na(as_num))
+    as_num <- suppressWarnings(as.numeric(data_table[[col]]))
+    n_bad  <- sum(!is.na(data_table[[col]]) & is.na(as_num))
     if (n_bad > 0) {
       warning(tbl_name, "$", col, ": ", n_bad, " value(s) were not numbers ",
               "and were set to 0.", call. = FALSE)
     }
-    df[[col]] <- coalesce(as_num, 0)
+    data_table[[col]] <- coalesce(as_num, 0)
   }
 
   # [Repeated ids in isolates and samples] ===========================================================================================================
@@ -175,21 +128,21 @@ clean_table <- function(df, tbl_name) {  # tbl_name only says WHICH table a warn
   # (one row per antibiotic or test performed).
   # ==================================================================================================================================================
   if (tbl_name %in% c("isolates", "samples")) {
-    is_dup  <- duplicated(df$id) & !is.na(df$id)
-    dup_ids <- unique(df$id[is_dup])
+    is_dup  <- duplicated(data_table$id) & !is.na(data_table$id)
+    dup_ids <- unique(data_table$id[is_dup])
     if (length(dup_ids) > 0) {
       warning(tbl_name, ": ", length(dup_ids), " id(s) appeared more than ",
               "once; kept the first row of each: ",
               paste(dup_ids, collapse = ", "), call. = FALSE)
-      df <- df[!is_dup, ]
+      data_table <- data_table[!is_dup, ]
     }
   }
-  df
+  data_table
 }
 
-# [3. Read + clean every file, all at once] ==========================================================================================================
-# imap() walks through table_files, and for each entry it gets BOTH the file path (.x) and that entry's name (.y, e.g. "isolates"), so we can print
-# progress as we go.
+# [3a. Read + clean every file, all at once] =========================================================================================================
+# imap() walks through table_files, and for each entry it gets BOTH the file path (path) and that entry's name (tbl_name, e.g. "isolates"), so we
+# can print progress as we go.
 # ====================================================================================================================================================
 tep_data <- imap(table_files, function(path, tbl_name) {
   message("Reading ", tbl_name, " ...")
@@ -234,19 +187,19 @@ if (drop_legacy) {
     filter(is_legacy(nickname) | sample_id %in% legacy_sample_ids) %>%
     pull(id)
 
-  tep_data <- imap(tep_data, function(df, tbl_name) {
+  tep_data <- imap(tep_data, function(data_table, tbl_name) {
     # [Mark rows to drop] ============================================================================================================================
     # Start with "keep every row", then rule rows out one check at a time -- each check only runs if the table has that column.
     # ================================================================================================================================================
-    drop <- rep(FALSE, nrow(df))
-    if ("nickname" %in% names(df))   drop <- drop | is_legacy(df$nickname)
-    if ("sample_id" %in% names(df))  drop <- drop | df$sample_id %in% legacy_sample_ids
-    if ("isolate_id" %in% names(df)) drop <- drop | df$isolate_id %in% legacy_isolate_ids
+    drop <- rep(FALSE, nrow(data_table))
+    if ("nickname" %in% names(data_table))   drop <- drop | is_legacy(data_table$nickname)
+    if ("sample_id" %in% names(data_table))  drop <- drop | data_table$sample_id %in% legacy_sample_ids
+    if ("isolate_id" %in% names(data_table)) drop <- drop | data_table$isolate_id %in% legacy_isolate_ids
 
     if (any(drop)) {
       message("Removed ", sum(drop), " legacy row(s) from ", tbl_name)
     }
-    df[!drop, ]
+    data_table[!drop, ]
   })
 
   # [Institutions with nothing left] =================================================================================================================
@@ -268,8 +221,9 @@ if (drop_legacy) {
 # ====================================================================================================================================================
 
 # [Fix 1: zeros that are really "not measured"] ======================================================================================================
-# Outdoor air can't have 0% humidity, and most BYU-Idaho samples have a sample_temperature of exactly 0.0 -- both look like a field left at its
-# default rather than a real reading. Turning them into NA means the app leaves them out of analyses instead of treating them as real values.
+# Outdoor air can't have 0% humidity, and a sample_temperature of exactly 0.0 (most of them from BYU-Idaho) looks like a field left at its default
+# rather than a real reading. Turning them into NA means the app leaves them out of analyses instead of treating them as real values. NOTE: this
+# applies to every school, so a genuine reading of 0 degrees C is removed too.
 # ====================================================================================================================================================
 tep_data$samples <- tep_data$samples %>%
   mutate(air_humidity       = na_if(air_humidity, 0),
@@ -278,8 +232,8 @@ tep_data$samples <- tep_data$samples %>%
 # [Fix 2: one spelling for "none"] ===================================================================================================================
 # In additives/media_mod, "none" is a real answer ("no additive used"), so it stays -- but "None" and "none" would show up as two categories.
 # ====================================================================================================================================================
-tep_data <- map(tep_data, function(df) {
-  df %>% mutate(across(where(is.character),
+tep_data <- map(tep_data, function(data_table) {
+  data_table %>% mutate(across(where(is.character),
                        ~ if_else(str_to_lower(.x) %in% "none", "none", .x)))
 })
 
@@ -359,17 +313,19 @@ tep_data$samples <- tep_data$samples %>%
   )
 
 # [Fix 5: known misspellings that split one group into two] ==========================================================================================
-# The organism names below were typed ~15 different ways each, so any name starting like "S. scl..." or "Macroph..." gets the one correct name.
-# (Salvia and Saccharomyces start with "Sa", so they aren't caught.)
+# Two misspellings are corrected wherever they appear: "Staphylococus" -> "Staphylococcus" (test_bacteria) and "Erthromycin" -> "Erythromycin"
+# (antibiotics). In eukaryotics, the two organism names below were typed ~15 different ways each, so any name starting like "S. scl..." or
+# "Macroph..." gets the one correct name. CAUTION: every name starting with "S." is caught, so a future "S. cerevisiae" would be wrongly renamed.
+# Names written out in full, like "Salvia hispanica" or "Saccharomyces cerevisiae", are not affected.
 # ====================================================================================================================================================
-tep_data <- map(tep_data, function(df) {
-  if ("test_bacteria" %in% names(df)) {
-    df$test_bacteria <- str_replace(df$test_bacteria, "Staphylococus", "Staphylococcus")
+tep_data <- map(tep_data, function(data_table) {
+  if ("test_bacteria" %in% names(data_table)) {
+    data_table$test_bacteria <- str_replace(data_table$test_bacteria, "Staphylococus", "Staphylococcus")
   }
-  if ("antibiotics" %in% names(df)) {
-    df$antibiotics <- str_replace(df$antibiotics, "Erthromycin", "Erythromycin")
+  if ("antibiotics" %in% names(data_table)) {
+    data_table$antibiotics <- str_replace(data_table$antibiotics, "Erthromycin", "Erythromycin")
   }
-  df
+  data_table
 })
 
 tep_data$eukaryotics <- tep_data$eukaryotics %>%
@@ -392,8 +348,8 @@ unify_case <- function(x) {
   spellings$x[match(key, spellings$key)]
 }
 
-tep_data <- map(tep_data, function(df) {
-  df %>% mutate(across(where(is.character) & !any_of(c("nickname", "fasta_text")),
+tep_data <- map(tep_data, function(data_table) {
+  data_table %>% mutate(across(where(is.character) & !any_of(c("nickname", "fasta_text")),
                        unify_case))
 })
 
@@ -407,15 +363,15 @@ referenced_ids <- list(
   dilutions = unlist(map(tep_data, ~ .x[["dilution_id"]]))
 )
 
-tep_data <- imap(tep_data, function(df, tbl_name) {
-  is_dup <- duplicated(select(df, -any_of("id")))
+tep_data <- imap(tep_data, function(data_table, tbl_name) {
+  is_dup <- duplicated(select(data_table, -any_of("id")))
   if (tbl_name %in% names(referenced_ids)) {
-    is_dup <- is_dup & !(df$id %in% referenced_ids[[tbl_name]])
+    is_dup <- is_dup & !(data_table$id %in% referenced_ids[[tbl_name]])
   }
   if (any(is_dup)) {
     message("Removed ", sum(is_dup), " row(s) entered twice from ", tbl_name)
   }
-  df[!is_dup, ]
+  data_table[!is_dup, ]
 })
 
 # [Fix 8: the same test giving opposite answers] =====================================================================================================
@@ -445,14 +401,14 @@ tep_data$gram_stains <- tep_data$gram_stains %>%
 # [Fix 9: 16S rRNA genus results] ====================================================================================================================
 # "No NCBI BLAST hits" means NO genus was found, so it becomes NA instead of looking like one more kind of bacterium. An isolate given two different
 # genera is set to NA too (same reason as Fix 8). Finally, genus_confident flags each identification: TRUE when the DNA match (percent_identity) is at
-# least 90%, FALSE below that, NA if no match % was recorded -- filter on it to keep only trustworthy genus calls.
+# least 90%, FALSE below that, NA if there is no genus or no match % -- filter on it to keep only trustworthy genus calls.
 # ====================================================================================================================================================
 tep_data$rrna_analyses <- tep_data$rrna_analyses %>%
   mutate(genus = na_if(genus, "No NCBI BLAST hits")) %>%
   group_by(isolate_id) %>%
   mutate(genus = if (n_distinct(genus, na.rm = TRUE) > 1) NA_character_ else genus) %>%
   ungroup() %>%
-  mutate(genus_confident = percent_identity >= 90)
+  mutate(genus_confident = if_else(is.na(genus), NA, percent_identity >= 90))
 
 # [Fix 10: recount the "num_" columns] ===============================================================================================================
 # Tiny Earth computed these counts over its WHOLE database -- including the legacy records removed above -- so they no longer match our tables. Each
@@ -481,36 +437,36 @@ count_keys <- list(isolates     = c("id", "isolate_id"),  # (own key, child's ke
                    samples      = c("id", "sample_id"),
                    institutions = c("institution_name", "institution_name"))
 
-tep_data <- imap(tep_data, function(df, tbl_name) {
+tep_data <- imap(tep_data, function(data_table, tbl_name) {
   sources <- num_sources[[tbl_name]]
-  for (col in intersect(names(sources), names(df))) {
+  for (col in intersect(names(sources), names(data_table))) {
     keys   <- count_keys[[tbl_name]]
     counts <- table(tep_data[[sources[[col]]]][[keys[2]]])  # rows per parent
-    df[[col]] <- as.numeric(coalesce(as.integer(counts[as.character(df[[keys[1]]])]), 0L))
+    data_table[[col]] <- as.numeric(coalesce(as.integer(counts[as.character(data_table[[keys[1]]])]), 0L))
   }
-  df %>% select(-any_of(setdiff(str_subset(names(df), "^num_"), names(sources))))
+  data_table %>% select(-any_of(setdiff(str_subset(names(data_table), "^num_"), names(sources))))
 })
 
 # [Fix 11: drop columns that are completely empty] ===================================================================================================
 # Some columns (e.g. gram_stains$cell_shape, rrna_analyses$primers_used) were never filled in by anyone -- not even in the raw files. They only
 # clutter the app, so any column with no values at all is removed.
 # ====================================================================================================================================================
-tep_data <- imap(tep_data, function(df, tbl_name) {
-  empty_cols <- names(df)[map_lgl(df, ~ all(is.na(.x)))]
+tep_data <- imap(tep_data, function(data_table, tbl_name) {
+  empty_cols <- names(data_table)[map_lgl(data_table, ~ all(is.na(.x)))]
   if (length(empty_cols) > 0) {
     message("Dropped empty column(s) from ", tbl_name, ": ",
             paste(empty_cols, collapse = ", "))
   }
-  df %>% select(-all_of(empty_cols))
+  data_table %>% select(-all_of(empty_cols))
 })
 
 # [4. Quick sanity check] ============================================================================================================================
 # Print size + missingness for every table so you can eyeball whether anything looks off before trusting the data downstream.
 # ====================================================================================================================================================
-iwalk(tep_data, function(df, tbl_name) {
-  pct_missing <- round(100 * sum(is.na(df)) / (nrow(df) * ncol(df)), 1)
+iwalk(tep_data, function(data_table, tbl_name) {
+  pct_missing <- round(100 * sum(is.na(data_table)) / (nrow(data_table) * ncol(data_table)), 1)
   cat(sprintf("%-22s %6d rows  %3d cols  %5s%% missing\n",
-              tbl_name, nrow(df), ncol(df), pct_missing))
+              tbl_name, nrow(data_table), ncol(data_table), pct_missing))
 })
 
 # [5. Join helpers] ==================================================================================================================================
@@ -524,6 +480,7 @@ iwalk(tep_data, function(df, tbl_name) {
 #   isolates --(isolate_id)--> streaks, gram_stains, other_tests,
 #                              rrna_analyses, antibio_suscepts,
 #                              eukaryotics, aa_screen_isolates, extracts
+# library_collections and aa_screen_libraries also carry an isolate_id, so they get isolate info as well.
 # So any table can be traced up the chain: isolate -> sample -> institution.
 # ====================================================================================================================================================
 
@@ -615,13 +572,6 @@ join_with_institution <- function(child_df) {
               drop = "id")
 }
 
-# [Quick test] =======================================================================================================================================
-# Run these lines by hand in the console (not part of the automatic pipeline) to confirm a join behaves correctly:
-#   combined <- join_with_context(tep_data$antibio_suscepts)
-#   nrow(combined) == nrow(tep_data$antibio_suscepts)  # should be TRUE
-#   names(combined)        # new isolate_*, sample_*, institution_* columns
-# ====================================================================================================================================================
-
 # [6. Build ready-to-use combined views] =============================================================================================================
 # The app COULD call join_with_sample()/join_with_institution() itself every time it draws a table, but doing that join once here, right after
 # cleaning, means the app just displays an already-joined table -- simpler code over there, and the join only happens once instead of every time
@@ -654,6 +604,13 @@ combinable_tables <- setdiff(
 tep_data_combined <- tep_data[combinable_tables] %>%
   map(join_with_context)
 
+# [Quick test] =======================================================================================================================================
+# Run these lines by hand in the console (not part of the automatic pipeline) to confirm a join behaves correctly:
+#   combined <- join_with_context(tep_data$antibio_suscepts)
+#   nrow(combined) == nrow(tep_data$antibio_suscepts)  # should be TRUE
+#   names(combined)        # new isolate_*, sample_*, institution_* columns
+# ====================================================================================================================================================
+
 # [7. Row-count check on the joins] ==================================================================================================================
 # The joins above are meant to ADD columns only. If samples$id or institution_name ever contained a duplicate, a left_join() would quietly copy the
 # matching rows and inflate the table, which would skew every statistic in the app. This section stops the script before anything is saved if that
@@ -679,10 +636,10 @@ if (anyDuplicated(tep_data$institutions$institution_name) > 0) {
 
 # [Step B] ===========================================================================================================================================
 # Each combined table must have exactly as many rows as its original. imap_lgl() runs the comparison once per table and returns one TRUE/FALSE per
-# table, named by table (.y is the table name).
+# table, named by table.
 # ====================================================================================================================================================
-rows_match <- imap_lgl(tep_data_combined, function(df, tbl_name) {
-  nrow(df) == nrow(tep_data[[tbl_name]])
+rows_match <- imap_lgl(tep_data_combined, function(data_table, tbl_name) {
+  nrow(data_table) == nrow(tep_data[[tbl_name]])
 })
 if (!all(rows_match)) {
   stop("Row count changed after joining for: ",
@@ -710,11 +667,11 @@ message("Join check passed: every combined table kept its original row count.")
 dir.create("Data", showWarnings = FALSE)
 
 # [write_table_list()] ===============================================================================================================================
-# Writes every table in a named list to Data/<name><suffix>.rds. iwalk() hands us each table (df) and its name (tbl_name) in turn.
+# Writes every table in a named list to Data/<name><suffix>.rds. iwalk() hands us each table (data_table) and its name (tbl_name) in turn.
 # ====================================================================================================================================================
 write_table_list <- function(tbl_list, suffix = "") {
-  iwalk(tbl_list, function(df, tbl_name) {
-    saveRDS(df, file.path("Data", paste0(tbl_name, suffix, ".rds")))
+  iwalk(tbl_list, function(data_table, tbl_name) {
+    saveRDS(data_table, file.path("Data", paste0(tbl_name, suffix, ".rds")))
   })
 }
 

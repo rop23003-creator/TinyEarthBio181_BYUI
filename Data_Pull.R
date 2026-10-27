@@ -1,18 +1,18 @@
 # [Data_Pull.R] ======================================================================================================================================
-# PURPOSE
+# PURPOSE:
 #   Downloads the latest raw Excel (.xlsx) export of every table on the Tiny Earth Public Database website (https://publicdata.tinyearth.wisc.edu/)
 #   into the "Data_Raw" folder. Run this FIRST, then run Data_Clean.R to turn those raw files into the cleaned .rds files the app uses.
 #
 #   Data_Raw always holds the files exactly as the website gives them -- nothing here edits the data.
 #
-# HOW THE WEBSITE'S DOWNLOAD WORKS
+# HOW THE WEBSITE'S DOWNLOAD WORKS:
 #   Each table has its own page (e.g. .../isolates/) with a "Download All (Excel)" button. Behind that button are two values written into the page:
 #     report_id  which table's spreadsheet to build
 #     nonce      a short-lived security code the site requires
 #   Clicking the button sends both to the site's download address, which answers with the .xlsx file. This script does the same thing for every table:
 #   open the page, read the two values, and ask for the file.
 #
-# BEFORE YOU RUN THIS
+# BEFORE YOU RUN THIS:
 #   1. Open this project through its .Rproj file, so "Data_Raw" means the folder inside this project.
 #   2. Install these packages once, if you haven't already: install.packages(c("tidyverse", "httr2")) [readxl comes with the tidyverse install.]
 # ====================================================================================================================================================
