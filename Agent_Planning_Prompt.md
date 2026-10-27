@@ -141,6 +141,31 @@ App Work Update 2 (October 15, 2026 - second agent session):
     fix_folder_name() does not check whether file.rename() succeeded.
     The diagram shows dilutions and isolates linking to each other (dilutions "yields" isolates). Both carry the other's key, so dilutions_combined gets isolate columns and isolates_combined carries dilution_id, but dilution columns are not attached to isolates.
 
+Script Work Update 3 (October 26, 2026 - third agent session):
+
+  Files changed: Data_Pull.R (new), Data_Clean.R, Bio181L_App_TE.qmd and this planning file. Where this section disagrees with older text above, THIS SECTION IS NEWER and wins.
+
+  Data_Pull.R (new): downloads the raw .xlsx export of every table from https://publicdata.tinyearth.wisc.edu/ into Data_Raw. For each table it reads the page's report_id and nonce (behind the "Download All (Excel)" button), requests the file, checks it is a real, readable .xlsx, and only then replaces the old copy. A failed table prints why and keeps its old file. Run order: Data_Pull.R, then Data_Clean.R, then the app.
+
+  Data_Clean.R - changes made (tested on the REAL Tiny Earth files):
+    Join safety: na_matches = "never" (a blank key no longer matches a blank key), a name-collision check, clearer date-parse and num_ warnings.
+    Repeated ids in isolates and samples are collapsed to one row with a warning (other tables keep repeated ids; there they are real data).
+    New section 3b removes all "Legacy" records (and rows tied to a legacy sample or isolate) from every table; drop_legacy = FALSE turns this off. Institutions left with no samples are dropped.
+    New section 3c, Fixes 1-11: placeholder zeros -> NA (air_humidity, sample_temperature), one spelling for "none", one name per other_tests$test_type, impossible lat/lng/humidity/depth values, known misspellings, capitalization-only differences, rows entered twice, conflicting results for the same test, 16S genus cleanup (+ genus_confident), num_ columns recounted, completely empty columns dropped.
+    Output confirmed: 14 individual + 13 combined .rds files in Data/.
+
+  All three scripts - style pass:
+    Libraries grouped at the top and condensed to library(tidyverse) plus readxl (and httr2 in Data_Pull). The app loads its packages in its own chunk [D0], right after the HTML chunk.
+    Every |> pipe is now %>%.
+    Comments restyled: short notes sit at the end of the line they describe (aligned, lines max 100 characters); longer notes are blocks in the form "# [Heading] =====" / text / "# =====", 150 characters wide in R (the app's YAML/CSS/HTML/JS blocks use the same shape at their older width). Code was confirmed identical before and after.
+
+  Open items:
+    aa-screen-extracts cannot be downloaded (the Tiny Earth server returns HTTP 500).
+    Two duplicate isolates remain in the source data (to be fixed on Tiny Earth and re-pulled).
+    Data/data_dictionary.csv does not exist yet.
+    Free-text and multi-select columns are not cleaned yet; sample_type is almost all "Soil".
+    After the restyle, the app still needs a click-through test in the browser. Nothing from this session is committed yet.
+
 ---
   
 Thank you!
