@@ -33,7 +33,7 @@
 #         [B1] colour palette   [B2] banner   [B3] viewer layout   [B4] buttons
 #         [B5] collapsible sections   [B6] variable picker   [B7] results page
 #         [B8] data tables   [B9] print and small screens
-#   [C] JAVASCRIPT ....................... tePick(): the Response / Explanatory checkboxes
+#   [C] JAVASCRIPT ....................... tePick(): the Response / Explanatory checkboxes; teCsv(): table CSV downloads
 #   [D0] PACKAGES (R, runs once) ......... every library() the app uses, in its own chunk
 #   [D] SETUP (R, runs once) ............. loading data, helpers, statistics
 #         [D1] settings   [D2] find the tables   [D3] order and names
@@ -46,7 +46,7 @@
 #         [F1] app state   [F2] which page shows   [F3] left panel
 #         [F4] picker status and Analyse button   [F5] right panel (tables)
 #         [F6] click handlers   [F7] Background window   [F8] results page
-#         [F9] Learn More window
+#         [F9] Learn More window   [F10] Feedback window
 #
 # HOW A CLICK TRAVELS:  a button or link sends a value to R (input$...)  ->  an
 # observeEvent() in [F6] updates the visitor's state rv$...  ->  every renderUI()
@@ -160,6 +160,8 @@ server: shiny             # makes the document a live Shiny app (needs R running
                           valid pair is chosen
        .btn-row           a row of buttons that share the width evenly
                           (Description + Run Analysis, Back + Analyse)
+       .btn-round         round icon-only button (the Feedback speech
+                          bubble on the results page)
      ================================================================ */
   .btn-te        { background: var(--sea); color: #fff; border: 1px solid var(--sea); border-radius: 8px;
                    font-weight: 600; padding: 7px 16px; }
@@ -176,6 +178,8 @@ server: shiny             # makes the document a live Shiny app (needs R running
   .btn-row .btn  { flex: 1; }
   .btn-row > *   { flex: 1; }                 /* Back and Analyse share the row evenly */
   .btn-row .shiny-html-output .btn { width: 100%; }
+  .btn-round     { width: 42px; height: 42px; padding: 0; border-radius: 50%; font-size: 1.05rem;
+                   display: inline-flex; align-items: center; justify-content: center; }
 
   /* [B5. Collapsible selector sections (<details> / <summary>)] =======
      The heading is clickable; the browser's default triangle is hidden.
@@ -236,6 +240,14 @@ server: shiny             # makes the document a live Shiny app (needs R running
        .diag-row               diagnostic plots sit side by side and wrap
                                onto the next line on narrow screens
        .shiny-plot-output img  never let a plot be wider than the page
+       .dl-box                 a graph plus its download icon (built by
+                               plot_box()); the box is as wide as the graph
+       .dl-menu                the download icon in the graph's top-right
+                               corner; clicking it opens PDF / PNG links
+       .csv-btn                "CSV" download button beside a table's
+                               caption; only shown inside .csv-tables (the
+                               Numerical Summary). To offer CSV on every
+                               table, delete the "display: none" rule.
      ================================================================ */
   .results-bar  { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
   .results-bar .spacer { flex: 1; }
@@ -262,15 +274,34 @@ server: shiny             # makes the document a live Shiny app (needs R running
   .more.open .more-body { display: block; }
   .diag-row     { display: flex; flex-wrap: wrap; gap: 14px; }
   .shiny-plot-output img { max-width: 100%; height: auto !important; }
+  .dl-box       { position: relative; width: fit-content; max-width: 100%; }
+  .dl-menu      { position: absolute; top: 6px; right: 6px; z-index: 2; text-align: right; }
+  .dl-menu > summary { list-style: none; cursor: pointer; display: inline-block; background: rgba(255,255,255,.9);
+                  color: var(--sea-dark); border: 1px solid var(--sea); border-radius: 6px; padding: 2px 8px; }
+  .dl-menu > summary::-webkit-details-marker { display: none; }
+  .dl-menu > summary:hover, .dl-menu[open] > summary { background: var(--mint); }
+  .dl-menu a    { display: block; margin-top: 3px; padding: 3px 14px; background: #fff; border: 1px solid var(--cyan);
+                  border-radius: 6px; color: var(--sea-dark); font-weight: 600; font-size: .85rem; text-decoration: none; }
+  .dl-menu a:hover { background: var(--cyan-light); }
+  .csv-btn      { display: none; }
+  .csv-tables .csv-btn { display: inline-block; margin-left: 8px; padding: 0 7px; font-size: .78rem; font-weight: 600;
+                  color: var(--sea-dark); background: #fff; border: 1px solid var(--sea); border-radius: 6px; }
+  .csv-tables .csv-btn:hover { background: var(--mint); }
 
   /* [B8. DataTable touches] ===========================================
        table.dataTable thead th  cyan header cells in the data tables
        .paginate_button.current  green highlight on the current page
                                  button of a data table
+       .dataTables_filter input  the Search box, trimmed to the same 34px
+                                 height as the "Show [n] entries" drop-down
+       .dataTables_length,       an 8px gap between those two controls and
+       .dataTables_filter        the table below them
      ================================================================ */
   table.dataTable thead th { background: var(--cyan-light); color: var(--sea-dark); }
   .dataTables_wrapper .dataTables_paginate .paginate_button.current { background: var(--sea) !important;
         color: #fff !important; border: 1px solid var(--sea) !important; }
+  .dataTables_wrapper .dataTables_filter input { box-sizing: border-box; height: 34px; padding: 2px 6px; }
+  .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter { margin-bottom: 8px; }
 
   /* [B9. Print ("Save PDF") and small-screen rules] ===================
      Printing: hide anything marked no-print (buttons) and pop-up
@@ -290,8 +321,9 @@ server: shiny             # makes the document a live Shiny app (needs R running
 </style>
 
 <!-- [C. JAVASCRIPT] ====================================================
-     One small function, tePick(), that controls the Response /
-     Explanatory checkboxes in the variable picker.
+     Two small functions: tePick() controls the Response / Explanatory
+     checkboxes in the variable picker, and teCsv() downloads a results
+     table as a CSV file.
      ================================================================ -->
 <script>
   // [tePick()] =======================================================
@@ -327,6 +359,27 @@ server: shiny             # makes the document a live Shiny app (needs R running
     // ================================================================
     Shiny.setInputValue('sel_pair', { resp: chosen('resp'), expl: chosen('expl') }, { priority: 'event' });
   }
+
+  // [teCsv()] ========================================================
+  // Called by a table's "CSV" button (see html_table() in the setup
+  // code). Copies the table on the page, header row first, into a CSV
+  // file and downloads it. Every cell is wrapped in quotes so commas in
+  // numbers such as 1,234 stay in one cell. The ﻿ mark at the start
+  // tells Excel the file is UTF-8, so symbols show correctly.
+  // ==================================================================
+  function teCsv(btn) {
+    var wrap = btn.closest('.tbl-wrap');
+    var rows = Array.from(wrap.querySelectorAll('tr')).map(function (tr) {
+      return Array.from(tr.children).map(function (cell) {
+        return '"' + cell.textContent.replace(/"/g, '""') + '"';
+      }).join(',');
+    });
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob(['﻿' + rows.join('\r\n')], { type: 'text/csv' }));
+    link.download = btn.dataset.name + '.csv';
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
 </script>
 ```
 
@@ -356,6 +409,7 @@ DATA_DIR   <- "Data"   # folder holding the cleaned .rds files
 MAX_LEVELS <- 30       # text variables with MORE distinct values are hidden from the picker
 TOP_LEVELS <- 10       # analyses keep the 10 most common groups; the rest become "Other"
 ALPHA      <- 0.05     # significance level used in the written conclusions
+FEEDBACK_URL <- "https://forms.gle/rF1p59ydqe97piHw5"  # feedback form opened by the round speech-bubble button on the results page [F10]
 
 # [D2. Find the cleaned tables] ======================================================================================================================
 # Every .rds in Data/ is one table. Files ending in "_combined" are the "Combined" tables; everything else is "Individual". (data_dictionary.csv is
@@ -407,7 +461,8 @@ load_table <- function(key) {  # load_table('isolates') returns that table, read
 # [D5. Variable descriptions (the "Description" directory)] ==========================================================================================
 # OPTIONAL file: Data/data_dictionary.csv with 3 columns:
 #   table, variable, description
-# Whatever you write there is shown in the Variable Directory. We start with an empty dictionary so the app still works when the file is missing.
+# One row per column of each Individual table (Combined tables reuse these rows, see lookup_description()). A blank description shows the
+# "not yet documented" reminder. Whatever you write there is shown in the Variable Directory. We start with an empty dictionary so the app still works when the file is missing.
 # ====================================================================================================================================================
 dictionary <- data.frame(table = character(), variable = character(), description = character())
 dict_path  <- file.path(DATA_DIR, "data_dictionary.csv")
@@ -420,8 +475,8 @@ if (file.exists(dict_path)) {  # if the file exists, read it with every column a
 # Finds the description for one variable. Order of search:
 #   Rule 1. same table + same variable name
 #   Rule 2. same variable name in any table
-#   Rule 3. columns joined in from the samples table start with "sample_", so look them up there without the prefix
-#   Rule 4. same idea for "institution_" columns and the institutions table
+#   Rule 3. columns joined in from another table carry that table's prefix ("sample_", "isolate_", "institution_"), so look them up in that table
+#           without the prefix (e.g. isolate_date -> isolates / date). `joined` lists the prefixes.
 # Nothing found: show a reminder instead of a blank. Dictionary entries use the plain table name, so '_combined' is dropped first.
 # ====================================================================================================================================================
 lookup_description <- function(key, var) {
@@ -432,10 +487,9 @@ lookup_description <- function(key, var) {
   pick <- function(d) { d <- d[!is.na(d) & nzchar(d)]; if (length(d)) d[1] else NA_character_ }
   out  <- pick(dictionary$description[dictionary$table == tbl & dictionary$variable == var])
   if (is.na(out)) out <- pick(dictionary$description[dictionary$variable == var])
-  if (is.na(out) && grepl("^sample_", var))
-    out <- pick(dictionary$description[dictionary$table == "samples" & dictionary$variable == sub("^sample_", "", var)])
-  if (is.na(out) && grepl("^institution_", var))
-    out <- pick(dictionary$description[dictionary$table == "institutions" & dictionary$variable == sub("^institution_", "", var)])
+  joined <- c(sample_ = "samples", isolate_ = "isolates", institution_ = "institutions")  # prefix -> table it came from
+  for (p in names(joined)) if (is.na(out) && startsWith(var, p))
+    out <- pick(dictionary$description[dictionary$table == joined[[p]] & dictionary$variable == sub(p, "", var, fixed = TRUE)])
   if (is.na(out)) "(not yet documented - add it to Data/data_dictionary.csv)" else out
 }
 
@@ -514,7 +568,8 @@ fmt_n <- function(x, d = 3) formatC(x, format = "f", digits = d)
 # [html_table()] =====================================================================================================================================
 # Turns a data.frame into a tidy HTML table (used in the results page). fmt_col() formats one column: numbers are rounded to 3 decimals with thousands
 # commas and NA shown blank; anything else is shown as text. The HTML is an optional caption, then a <table> with a header row and one row per data
-# row.
+# row. The caption also holds a "CSV" button that calls teCsv() (JavaScript [C]); data-name is the file name, made from the caption. The button is
+# only visible in the Numerical Summary (see .csv-btn in [B7]).
 # ====================================================================================================================================================
 html_table <- function(df, caption = NULL) {
   fmt_col <- function(col) {
@@ -528,7 +583,9 @@ html_table <- function(df, caption = NULL) {
   }
   df[] <- lapply(df, fmt_col)  # apply fmt_col to every column (df[] keeps the data.frame shape)
   tags$div(class = "tbl-wrap",
-    if (!is.null(caption)) tags$div(class = "tbl-cap", caption),
+    if (!is.null(caption)) tags$div(class = "tbl-cap", caption,
+      tags$button(type = "button", class = "csv-btn no-print", title = "Download this table as a CSV file (opens in Excel)",
+                  `data-name` = gsub("[^A-Za-z0-9]+", "_", caption), onclick = "teCsv(this);", icon("download"), "CSV")),
     tags$table(class = "te-table",
       tags$thead(tags$tr(lapply(names(df), tags$th))),
       tags$tbody(lapply(seq_len(nrow(df)), function(i) tags$tr(lapply(df[i, ], tags$td))))))
@@ -917,6 +974,20 @@ pick_row <- function(v, type, is_resp, is_expl) {
       span(class = "pick-name", v, span(class = "vtype", paste0("(", type, ")"))),
       box("resp", is_resp), box("expl", is_expl))
 }
+
+# [plot_box()] =======================================================================================================================================
+# A graph with a download icon in its top-right corner. Clicking the icon opens two links, PDF and PNG, that download the graph through the handlers
+# named <id>_pdf and <id>_png (see "Graph downloads" in [F8]). Choosing a link closes the menu again.
+# ====================================================================================================================================================
+plot_box <- function(id, width, height) {
+  close_menu <- "this.parentNode.open = false;"
+  div(class = "dl-box",
+      plotOutput(id, width = width, height = height),
+      tags$details(class = "dl-menu no-print",
+                   tags$summary(title = "Download this graph", icon("download")),
+                   downloadLink(paste0(id, "_pdf"), "PDF", onclick = close_menu),
+                   downloadLink(paste0(id, "_png"), "PNG", onclick = close_menu)))
+}
 ```
 
 ```{r}
@@ -1181,7 +1252,7 @@ result <- reactive({
 })
 
 # [Top bar and results body] =========================================================================================================================
-# output$results_ui    the top bar (Back / Learn More / Save PDF), built once per analysis. "Save PDF" uses the browser's print window - choose "Save
+# output$results_ui    the top bar (Back / Learn More / Save PDF / Feedback), built once per analysis. "Save PDF" uses the browser's print window - choose "Save
 #                      as PDF" as the printer.
 # output$results_body  everything under the top bar. result() is calculated once and shared with the plots; r = the named list returned by the
 #                      matching analyse_* function. The "View More on Test" drop-down is a button that toggles the "open" class (see CSS). When
@@ -1194,7 +1265,9 @@ output$results_ui <- renderUI({
           actionButton("btn_results_back", "\u2190 Back to Data", class = "btn-te btn-outline"),
           div(class = "spacer"),
           actionButton("btn_learn", "Learn More", class = "btn-te btn-cyan"),
-          tags$button(type = "button", class = "btn btn-te", onclick = "window.print();", "Save PDF")),
+          tags$button(type = "button", class = "btn btn-te", onclick = "window.print();", "Save PDF"),
+          actionButton("btn_feedback", NULL, icon = icon("comment-dots"), class = "btn-te btn-round",
+                       title = "Give feedback on this app")),  # opens the Feedback window [F10]
       p(class = "hint", paste("Table:", pretty_name(a$table), "\u00b7 Response (y):", a$resp, "\u00b7 Explanatory (x):", a$expl)),
       uiOutput("results_body"))
 })
@@ -1204,9 +1277,9 @@ output$results_body <- renderUI({
   div(
     h2(r$title),
     h3(class = "sec-title", "Graph"),
-    plotOutput("res_plot", width = "780px", height = "440px"),
+    plot_box("res_plot", width = "780px", height = "440px"),
     h3(class = "sec-title", "Numerical Summary"),
-    r$summary_ui,
+    div(class = "csv-tables", r$summary_ui),  # csv-tables shows each table's CSV button (see [B7])
     div(class = "more",
         tags$button(type = "button", class = "btn btn-te more-toggle no-print",
                     onclick = "this.parentNode.classList.toggle('open');", "View More on Test \u25be"),
@@ -1216,7 +1289,7 @@ output$results_body <- renderUI({
             h3(class = "sec-title", "Test Results"), r$test_ui,
             h3(class = "sec-title", "Diagnostics"),
             div(class = "diag-row", lapply(seq_along(r$diag_plots), function(i)
-              plotOutput(paste0("diag_plot_", i), width = "520px", height = "360px"))),
+              plot_box(paste0("diag_plot_", i), width = "520px", height = "360px"))),
             r$diag_ui)))
 })
 
@@ -1234,6 +1307,27 @@ for (i in 1:2) local({
   outputOptions(output, id, suspendWhenHidden = FALSE)
 })
 
+# [Graph downloads] ==================================================================================================================================
+# plot_downloads() gives one graph its PDF and PNG download (the links in plot_box()). ggsave() redraws the same ggplot at the same size in inches as
+# on the page (pixels / res), so the file looks like what the student sees; PNGs are 300 dpi so they stay sharp in Word. cairo_pdf keeps symbols
+# such as the plus-minus sign intact. Files are named after the test, e.g. "ANOVA_pH_by_Site_graph.png".
+# ====================================================================================================================================================
+plot_downloads <- function(id, get_plot, w, h, label) {
+  for (ext in c("pdf", "png")) local({
+    e <- ext
+    output[[paste0(id, "_", e)]] <- downloadHandler(
+      filename = function() paste0(gsub("[^A-Za-z0-9]+", "_", result()$title), "_", label, ".", e),
+      content  = function(file) ggsave(file, get_plot(), width = w, height = h, units = "in", dpi = 300,
+                                       device = if (e == "pdf") grDevices::cairo_pdf else "png"))
+    outputOptions(output, paste0(id, "_", e), suspendWhenHidden = FALSE)  # links work even inside the closed drop-down
+  })
+}
+plot_downloads("res_plot", function() result()$main_plot, 780 / 110, 440 / 110, "graph")
+for (i in 1:2) local({
+  ii <- i
+  plot_downloads(paste0("diag_plot_", ii), function() result()$diag_plots[[ii]], 520 / 100, 360 / 100, paste0("diagnostic_", ii))
+})
+
 # [F9. Learn More window] ============================================================================================================================
 # Shows a table of which test goes with which variable types, then one explanation block per test, with the test you just ran first.
 # ====================================================================================================================================================
@@ -1248,5 +1342,19 @@ observeEvent(input$btn_learn, {
       tags$thead(tags$tr(tags$th("Variables chosen"), tags$th("Test used"))),
       tags$tbody(lapply(names(test_info), function(k) tags$tr(tags$td(test_info[[k]]$when), tags$td(test_info[[k]]$name))))),
     lapply(order, function(k) tagList(h4(class = "sec-title", test_info[[k]]$name), info_ui(k)))))
+})
+
+# [F10. Feedback window] =============================================================================================================================
+# The round speech-bubble button asks whether the visitor wants to give feedback. "Yes" opens FEEDBACK_URL [D1] in a new browser tab and closes the
+# window; "No" just closes it. Both buttons close the window in the browser (data-dismiss), so R does not need to react to them.
+# ====================================================================================================================================================
+observeEvent(input$btn_feedback, {
+  showModal(modalDialog(
+    title = "Feedback", size = "s", easyClose = TRUE,
+    p("Would you like to give feedback on this app?"),
+    footer = tagList(
+      modalButton("No"),
+      tags$button(type = "button", class = "btn btn-te", `data-dismiss` = "modal", `data-bs-dismiss` = "modal",
+                  onclick = sprintf("window.open('%s', '_blank', 'noopener');", FEEDBACK_URL), "Yes"))))
 })
 ```

@@ -14,22 +14,20 @@
 #
 # BEFORE YOU RUN THIS
 #   1. Open this project through its .Rproj file, so "Data_Raw" means the folder inside this project.
-#   2. Install these packages once, if you haven't already:
-#        install.packages(c("tidyverse", "httr2"))
-#      (readxl comes with the tidyverse install.)
+#   2. Install these packages once, if you haven't already: install.packages(c("tidyverse", "httr2")) [readxl comes with the tidyverse install.]
 # ====================================================================================================================================================
 
-library(tidyverse)  # stringr (find report_id/nonce), purrr (repeat downloads), %>% pipe, and more
-library(readxl)     # opens each downloaded file to check it's a real spreadsheet
-library(httr2)      # sends requests to the website and saves the replies
+library(tidyverse)  # stringr (find report_id/nonce); purrr (repeat downloads)
+library(readxl)     # Opens each downloaded file to check it's a real spreadsheet.
+library(httr2)      # Sends requests to the website and saves the replies.
 
-base_url <- "https://publicdata.tinyearth.wisc.edu"
-raw_dir  <- "Data_Raw"
-
-# [1. The tables to download] ========================================================================================================================
+# [1. Setup: website address, Data_Raw folder, and table list] =======================================================================================
 # Each name is the table's web address on the site (e.g. .../isolates/) AND the name its file is saved under (e.g. Data_Raw/isolates.xlsx) -- the same
-# names Data_Clean.R reads. If the site adds a table, add its page name here.
+# names Data_Clean.R reads.
 # ====================================================================================================================================================
+base_url     <- "https://publicdata.tinyearth.wisc.edu"
+data_raw_dir <- "Data_Raw"
+dir.create(data_raw_dir, showWarnings = FALSE) # Make the Data_Raw folder if it isn't there already.
 tables <- c(
   "institutions",
   "samples",
@@ -48,79 +46,73 @@ tables <- c(
   "aa-screen-extracts"
 )
 
-dir.create(raw_dir, showWarnings = FALSE)  # make Data_Raw if it isn't there yet
-
-# [2. A function that downloads ONE table] ===========================================================================================================
-# The new file is first saved to a temporary spot and checked. Only if it is a real, readable Excel file does it replace the old copy in Data_Raw --
-# so a failed download never leaves you with a broken or half-finished file.
+# [2. How each table is downloaded] ==================================================================================================================
+# A new file is first saved to a temporary spot and checked. Only if the file is a readable XLSX file does it replace the old copy in Data_Raw.
+# This makes it so a failed download never leaves you with an unusable file.
 # ====================================================================================================================================================
-pull_table <- function(slug) {
-  message("Downloading ", slug, " ...")
+pull_table <- function(table_name) {
+  message("Downloading ", table_name, " ...")
 
-  jar <- tempfile(fileext = ".txt")  # "cookie jar": both requests then look like one visitor
+  jar <- tempfile(fileext = ".txt")  # Cookie "jar": it's a temp file holding the site's cookies, so both requests look like one visitor.
 
-  # [Step A] =========================================================================================================================================
-  # Open the table's page and read its HTML as text.
+  # [Step 1/5] =======================================================================================================================================
+  # Open the table's page and read its HTML as text. req_user_agent() labels our requests (here and in Step 3) so the site's admins can see in their
+  # logs who is downloading and why. It does not change the data we get.
   # ==================================================================================================================================================
-  page <- request(paste0(base_url, "/", slug, "/")) %>%
+  page <- request(paste0(base_url, "/", table_name, "/")) %>%
     req_user_agent("BYU-Idaho Bio 181 Tiny Earth data pull (R httr2)") %>%
     req_cookie_preserve(jar) %>%
     req_perform() %>%
     resp_body_string()
 
-  # [Step B] =========================================================================================================================================
+  # [Step 2/5] =======================================================================================================================================
   # Find the two values the download button uses. str_match() returns the full match in column 1 and the part inside ( ) in column 2, so [, 2] is just
   # the value we want.
   # ==================================================================================================================================================
   report_id <- str_match(page, 'data-report_id="(\\d+)"')[, 2]
-  nonce     <- str_match(page, paste0('reportbuilder_', report_id,
-                                      '\\s*=\\s*\\{[^}]*"nonce":"([^"]+)"'))[, 2]
+  nonce <- str_match(page, paste0('reportbuilder_', report_id, '\\s*=\\s*\\{[^}]*"nonce":"([^"]+)"'))[, 2]
   if (is.na(report_id) || is.na(nonce)) {
-    stop("could not find the download button on the ", slug,
-         " page -- the website may have changed.", call. = FALSE)
+    stop("could not find the download button on the ", table_name, " page -- the website may have changed.", call. = FALSE)
   }
 
-  # [Step C] =========================================================================================================================================
+  # [Step 3/5] =======================================================================================================================================
   # Ask for the spreadsheet, the same way the button does, and save the reply to a temporary file.
   # ==================================================================================================================================================
   tmp <- tempfile(fileext = ".xlsx")
   request(paste0(base_url, "/wp-admin/admin-ajax.php")) %>%
     req_user_agent("BYU-Idaho Bio 181 Tiny Earth data pull (R httr2)") %>%
     req_cookie_preserve(jar) %>%
-    req_body_form(
-      action               = "report_builder_download_report",
-      nonce                = nonce,
-      `wdtReportConfig[id]` = report_id,
-      wdtDownloadToken     = format(as.numeric(Sys.time()) * 1000, scientific = FALSE),
-      downloadType         = "download"
-    ) %>%
-    req_timeout(300) %>%  # big tables can take a while to build, so allow up to 5 minutes
+    req_body_form(action = "report_builder_download_report",
+                  nonce = nonce,
+                  `wdtReportConfig[id]` = report_id,
+                  wdtDownloadToken = format(as.numeric(Sys.time()) * 1000, scientific = FALSE),
+                  downloadType = "download") %>%
+    req_timeout(300) %>%
     req_perform(path = tmp)
 
-  # [Step D] =========================================================================================================================================
-  # Check the file before trusting it. Every .xlsx file begins with the two letters "PK" (it's a zip file inside), so anything else -- like an error
-  # page -- is rejected. Then make sure readxl can actually open it. col_types = "text" reads every cell as plain text -- we only need a row count
-  # here, and it skips readxl's type-guessing (and its pile of warnings). Data_Clean.R works out the real column types later.
+  # [Step 4/5] =======================================================================================================================================
+  # Check the file before trusting it. Every .xlsx file begins with the two letters "PK" (it's a zip file inside), so anything else is rejected.
+  # Then make sure readxl can actually open it. col_types = "text" reads every cell as plain text and it skips readxl's type-guessing.
   # ==================================================================================================================================================
-  first_bytes <- readBin(tmp, "raw", n = 2)
-  if (!identical(first_bytes, charToRaw("PK"))) {
-    stop("the website did not send an Excel file for ", slug, call. = FALSE)
+  xlsx_zip_id <- readBin(tmp, "raw", n = 2)
+  if (!identical(xlsx_zip_id, charToRaw("PK"))) {
+    stop("the website did not send an Excel file for ", table_name, call. = FALSE)
   }
   n_rows <- nrow(read_excel(tmp, col_types = "text"))
 
-  # [Step E] =========================================================================================================================================
-  # The file is good -- put it in Data_Raw, replacing the old one.
+  # [Step 5/5] =======================================================================================================================================
+  # Put the file in Data_Raw and replace the old one.
   # ==================================================================================================================================================
-  file.copy(tmp, file.path(raw_dir, paste0(slug, ".xlsx")), overwrite = TRUE)
-  message("  saved ", slug, ".xlsx (", n_rows, " rows)")
+  file.copy(tmp, file.path(data_raw_dir, paste0(table_name, ".xlsx")), overwrite = TRUE)
+  message("  saved ", table_name, ".xlsx (", n_rows, " rows)")
   n_rows
 }
 
-# [3. Download every table] ==========================================================================================================================
+# [3. Downloads every table] =========================================================================================================================
 # tryCatch() means "if one table fails, print why and keep going" instead of stopping the whole script. A failed table keeps its old file in Data_Raw.
 # ====================================================================================================================================================
-rows_pulled <- map_dbl(tables, function(slug) {
-  n <- tryCatch(pull_table(slug), error = function(e) {
+rows_pulled <- map_dbl(tables, function(table_name) {
+  n <- tryCatch(pull_table(table_name), error = function(e) {
     message("  FAILED: ", conditionMessage(e))
     NA
   })
@@ -129,13 +121,11 @@ rows_pulled <- map_dbl(tables, function(slug) {
 })
 names(rows_pulled) <- tables
 
-# [4. Summary] =======================================================================================================================================
-# Report how many tables downloaded, and name any that failed.
+# [4. Download Report] ===============================================================================================================================
+# Reports how many tables were downloaded, and name any that failed.
 # ====================================================================================================================================================
 failed <- names(rows_pulled)[is.na(rows_pulled)]
-
-message("\nDownloaded ", sum(!is.na(rows_pulled)), " of ", length(tables),
-        " tables into ", raw_dir, ".")
+message("\nDownloaded ", sum(!is.na(rows_pulled)), " of ", length(tables), " tables into ", data_raw_dir, ".")
 if (length(failed) > 0) {
   warning("These tables could not be downloaded (their old files, if any, ",
           "were kept): ", paste(failed, collapse = ", "),
