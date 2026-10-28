@@ -1,190 +1,147 @@
 table,variable,description
-aa_screen_isolates,id,
-aa_screen_isolates,nickname,
-aa_screen_isolates,date,
-aa_screen_isolates,media_used,
-aa_screen_isolates,media_used_concentration,
-aa_screen_isolates,media_mod,
-aa_screen_isolates,additives,
-aa_screen_isolates,additive_concentration,
-aa_screen_isolates,temperature,
-aa_screen_isolates,duration,
-aa_screen_isolates,isolate_id,
-aa_screen_isolates,sample_id,
-aa_screen_isolates,test_bacteria,
-aa_screen_isolates,antibiotic_activity,
-aa_screen_isolates,institution_name,
-aa_screen_libraries,id,
-aa_screen_libraries,nickname,
-aa_screen_libraries,date,
-aa_screen_libraries,media_used,
-aa_screen_libraries,media_used_concentration,
-aa_screen_libraries,media_mod,
-aa_screen_libraries,temperature,
-aa_screen_libraries,duration,
-aa_screen_libraries,test_bacteria,
-aa_screen_libraries,activity_yes,
-aa_screen_libraries,activity_no,
-aa_screen_libraries,activity_isolate_did_not_grow,
-aa_screen_libraries,activity_inconclusive,
-aa_screen_libraries,additives,
-aa_screen_libraries,additive_concentration,
-aa_screen_libraries,sample_id,
-aa_screen_libraries,antibiotic_activity,
-aa_screen_libraries,isolate_id,
-aa_screen_libraries,institution_name,
-antibio_suscepts,id,
-antibio_suscepts,nickname,
-antibio_suscepts,date,
-antibio_suscepts,media_used,
-antibio_suscepts,media_used_concentration,
-antibio_suscepts,media_mod,
-antibio_suscepts,additives,
-antibio_suscepts,additive_concentration,
-antibio_suscepts,temperature,
-antibio_suscepts,duration,
-antibio_suscepts,sample_id,
-antibio_suscepts,antibiotics,
-antibio_suscepts,concentration,
-antibio_suscepts,results,
-antibio_suscepts,isolate_id,
-antibio_suscepts,institution_name,
-dilutions,id,
-dilutions,nickname,
-dilutions,date,
-dilutions,media_used,
-dilutions,media_used_concentration,
-dilutions,media_mod,
-dilutions,additives,
-dilutions,additive_concentration,
-dilutions,temperature,
-dilutions,duration,
-dilutions,dilution_buffer,
-dilutions,cfug,
-dilutions,sample_id,
-dilutions,morphology_color,
-dilutions,morphology_edge,
-dilutions,morphology_elevation,
-dilutions,morphology_surface,
-dilutions,morphology_whole_colony,
-dilutions,isolate_id,
-dilutions,institution_name,
-eukaryotics,id,
-eukaryotics,nickname,
-eukaryotics,date,
-eukaryotics,media_used,
-eukaryotics,media_used_concentration,
-eukaryotics,media_mod,
-eukaryotics,additives,
-eukaryotics,additive_concentration,
-eukaryotics,temperature,
-eukaryotics,duration,
-eukaryotics,eukaryotic_organism,
-eukaryotics,experimental_design,
-eukaryotics,results,
-eukaryotics,isolate_form,
-eukaryotics,eukaryotic_inhibition,
-eukaryotics,isolate_id,
-eukaryotics,sample_id,
-eukaryotics,institution_name,
-extracts,id,
-extracts,nickname,
-extracts,date,
-extracts,media_used,
-extracts,media_used_concentration,
-extracts,additives,
-extracts,additive_concentration,
-extracts,temperature,
-extracts,duration,
-extracts,solid_or_liquid_culture,
-extracts,volume_of_liquid_culture,
-extracts,number_of_plates_used,
-extracts,solvent_used_for_extraction,
-extracts,resin_used,
-extracts,drying_agent_used,
-extracts,experimental_design,
-extracts,isolate_id,
-extracts,sample_id,
-extracts,institution_name,
-gram_stains,id,
-gram_stains,date,
-gram_stains,sample_id,
-gram_stains,isolate_id,
-gram_stains,test_date,
-gram_stains,protocol,
-gram_stains,result,
-gram_stains,cell_size,
-gram_stains,institution_name,
-institutions,id,
-institutions,institution_name,
-institutions,country_name,
-isolates,id,
-isolates,date,
-isolates,sample_id,
-isolates,dilution_id,
-isolates,institution_name,
-isolates,nickname,
-library_collections,id,
-library_collections,date,
-library_collections,media_used,
-library_collections,media_used_concentration,
-library_collections,temperature,
-library_collections,duration,
-library_collections,number_of_isolates,
-library_collections,nickname,
-library_collections,additives,
-library_collections,additive_concentration,
-library_collections,sample_id,
-library_collections,isolate_id,
-library_collections,institution_name,
-other_tests,id,
-other_tests,date,
-other_tests,sample_id,
-other_tests,isolate_id,
-other_tests,test_type,
-other_tests,test_date,
-other_tests,protocol,
-other_tests,results,
-other_tests,institution_name,
-rrna_analyses,id,
-rrna_analyses,nickname,
-rrna_analyses,date,
-rrna_analyses,genus,
-rrna_analyses,percent_identity,
-rrna_analyses,fasta_text,
-rrna_analyses,query_length,
-rrna_analyses,isolate_id,
-rrna_analyses,sample_id,
-rrna_analyses,institution_name,
-rrna_analyses,genus_confident,
-samples,id,
-samples,nickname,
-samples,date,
-samples,site_description,
-samples,air_temperature,
-samples,air_humidity,
-samples,sample_temperature,
-samples,sample_ph,
-samples,sample_type,
-samples,depth,
-samples,water_content,
-samples,lat,
-samples,lng,
-samples,country,
-samples,soil_type,
-samples,institution_name,
-streaks,id,
-streaks,date,
-streaks,media_used,
-streaks,media_used_concentration,
-streaks,media_mod,
-streaks,temperature,
-streaks,duration,
-streaks,morphology_color,
-streaks,morphology_edge,
-streaks,morphology_elevation,
-streaks,morphology_surface,
-streaks,morphology_whole_colony,
-streaks,isolate_id,
-streaks,sample_id,
-streaks,institution_name,
+aa_screen_isolates,id,Unique ID number of the antibiotic-activity screen of one isolate against one test bacterium.
+aa_screen_isolates,nickname,"Short label the student gave this record (free text, not a category)."
+aa_screen_isolates,date,Date the work was done (year-month-day).
+aa_screen_isolates,media_used,Growth medium (agar) used for the plates.
+aa_screen_isolates,media_used_concentration,"Strength of the growth medium as a percent of full strength (100 = full strength, 10 = 1/10 strength)."
+aa_screen_isolates,additives,Antifungal or other compound added to the medium (None = nothing added).
+aa_screen_isolates,temperature,Incubation temperature (degrees C).
+aa_screen_isolates,duration,Incubation time (hours).
+aa_screen_isolates,isolate_id,ID of the bacterial isolate tested (links to isolates$id).
+aa_screen_isolates,sample_id,ID of the soil sample this record comes from (links to samples$id).
+aa_screen_isolates,test_bacteria,Tester (ESKAPE-safe relative) bacterium the isolate was screened against.
+aa_screen_isolates,antibiotic_activity,"Whether the isolate inhibited the test bacterium: Yes, No, Inconclusive (unclear or conflicting repeat results), or Isolate did not grow."
+aa_screen_isolates,institution_name,School that submitted the record (links to institutions).
+aa_screen_libraries,id,"ID of the library screen. One screen can appear on several rows, one per isolate in the library."
+aa_screen_libraries,nickname,"Short label the student gave this record (free text, not a category)."
+aa_screen_libraries,date,Date the work was done (year-month-day).
+aa_screen_libraries,media_used,Growth medium (agar) used for the plates.
+aa_screen_libraries,media_used_concentration,"Strength of the growth medium as a percent of full strength (100 = full strength, 10 = 1/10 strength)."
+aa_screen_libraries,temperature,Incubation temperature (degrees C).
+aa_screen_libraries,duration,Incubation time (hours).
+aa_screen_libraries,test_bacteria,Tester (ESKAPE-safe relative) bacterium the isolate was screened against.
+aa_screen_libraries,activity_yes,"Number of library isolates that inhibited the test bacterium (given only on the first row of each screen, NA on the rest)."
+aa_screen_libraries,activity_no,Number of library isolates that did not inhibit the test bacterium (first row of each screen only).
+aa_screen_libraries,activity_isolate_did_not_grow,Number of library isolates that did not grow during the screen (first row of each screen only).
+aa_screen_libraries,activity_inconclusive,Number of library isolates with an unclear result (first row of each screen only).
+aa_screen_libraries,sample_id,ID of the soil sample this record comes from (links to samples$id).
+aa_screen_libraries,antibiotic_activity,"Result for the isolate named on this row: Yes, No, or Inconclusive."
+aa_screen_libraries,isolate_id,ID of one isolate from the screened library (links to isolates$id); blank when no isolate was named.
+aa_screen_libraries,institution_name,School that submitted the record (links to institutions).
+antibio_suscepts,id,Unique ID number of the antibiotic susceptibility (disk) test.
+antibio_suscepts,nickname,"Short label the student gave this record (free text, not a category)."
+antibio_suscepts,date,Date the work was done (year-month-day).
+antibio_suscepts,media_used,Growth medium (agar) used for the plates.
+antibio_suscepts,media_used_concentration,"Strength of the growth medium as a percent of full strength (100 = full strength, 10 = 1/10 strength)."
+antibio_suscepts,temperature,Incubation temperature (degrees C).
+antibio_suscepts,duration,Incubation time (hours).
+antibio_suscepts,sample_id,ID of the soil sample this record comes from (links to samples$id).
+antibio_suscepts,antibiotics,Antibiotic on the disk.
+antibio_suscepts,concentration,Amount of antibiotic on the disk (micrograms).
+antibio_suscepts,results,"Isolate's response to the antibiotic: Susceptible, Intermediate, or Resistant."
+antibio_suscepts,isolate_id,ID of the bacterial isolate tested (links to isolates$id).
+antibio_suscepts,institution_name,School that submitted the record (links to institutions).
+dilutions,id,Unique ID number of the dilution plating.
+dilutions,nickname,"Short label the student gave this record (free text, not a category)."
+dilutions,date,Date the work was done (year-month-day).
+dilutions,media_used,Growth medium (agar) used for the plates.
+dilutions,additives,Antifungal or other compound added to the medium (None = nothing added).
+dilutions,temperature,Incubation temperature (degrees C).
+dilutions,duration,Incubation time (hours).
+dilutions,dilution_buffer,"Liquid used to dilute the soil (water, saline, or PBS)."
+dilutions,cfug,Colony-forming units per gram of soil (CFU/g): how many live bacteria the soil held.
+dilutions,sample_id,ID of the soil sample this record comes from (links to samples$id).
+dilutions,isolate_id,"ID of an isolate picked from this dilution plate, when one was recorded (links to isolates$id)."
+dilutions,institution_name,School that submitted the record (links to institutions).
+eukaryotics,id,Unique ID number of the eukaryotic toxicity/inhibition test.
+eukaryotics,nickname,"Short label the student gave this record (free text, not a category)."
+eukaryotics,date,Date the work was done (year-month-day).
+eukaryotics,media_used,Growth medium (agar) used for the plates.
+eukaryotics,media_used_concentration,"Strength of the growth medium as a percent of full strength (100 = full strength, 10 = 1/10 strength)."
+eukaryotics,temperature,Incubation temperature (degrees C).
+eukaryotics,duration,Incubation time (hours).
+eukaryotics,eukaryotic_organism,"Fungus, plant, or yeast the isolate was tested against."
+eukaryotics,isolate_form,Form of the isolate used: Live culture or Extract.
+eukaryotics,eukaryotic_inhibition,"Whether the isolate inhibited the eukaryotic organism: Yes, No, or Inconclusive."
+eukaryotics,isolate_id,ID of the bacterial isolate tested (links to isolates$id).
+eukaryotics,sample_id,ID of the soil sample this record comes from (links to samples$id).
+eukaryotics,institution_name,School that submitted the record (links to institutions).
+extracts,id,Unique ID number of the chemical extract made from an isolate.
+extracts,nickname,"Short label the student gave this record (free text, not a category)."
+extracts,date,Date the work was done (year-month-day).
+extracts,media_used,Growth medium (agar) used for the plates.
+extracts,media_used_concentration,"Strength of the growth medium as a percent of full strength (100 = full strength, 10 = 1/10 strength)."
+extracts,additives,Antifungal or other compound added to the medium (None = nothing added).
+extracts,duration,Incubation time (hours).
+extracts,number_of_plates_used,Number of agar plates of the isolate used to make the extract.
+extracts,drying_agent_used,Drying agent used to remove water from the extract (None or sodium sulfate).
+extracts,isolate_id,ID of the bacterial isolate tested (links to isolates$id).
+extracts,sample_id,ID of the soil sample this record comes from (links to samples$id).
+extracts,institution_name,School that submitted the record (links to institutions).
+gram_stains,id,Unique ID number of the Gram stain.
+gram_stains,date,Date the work was done (year-month-day).
+gram_stains,sample_id,ID of the soil sample this record comes from (links to samples$id).
+gram_stains,isolate_id,ID of the bacterial isolate tested (links to isolates$id).
+gram_stains,result,"Gram stain result: Gram positive, Gram negative, or Inconclusive (unclear or conflicting repeat stains)."
+gram_stains,institution_name,School that submitted the record (links to institutions).
+institutions,institution_name,Name of the school taking part in Tiny Earth.
+institutions,country_name,Country the school is in.
+isolates,id,Unique ID number of the bacterial isolate (one pure culture picked from a sample).
+isolates,date,Date the isolate was picked (year-month-day).
+isolates,sample_id,ID of the soil sample this record comes from (links to samples$id).
+isolates,dilution_id,"ID of the dilution plate the isolate was picked from, when recorded (links to dilutions$id)."
+isolates,institution_name,School that submitted the record (links to institutions).
+isolates,nickname,"Short label the student gave this record (free text, not a category)."
+library_collections,id,Unique ID number of the library collection (a set of isolates picked from one sample).
+library_collections,date,Date the work was done (year-month-day).
+library_collections,media_used,Growth medium (agar) used for the plates.
+library_collections,media_used_concentration,"Strength of the growth medium as a percent of full strength (100 = full strength, 10 = 1/10 strength)."
+library_collections,temperature,Incubation temperature (degrees C).
+library_collections,duration,Incubation time (hours).
+library_collections,number_of_isolates,Number of isolates collected into the library.
+library_collections,nickname,"Short label the student gave this record (free text, not a category)."
+library_collections,sample_id,ID of the soil sample this record comes from (links to samples$id).
+library_collections,institution_name,School that submitted the record (links to institutions).
+other_tests,id,Unique ID number of the biochemical test.
+other_tests,date,Date the work was done (year-month-day).
+other_tests,sample_id,ID of the soil sample this record comes from (links to samples$id).
+other_tests,isolate_id,ID of the bacterial isolate tested (links to isolates$id).
+other_tests,test_type,"Name of the biochemical test (e.g. Catalase Test, Oxidase Test), with spellings standardized."
+other_tests,results,"Standardized test result: Positive, Negative, Alpha/Beta/Gamma hemolysis (Blood Agar), No growth, Inconclusive, or Other (mixed or unclear). MacConkey Agar = lactose fermentation."
+other_tests,institution_name,School that submitted the record (links to institutions).
+rrna_analyses,id,Unique ID number of the 16S rRNA sequencing analysis.
+rrna_analyses,nickname,"Short label the student gave this record (free text, not a category)."
+rrna_analyses,date,Date the work was done (year-month-day).
+rrna_analyses,genus,"Bacterial genus from the closest NCBI BLAST match of the 16S rRNA sequence (NA = no hit, 'Other', or conflicting genera)."
+rrna_analyses,percent_identity,"How closely the sequence matched the BLAST hit (percent identity, 0-100)."
+rrna_analyses,isolate_id,ID of the bacterial isolate tested (links to isolates$id).
+rrna_analyses,sample_id,ID of the soil sample this record comes from (links to samples$id).
+rrna_analyses,institution_name,School that submitted the record (links to institutions).
+rrna_analyses,genus_confident,"TRUE when the genus call is backed by a match of at least 90% identity, FALSE below 90%, NA if no genus or no match %."
+samples,id,Unique ID number of the soil sample.
+samples,nickname,"Short label the student gave this record (free text, not a category)."
+samples,date,Date the soil sample was collected (year-month-day).
+samples,air_temperature,Air temperature at the collection site (degrees C). A few winter readings typed in Fahrenheit were converted to C.
+samples,air_humidity,"Relative humidity of the air at the collection site (percent, 0-100). Entries of 0 were treated as not measured (NA)."
+samples,sample_temperature,Temperature of the soil itself (degrees C). Zeros were treated as not measured except winter samples from cold sites.
+samples,sample_ph,pH of the soil sample (0-14; 7 = neutral).
+samples,depth,How far below the surface the soil was collected (cm).
+samples,water_content,Water content of the soil (percent).
+samples,lat,Latitude of the collection site (decimal degrees; positive = north).
+samples,lng,Longitude of the collection site (decimal degrees; negative = west).
+samples,soil_type,"Soil texture(s) of the sample (clay, loam, sand, silt; several are listed when mixed)."
+samples,institution_name,School that collected the sample.
+streaks,id,Unique ID number of the streak plate used to grow the isolate pure.
+streaks,date,Date the work was done (year-month-day).
+streaks,media_used,Growth medium (agar) used for the plates.
+streaks,media_used_concentration,"Strength of the growth medium as a percent of full strength (100 = full strength, 10 = 1/10 strength)."
+streaks,temperature,Incubation temperature (degrees C).
+streaks,duration,Incubation time (hours).
+streaks,morphology_color,Colony color(s) on the streak plate.
+streaks,morphology_edge,"Shape of the colony edge (e.g. entire, undulate, lobate)."
+streaks,morphology_elevation,"Side profile of the colony (e.g. flat, raised, convex)."
+streaks,morphology_surface,"Texture of the colony surface (e.g. smooth, glistening, dry/powdery)."
+streaks,morphology_whole_colony,"Overall colony shape seen from above (e.g. circular, irregular)."
+streaks,isolate_id,ID of the bacterial isolate tested (links to isolates$id).
+streaks,sample_id,ID of the soil sample this record comes from (links to samples$id).
+streaks,institution_name,School that submitted the record (links to institutions).

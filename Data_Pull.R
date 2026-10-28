@@ -121,5 +121,6 @@ if (length(failed) > 0) {
           "were kept): ", paste(failed, collapse = ", "),
           "\nTry again later, or download them by hand from the website.",
           call. = FALSE)
-} 
-else {message("Next step: run Data_Clean.R.")}
+} else {
+  message("Next step: run Data_Clean.R.")
+}

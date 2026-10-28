@@ -290,6 +290,8 @@ server: shiny             # makes the document a live Shiny app (needs R running
 
   /* [B8. DataTable touches] =========================================================================================================================
        table.dataTable thead th  cyan header cells in the data tables
+       table.dataTable th, td    every header and cell left-aligned (DT
+                                 right-aligns number columns by default)
        .paginate_button.current  green highlight on the current page
                                  button of a data table
        .dataTables_filter input  the Search box, trimmed to the same 34px
@@ -298,6 +300,7 @@ server: shiny             # makes the document a live Shiny app (needs R running
        .dataTables_filter        the table below them
      ============================================================================================================================================== */
   table.dataTable thead th { background: var(--cyan-light); color: var(--sea-dark); }
+  table.dataTable th, table.dataTable td { text-align: left !important; }
   .dataTables_wrapper .dataTables_paginate .paginate_button.current { background: var(--sea) !important;
         color: #fff !important; border: 1px solid var(--sea) !important; }
   .dataTables_wrapper .dataTables_filter input { box-sizing: border-box; height: 34px; padding: 2px 6px; }
