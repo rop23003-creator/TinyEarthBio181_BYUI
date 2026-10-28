@@ -14,7 +14,13 @@
 #
 # BEFORE YOU RUN THIS:
 #   1. Open this project through its .Rproj file, so "Data_Raw" means the folder inside this project.
-#   2. Install these packages once, if you haven't already: install.packages(c("tidyverse", "httr2")) [readxl comes with the tidyverse install.]
+#   2. Install the packages once, if you haven't already, by pasting this line into the Console. It covers this script, Data_Clean.R, and the app
+#      (Bio181L_App_TE.qmd), so the whole project is set up in one step:
+#        install.packages(c("tidyverse", "readxl", "httr2", "shiny", "DT", "car", "ggthemes", "scales", "writexl", "rmarkdown", "knitr"))
+#      This script uses: tidyverse, readxl, httr2
+#      Data_Clean.R uses: tidyverse, readxl
+#      The app uses:      tidyverse (ggplot2, dplyr, readr ...), shiny, DT, car, ggthemes, scales, writexl; rmarkdown and knitr let Quarto run R code.
+#      The app also needs Quarto itself, which comes with RStudio (or install it from https://quarto.org).
 # ====================================================================================================================================================
 
 library(tidyverse)  # stringr (find report_id/nonce); purrr (repeat downloads)

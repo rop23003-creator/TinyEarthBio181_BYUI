@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "te-app",
+      "runtimeExecutable": "C:\\Program Files\\RStudio\\resources\\app\\bin\\quarto\\bin\\quarto.exe",
+      "runtimeArgs": ["serve", "Bio181L_App_TE.qmd", "--port", "4848"],
+      "env": { "QUARTO_R": "C:\\Program Files\\R\\R-4.5.2\\bin\\x64" },
+      "port": 4848
+    }
+  ]
+}

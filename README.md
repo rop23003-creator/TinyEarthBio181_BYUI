@@ -28,6 +28,7 @@ Preface to Tiny Earth Project Bio 181 Lab BYU-I:
     Bivariate, One quantitative response variable and one qualitative explanatory variable - Analysis of Variance (ANOVA) Test
     Bivariate, Both response variable and explanatory variable are quantitative - Simple Linear Regression Test
     Bivariate, Both response variable and explanatory variable are qualitative - Chi-squared Test of Independence
+    Bivariate, One two-outcome qualitative response variable (e.g. Yes / No) and one quantitative explanatory variable - Simple Logistic Regression
   
   This project is written in R code using R-studio IDE (https://posit.co/downloads) from Posit (https://posit.co/).
   The "Tiny Earth Project Bio 181 Lab BYU-I" project itself originates as a senior project in the 2026 fall semester by Biostatistics major Quinton Roper and assisted by Dr. Todd Kelson and Dr. Michael Terribilini of the Biology Department of Brigham Young University - Idaho, as well as Dr. Garrett Saunders of the Mathematics Department of Brigham Young University - Idaho.
@@ -41,7 +42,40 @@ Project File Architecture:
     
   Additionally, this project is built around three R scripts: Data_Pull, Data_Clean, Bio181L_App_TE
     Data_Pull --> This R script is to pull the raw data from the Tiny Earth Public Database and store the raw .xlsx files into the Data_Raw folder in our project
-    Data_Clean --> This R script is to pull the raw data from the stored .xlsx files and process the data (clean and condense the data) and export it into the Data folder as .csv files 
-    Bio181L_App_TE --> This R Script is to pull the .csv files into a shiny app that allows students to both view the data and run an analysis on two factors/variables they chose within the app.
-    
+    Data_Clean --> This R script is to pull the raw data from the stored .xlsx files and process the data (clean and condense the data) and export it into the Data folder as .rds files (an .rds file keeps every column type, such as numbers and dates, exactly as R holds it)
+    Bio181L_App_TE --> This Quarto Shiny document (.qmd) loads the .rds files into a shiny app that allows students to both view the data and run an analysis on two factors/variables they chose within the app.
+
+  Scripts are run in this order: Data_Pull, then Data_Clean, then Bio181L_App_TE (open it in R-Studio and click "Run Document").
+
+Setup (install once):
+
+  Paste this line into the R-Studio Console. It installs every package the three scripts need (the same line is at the top of each script):
+
+    install.packages(c("tidyverse", "readxl", "httr2", "shiny", "DT", "car", "ggthemes", "scales", "writexl", "rmarkdown", "knitr"))
+
+  The app also needs Quarto, which comes with R-Studio, and an internet connection to draw the equations (KaTeX).
+
+What the app does:
+
+  Main screen
+    Table Selector --> Pick any Individual table (matches the Tiny Earth database) or Combined table (adds the related sample and institution columns)
+    Table Viewer --> Search, filter, and sort the selected table
+    Description --> Shows what each column (variable) of the table means
+    Run Analysis --> Tick one Response (y) and one Explanatory (x) variable; the app picks the right test and the Analyze button lights up
+    Background --> A short introduction to Tiny Earth and how to use the app
+
+  Results page
+    Graphical Summary --> A graph of the two variables (downloadable as PDF or PNG)
+    Numerical Summary --> Summary tables (downloadable as CSV)
+    View More on Test --> When the test is used, its purpose, the mathematical model and hypotheses (written as real math), the test results with a written conclusion, and the assumption checks (diagnostic plots and tests). If an assumption fails, a backup is added: Kruskal-Wallis for ANOVA, a log(y) refit for regression, and a simulation-based p-value for chi-squared
+    Learn More --> A broad guide to the statistics: choosing a test, how hypothesis tests work, reading the graphs, checking assumptions, and links to the BYU-Idaho class notes
+    Save PDF --> Prints the results page or saves it as a PDF
+    Round buttons --> Download an analysis worksheet (once worksheets are added), explore and download the clean or raw data behind the analysis, and give feedback on the app
+
+  Settings for maintainers (near the top of Bio181L_App_TE, section [D1])
+    DEBUG_MODE --> TRUE shows a bug button in the bottom-left corner that opens each test's results page for checking layouts. Set it to FALSE before publishing for students
+    WORKSHEET_ENABLED --> Set to TRUE once worksheet files are added to a Worksheets folder (named e.g. anova_worksheet.docx / anova_worksheet.pdf)
+    FEEDBACK_URL --> The feedback form the speech-bubble button opens
+    GRAPH_STYLE --> "economist" or "minimal" graph look
+
   All files in this project are stored on github: https://github.com/rop23003-creator/TinyEarthBio181_BYUI.git

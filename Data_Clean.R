@@ -8,7 +8,13 @@
 #   1. Open this project through its .Rproj file instead of the script itself, making RStudio's "working directory" the project folder automatically
 #   so the relative file paths below work correctly.
 #   2. Run Data_Pull.R in the project first so the Data_Raw folder holds the latest files.
-#   3. Install these packages once, if you haven't already: install.packages("tidyverse") [readxl comes with the tidyverse install.]
+#   3. Install the packages once, if you haven't already, by pasting this line into the Console. It covers this script, Data_Pull.R, and the app
+#      (Bio181L_App_TE.qmd), so the whole project is set up in one step:
+#        install.packages(c("tidyverse", "readxl", "httr2", "shiny", "DT", "car", "ggthemes", "scales", "writexl", "rmarkdown", "knitr"))
+#      This script uses:  tidyverse, readxl
+#      Data_Pull.R uses:  tidyverse, readxl, httr2
+#      The app uses:      tidyverse (ggplot2, dplyr, readr ...), shiny, DT, car, ggthemes, scales, writexl; rmarkdown and knitr let Quarto run R code.
+#      The app also needs Quarto itself, which comes with RStudio (or install it from https://quarto.org).
 # ====================================================================================================================================================
 
 library(tidyverse)  # dplyr, stringr, purrr, readr (type_convert()), and lubridate (ymd() for dates)
@@ -162,19 +168,15 @@ if (n_inst_removed > 0) {
 
   # [Fix 1: zeros that are really "not measured"] ====================================================================================================
   # Outdoor air can't have 0% humidity, and an antibiotic disk with a concentration of 0 holds no antibiotic, so it isn't a real test. A
-  # sample_temperature of exactly 0.0 looks like a field left at its default -- EXCEPT for winter (Dec-Mar) samples from the cold_sites below, where
-  # frozen soil really does sit at 0 C, so those zeros are kept. Turning the rest into NA means the app leaves them out of analyses instead of
-  # treating them as real values. NOTE: almost all kept zeros are from BYU-Idaho (Jan and Mar samples); if they turn out to be defaults after all,
-  # delete the "& !winter_cold" part below.
+  # sample_temperature of exactly 0.0 is a field left at its default (most were BYU-Idaho winter samples, where the 0 was never actually measured).
+  # Turning these into NA means the app leaves them out of analyses instead of treating them as real values.
   # ==================================================================================================================================================
-cold_sites <- c("Brigham Young University–Idaho", "University of Wisconsin–Madison", "Madison College",
+cold_sites <- c("Brigham Young University–Idaho", "University of Wisconsin–Madison", "Madison College",  # winter sites, used in Fix 4 below
                 "University of St. Thomas", "The College of St. Scholastica")
 
 tepd_data_tables$samples <- tepd_data_tables$samples %>%
-  mutate(winter_cold        = coalesce(institution_name %in% cold_sites & month(date) %in% c(12, 1:3), FALSE),
-         air_humidity       = na_if(air_humidity, 0),
-         sample_temperature = if_else(sample_temperature %in% 0 & !winter_cold, NA, sample_temperature)) %>%
-  select(-winter_cold)
+  mutate(air_humidity       = na_if(air_humidity, 0),
+         sample_temperature = na_if(sample_temperature, 0))
 
 tepd_data_tables$antibio_suscepts <- tepd_data_tables$antibio_suscepts %>%
   mutate(concentration = na_if(concentration, 0))

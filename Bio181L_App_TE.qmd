@@ -1,6 +1,6 @@
 ---
 # [Bio181L_App_TE.qmd] ===============================================================================================================================
-# Tiny Earth Project - Bio 181 Lab (BYU-Idaho)
+# Tiny Earth Public Database - BIO 181 Lab Analysis App (BYU-Idaho)
 #
 # This is a Quarto "Shiny document": a .qmd file whose `server: shiny`
 # setting below turns it into a live web app. Every visitor gets their
@@ -8,10 +8,9 @@
 # time.
 #
 # HOW TO RUN LOCALLY (RStudio)
-#   1. Install once:
-#        install.packages(c("tidyverse", "shiny", "DT",
-#                           "quarto", "rmarkdown"))
-#      (scales comes with the tidyverse install.)
+#   1. Install once (the same line is in Data_Pull.R and Data_Clean.R):
+#        install.packages(c("tidyverse", "readxl", "httr2", "shiny", "DT", "car",
+#                           "ggthemes", "scales", "writexl", "rmarkdown", "knitr"))
 #      (Quarto itself ships with recent RStudio versions.)
 #   2. Open this file and click "Run Document" (or run
 #        quarto::quarto_serve("Bio181L_App_TE.qmd")  in the Console).
@@ -34,19 +33,20 @@
 #         [B5] collapsible sections   [B6] variable picker   [B7] results page
 #         [B8] data tables   [B9] print and small screens
 #   [C] JAVASCRIPT ....................... tePick(): the Response / Explanatory checkboxes; teCsv(): table CSV downloads
+#         [C2] KaTeX: draws the LaTeX equations in the test explanations
 #   [D0] PACKAGES (R, runs once) ......... every library() the app uses, in its own chunk
 #   [D] SETUP (R, runs once) ............. loading data, helpers, statistics
 #         [D1] settings   [D2] find the tables   [D3] order and names
 #         [D4] load and cache a table  [D5] variable descriptions
 #         [D6] variable types and which test fits   [D7] formatting, table and graph helpers
-#         [D8] DESIGNER SECTION: ANOVA, regression, chi-squared, test explanations
-#         [D9] helpers that build pieces of the page
+#         [D8] DESIGNER SECTION: ANOVA, regression, chi-squared, logistic regression, test explanations
+#         [D9] helpers that build pieces of the page (selector, picker, graph boxes and sizes)
 #   [E] PAGE SHELL (R, built once) ....... banner + an empty "page" for the server to fill
 #   [F] SERVER (R, runs for each visitor)  everything that reacts to clicks
 #         [F1] app state   [F2] which page shows   [F3] left panel
-#         [F4] picker status and Analyse button   [F5] right panel (tables)
+#         [F4] picker status and Analyze button   [F5] right panel (tables)
 #         [F6] click handlers   [F7] Background window   [F8] results page
-#         [F9] Learn More window   [F10] Feedback window
+#         [F9] Learn More window   [F10] Feedback window   [F11] Explore Data window and downloads   [F12] Debug windows   [F13] Worksheet window
 #
 # HOW A CLICK TRAVELS:  a button or link sends a value to R (input$...)  ->  an
 # observeEvent() in [F6] updates the visitor's state rv$...  ->  every renderUI()
@@ -57,7 +57,7 @@
 # Page title, layout, and the line that turns this document into a
 # Shiny app.
 # ====================================================================================================================================================
-pagetitle: "Tiny Earth Project - Bio 181 Lab (BYU-I)"  # page title shown in the browser tab
+pagetitle: "Tiny Earth Public Database - BIO 181 Lab Analysis App"  # page title shown in the browser tab
 format:                   # output is an HTML page (a Shiny document = HTML page + a live R process)
   html:
     page-layout: custom   # no Quarto sidebar or margins; the app controls its own layout (see [B])
@@ -100,18 +100,29 @@ server: shiny             # makes the document a live Shiny app (needs R running
                       page
        .te-banner h1  banner title
        .te-banner p   the line of text under the title
+       .te-banner-art the zoomed-in bacteria drawing on the far right of
+                      the banner, cut off at the banner's edges; its
+                      left edge fades out and is gone by the 4/5 point
      ============================================================================================================================================== */
-  .te-banner { background: linear-gradient(90deg, var(--sea), var(--cyan)); color: #fff;
+  html, body { overflow-x: clip; }  /* the banner's negative side margins would otherwise add a sideways scrollbar */
+  .te-banner { background: linear-gradient(90deg, var(--sea), var(--cyan)); color: #fff; position: relative; overflow: hidden;
                padding: 14px 22px; border-radius: 0 0 12px 12px; margin: 0 -14px 14px -14px; }
-  .te-banner h1 { font-size: 1.45rem; margin: 0; font-weight: 700; color: #fff; }
-  .te-banner p  { margin: 2px 0 0 0; opacity: .92; font-size: .9rem; }
+  .te-banner h1 { font-size: 1.45rem; margin: 0; font-weight: 700; color: #fff; position: relative; }
+  .te-banner p  { margin: 2px 0 0 0; opacity: .92; font-size: .9rem; position: relative; }
+  .te-banner-art { position: absolute; top: 0; bottom: 0; right: 0; left: 80%; pointer-events: none;   /* left: where the fade ends */
+                   -webkit-mask-image: linear-gradient(90deg, transparent, rgba(0,0,0,.45) 45%, #000 85%);
+                           mask-image: linear-gradient(90deg, transparent, rgba(0,0,0,.45) 45%, #000 85%); }
+  .te-banner-art svg { width: 100%; height: 100%; display: block; }
 
   /* [B3. Viewer layout: selector (left) + table (right)] ============================================================================================
        .app-grid         two-column grid: a 310px selector on the left,
                          the table fills the rest on the right
        .panel-card       the white rounded 'card' that every panel sits on
-       .left-card        left card: fixed height, children stacked
-                         top-to-bottom so the buttons stay at the bottom
+       .left-col         left grid cell; the right card sets the row's
+                         height, so both cards end at the same line
+       .left-card        left card: fills .left-col exactly, children
+                         stacked top-to-bottom so the buttons stay at the
+                         bottom
        .selector-scroll  middle of the left card: takes the spare space
                          and scrolls when the list is long
        .sel-title        bold heading at the top of a panel
@@ -122,15 +133,16 @@ server: shiny             # makes the document a live Shiny app (needs R running
        .hint             small grey helper text
        .vtype            small grey '(Quantitative)' tag shown after a
                          variable name
-       .viewer-head      title row above the Table Viewer / Variable
-                         Directory
+       .viewer-head      title row (bold) above the Table Viewer /
+                         Variable Description
        .table-foot       line of text under the table (row and column
                          counts)
      ============================================================================================================================================== */
   .app-grid  { display: grid; grid-template-columns: 310px minmax(0, 1fr); gap: 14px; }
   .panel-card { background: #fff; border: 1px solid #CDE7DF; border-radius: 10px; padding: 14px;
                 box-shadow: 0 1px 4px rgba(27,94,75,.08); }
-  .left-card  { display: flex; flex-direction: column; height: 80vh; }
+  .left-col   { position: relative; min-height: 60vh; }
+  .left-card  { display: flex; flex-direction: column; position: absolute; inset: 0; }
   .selector-scroll { flex: 1 1 auto; overflow-y: auto; margin: 10px 0; padding-right: 4px; }
   .sel-title  { font-weight: 700; color: var(--sea-dark); font-size: 1.05rem; margin-bottom: 6px; }
   .sel-head   { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700;
@@ -143,7 +155,7 @@ server: shiny             # makes the document a live Shiny app (needs R running
   .vtype      { color: var(--grey); font-size: .8rem; margin-left: 6px; }
   .viewer-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline;
                  border-bottom: 2px solid var(--cyan-light); margin-bottom: 10px; padding-bottom: 4px; }
-  .viewer-head h3 { margin: 0; color: var(--sea-dark); font-size: 1.2rem; }
+  .viewer-head h3 { margin: 0; color: var(--sea-dark); font-size: 1.2rem; font-weight: 700; }
   .viewer-head .current { color: var(--grey); font-size: .9rem; }
   .table-foot { color: var(--grey); font-size: .85rem; margin-top: 6px; }
 
@@ -154,14 +166,26 @@ server: shiny             # makes the document a live Shiny app (needs R running
        .btn-outline       white outlined variant, used for secondary
                           actions (Back, Description)
        .btn-wide          makes a button fill the full width of its panel
-       .btn-te[disabled]  greyed-out look for a disabled button (Analyse
+       .btn-te[disabled]  greyed-out look for a disabled button (Analyze
                           before a valid pair is chosen)
-       .btn-glow          glowing cyan look for the Analyse button once a
-                          valid pair is chosen
+       .btn-glow          glowing cyan look for the Analyze button once a
+                          valid pair is chosen; only the glow pulses
+                          gently (te-pulse), the button itself stays still
        .btn-row           a row of buttons that share the width evenly
-                          (Description + Run Analysis, Back + Analyse)
-       .btn-round         round icon-only button (the Feedback speech
-                          bubble on the results page)
+                          (Description + Run Analysis, Back + Analyze)
+       .btn-round         round icon-only button (Worksheet, Explore Data
+                          and Feedback on the results page)
+       .has-tip           a styled hover label (bigger and brighter than
+                          the browser's own tooltip) that reads the
+                          button's data-tip text; used on the round
+                          buttons and the Debug button
+       .btn-square        small square icon-only button (the Debug bug)
+       .debug-corner      pins the Debug button to the bottom-left corner
+                          of the screen
+       .tip-start         hover label that opens to the right and wraps
+                          (for a button at the left edge)
+       .dl-choice         the Raw / Clean choice cards in the Explore
+                          Data window
      ============================================================================================================================================== */
   .btn-te        { background: var(--sea); color: #fff; border: 1px solid var(--sea); border-radius: 8px;
                    font-weight: 600; padding: 7px 16px; }
@@ -173,15 +197,40 @@ server: shiny             # makes the document a live Shiny app (needs R running
   .btn-wide      { width: 100%; }
   .btn-te[disabled] { background: #D5DFDC; border-color: #D5DFDC; color: #8A9A96; cursor: not-allowed; }
   .btn-glow      { box-shadow: 0 0 0 3px rgba(0,172,193,.25), 0 0 14px rgba(0,172,193,.85);
-                   background: var(--cyan); border-color: var(--cyan); }
+                   background: var(--cyan); border-color: var(--cyan); animation: te-pulse 1.8s ease-in-out infinite; }
+  @keyframes te-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(0,172,193,.25), 0 0 10px rgba(0,172,193,.6); }
+    50%      { box-shadow: 0 0 0 6px rgba(0,172,193,.18), 0 0 20px rgba(0,172,193,.95); }
+  }
+  @media (prefers-reduced-motion: reduce) { .btn-glow { animation: none; } }
   .btn-row       { display: flex; justify-content: space-between; gap: 8px; }
   .btn-row .btn  { flex: 1; }
-  .btn-row > *   { flex: 1; }                 /* Back and Analyse share the row evenly */
+  .btn-row > *   { flex: 1; }                 /* Back and Analyze share the row evenly */
   .btn-row .shiny-html-output .btn { width: 100%; }
   .btn-round     { width: 42px; height: 42px; padding: 0; border-radius: 50%; font-size: 1.05rem;
                    display: inline-flex; align-items: center; justify-content: center; }
+  .btn-square    { width: 34px; height: 34px; padding: 0; flex: none; font-size: 1rem;
+                   display: inline-flex; align-items: center; justify-content: center; }
+  .has-tip       { position: relative; }
+  .has-tip::after { content: attr(data-tip); position: absolute; top: calc(100% + 10px); right: 0; z-index: 20;
+                   background: var(--cyan); color: #fff; font-size: 1rem; font-weight: 600; white-space: nowrap;
+                   padding: 8px 14px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,172,193,.45);
+                   opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
+  .has-tip:hover::after, .has-tip:focus-visible::after { opacity: 1; transform: translateY(0); }
+  .tip-start::after { left: 0; right: auto; width: 270px; white-space: normal; }  /* label opens to the right (button at a left edge) and wraps */
+  .debug-corner  { position: fixed; left: 12px; bottom: 12px; z-index: 30; }      /* Debug button: bottom-left corner of the screen */
+  .debug-corner::after { top: auto; bottom: calc(100% + 10px); }                   /* its label opens upward */
+  .has-tip:disabled { pointer-events: auto; cursor: not-allowed; opacity: 1;
+                      background: #CFD8DC; border-color: #CFD8DC; color: #fff; }  /* Bootstrap blocks hover on disabled buttons; keep the label */
+  @media (prefers-reduced-motion: reduce) { .has-tip::after { transition: none; } }
+  .dl-choices    { display: flex; gap: 12px; flex-wrap: wrap; }
+  .dl-choice     { flex: 1 1 200px; display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: 10px;
+                   border: 1px solid var(--sea); background: #fff; color: var(--sea-dark); text-decoration: none; }
+  .dl-choice:hover { background: var(--mint); color: var(--sea-dark); }
+  .dl-choice strong { font-size: 1.05rem; }
+  .dl-choice span { font-size: .88rem; color: #4A5A56; }
 
-  /* [B5. Collapsible selector sections (<details> / <summary>)] =======
+  /* [B5. Collapsible selector sections (<details> / <summary>)] =====================================================================================
      The heading is clickable; the browser's default triangle is hidden.
      We draw our own arrow instead; it turns 90 degrees when the section
      is open.
@@ -192,7 +241,7 @@ server: shiny             # makes the document a live Shiny app (needs R running
                                                     transition: transform .15s; }
   details.sel-details[open] > summary.sel-head::before { transform: rotate(90deg); }
 
-  /* [B6. Variable picker: name + Response box + Explanatory box] ======
+  /* [B6. Variable picker: name + Response box + Explanatory box] ====================================================================================
        .pick-head, .pick-row  header and every row share one 3-column
                               grid (name, Response, Explanatory) so the
                               checkboxes line up
@@ -217,17 +266,25 @@ server: shiny             # makes the document a live Shiny app (needs R running
   .pick-row input.pick-expl { accent-color: var(--cyan); }
 
   /* [B7. Results page] ==============================================================================================================================
+       .results-page           the results page itself: no card border, it
+                               fills the screen under the banner
        .results-bar            top bar of the results page (Back on the
-                               left; Learn More and Save PDF on the right)
+                               left; Learn More, Save PDF and the round
+                               buttons on the right)
        .results-page h2        test title at the top of the results
        .sec-title              section headings on the results page
-                               (Graph, Numerical Summary, ...)
+                               (Graphical Summary, Numerical Summary, ...)
        .tbl-wrap               wrapper that lets a wide table scroll
                                sideways instead of stretching the page
+       .tbl-cap                bold caption above a table
        .te-table               style for the summary and test tables
                                built by html_table()
+       .learn                  the Learn More window: its table fills the
+                               width and long cells wrap
        .formula                shaded boxes used for equations and
                                hypotheses
+       .formula-note           pale blue box under each equation that
+                               explains its symbols
        .concl                  cyan box for written conclusions and
                                warnings
        .note                   small italic grey notes
@@ -238,7 +295,10 @@ server: shiny             # makes the document a live Shiny app (needs R running
        .more-body              the test details are hidden until the
                                button adds the class 'open' to .more
        .diag-row               diagnostic plots sit side by side and wrap
-                               onto the next line on narrow screens
+                               onto a new line when the window is narrow
+       .diag-title             heading over a group of diagnostic plots
+                               (regression: original model / log model)
+       details.contrasts       collapsible box for the Tukey contrasts
        .shiny-plot-output img  never let a plot be wider than the page
        .dl-box                 a graph plus its download icon (built by
                                plot_box()); the box is as wide as the graph
@@ -252,6 +312,8 @@ server: shiny             # makes the document a live Shiny app (needs R running
   .results-bar  { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
   .results-bar .spacer { flex: 1; }
   .results-page h2   { color: var(--sea-dark); margin: 6px 0 2px; }
+  .panel-card.results-page { border: 0; border-radius: 0; box-shadow: none; margin: -14px -14px -20px; padding: 16px 22px 28px;
+                             min-height: calc(100vh - 70px); }  /* one white page under the banner, edge to edge, lined up with the banner text */
   .sec-title    { color: var(--sea-dark); border-bottom: 2px solid var(--cyan-light); padding-bottom: 3px;
                   margin: 22px 0 10px; font-size: 1.15rem; }
   .tbl-wrap     { overflow-x: auto; margin: 6px 0 14px; }
@@ -259,10 +321,14 @@ server: shiny             # makes the document a live Shiny app (needs R running
   .te-table     { border-collapse: collapse; font-size: .88rem; min-width: 40%; }
   .te-table th  { background: var(--cyan-light); color: var(--sea-dark); padding: 5px 10px; text-align: left;
                   border-bottom: 2px solid var(--cyan); white-space: nowrap; }
-  .te-table td  { padding: 4px 10px; border-bottom: 1px solid #E1EEEA; }
+  .te-table td  { padding: 4px 10px; border-bottom: 1px solid #E1EEEA; white-space: nowrap; }
   .te-table tr:nth-child(even) td { background: #F7FBFA; }
-  .formula      { font-family: "Cambria Math", "Times New Roman", serif; background: var(--mint);
-                  border-left: 4px solid var(--sea); padding: 6px 12px; margin: 4px 0; border-radius: 0 6px 6px 0; }
+  .learn .te-table    { width: 100%; }
+  .learn .te-table td { white-space: normal; }  /* let long cells wrap inside the Learn More window */
+  .learn li           { margin-bottom: 4px; }
+  .formula      { background: var(--mint); border-left: 4px solid var(--sea); padding: 8px 12px; margin: 4px 0;
+                  border-radius: 0 6px 6px 0; overflow-x: auto; }  /* math is drawn by KaTeX (see [C2]) */
+  .formula .katex { font-size: 1.12em; }
   .concl        { background: var(--cyan-light); border-left: 4px solid var(--cyan); padding: 8px 12px;
                   border-radius: 0 6px 6px 0; }
   .note         { color: var(--grey); font-size: .85rem; font-style: italic; }
@@ -273,6 +339,12 @@ server: shiny             # makes the document a live Shiny app (needs R running
   .more-body    { display: none; }
   .more.open .more-body { display: block; }
   .diag-row     { display: flex; flex-wrap: wrap; gap: 14px; }
+  .diag-title   { color: var(--sea-dark); font-size: 1rem; font-weight: 600; margin: 14px 0 6px; }
+  details.contrasts { margin: 6px 0 14px; border: 1px solid var(--cyan-light); border-radius: 8px; padding: 6px 12px; }
+  details.contrasts > summary { cursor: pointer; font-weight: 600; color: var(--sea-dark); }
+  details.contrasts[open] > summary { margin-bottom: 6px; }
+  .formula-note { background: #EAF6FB; border-left: 4px solid #8FCFE0; padding: 6px 12px; margin: 0 0 10px; border-radius: 0 6px 6px 0;
+                  font-size: .9rem; color: #2F5560; }
   .shiny-plot-output img { max-width: 100%; height: auto !important; }
   .dl-box       { position: relative; width: fit-content; max-width: 100%; }
   .dl-menu      { position: absolute; top: 6px; right: 6px; z-index: 2; text-align: right; }
@@ -292,6 +364,8 @@ server: shiny             # makes the document a live Shiny app (needs R running
        table.dataTable thead th  cyan header cells in the data tables
        table.dataTable th, td    every header and cell left-aligned (DT
                                  right-aligns number columns by default)
+                                 and kept on one line (no text wrapping;
+                                 the table scrolls sideways instead)
        .paginate_button.current  green highlight on the current page
                                  button of a data table
        .dataTables_filter input  the Search box, trimmed to the same 34px
@@ -300,7 +374,7 @@ server: shiny             # makes the document a live Shiny app (needs R running
        .dataTables_filter        the table below them
      ============================================================================================================================================== */
   table.dataTable thead th { background: var(--cyan-light); color: var(--sea-dark); }
-  table.dataTable th, table.dataTable td { text-align: left !important; }
+  table.dataTable th, table.dataTable td { text-align: left !important; white-space: nowrap; }
   .dataTables_wrapper .dataTables_paginate .paginate_button.current { background: var(--sea) !important;
         color: #fff !important; border: 1px solid var(--sea) !important; }
   .dataTables_wrapper .dataTables_filter input { box-sizing: border-box; height: 34px; padding: 2px 6px; }
@@ -320,7 +394,8 @@ server: shiny             # makes the document a live Shiny app (needs R running
     .te-banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }  /* keep colours */
     .shiny-notification-panel { display: none !important; }                       /* hide pop-ups */
   }
-  @media (max-width: 900px) { .app-grid { grid-template-columns: 1fr; } .left-card { height: auto; } }
+  @media (max-width: 900px) { .app-grid { grid-template-columns: 1fr; } .left-col { min-height: 0; }
+                              .left-card { position: static; height: auto; } }
 </style>
 
 <!-- [C. JAVASCRIPT] =================================================================================================================================
@@ -380,6 +455,33 @@ server: shiny             # makes the document a live Shiny app (needs R running
     URL.revokeObjectURL(link.href);
   }
 </script>
+
+<!-- [C2. LaTeX math (KaTeX)] ========================================================================================================================
+     KaTeX draws the LaTeX in the test explanations (text between \( and
+     \) in test_info) as real math: fractions stacked, exponents raised.
+     Shiny adds the results page after the page loads, so a watcher
+     re-draws the math whenever new content appears. Without internet the
+     equations stay readable as plain LaTeX text.
+     ============================================================================================================================================= -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var timer = null;
+    var draw = function () {
+      if (!window.renderMathInElement) return;
+      document.querySelectorAll('.formula, .formula-note').forEach(function (el) {
+        if (el.dataset.math) return;  // already drawn
+        renderMathInElement(el, { delimiters: [{ left: '\\(', right: '\\)', display: false }], throwOnError: false });
+        el.dataset.math = '1';
+      });
+    };
+    new MutationObserver(function () { clearTimeout(timer); timer = setTimeout(draw, 100); })
+      .observe(document.body, { childList: true, subtree: true });
+    window.addEventListener('load', draw);
+  });
+</script>
 ```
 
 ```{r}
@@ -389,9 +491,10 @@ server: shiny             # makes the document a live Shiny app (needs R running
 # each visitor.
 # ====================================================================================================================================================
 library(tidyverse)  # ggplot2 (graphs), readr (read_csv() for data_dictionary.csv), and more
-library(scales)     # percent(): labels the chi-squared bar chart's y-axis as percentages
 library(shiny)      # the web-app framework
 library(DT)         # interactive, filterable data tables
+# car (Levene's test), ggthemes (theme_economist), scales (axis labels) and writexl (Clean Data downloads as .xlsx) must be installed too. They are
+# called with :: (e.g. car::leveneTest()) instead of loaded with library(), because loading car would hide dplyr's recode() and purrr's some().
 ```
 
 ```{r}
@@ -408,7 +511,33 @@ DATA_DIR   <- "Data"   # folder holding the cleaned .rds files
 MAX_LEVELS <- 30       # text variables with MORE distinct values are hidden from the picker
 TOP_LEVELS <- 10       # analyses keep the 10 most common groups; the rest become "Other"
 ALPHA      <- 0.05     # significance level used in the written conclusions
+QQ_OUTSIDE <- 0.10     # residuals count as "not normal" when more than this share fall outside the Q-Q plot's 95% band (see qq_check())
+GRAPH_STYLE <- "economist"  # graph look: "economist" (ggthemes::theme_economist, blue-grey panel) or "minimal" (plain white); see te_theme()
 FEEDBACK_URL <- "https://forms.gle/rF1p59ydqe97piHw5"  # feedback form opened by the round speech-bubble button on the results page [F10]
+
+  # [Analysis worksheets] ============================================================================================================================
+  # The round microscope button on the results page is for downloadable analysis worksheets [F13]. While WORKSHEET_ENABLED is FALSE the button is
+  # shown greyed out and does nothing. To turn it on: put the files in the WORKSHEET_DIR folder, named <test>_worksheet.docx and/or
+  # <test>_worksheet.pdf, where <test> is anova, regression, chisq or logistic (e.g. "Worksheets/anova_worksheet.docx"), then set it to TRUE.
+  # ==================================================================================================================================================
+WORKSHEET_ENABLED <- FALSE
+WORKSHEET_DIR     <- "Worksheets"
+
+  # [Debug mode] =====================================================================================================================================
+  # DEBUG_MODE = TRUE shows a square bug button in the bottom-left corner of the main screen [F12]. It opens each test's results page in its own
+  # window (the URL ends in ?debug=<test>), so layouts can be checked without picking variables. Set it to FALSE before publishing the app for students.
+  # DEBUG_CASES: one analysis per test, chosen to show as much of each layout as possible:
+  #   anova       11 soil types: long Tukey table, and the residuals fail the Q-Q check so Kruskal-Wallis appears
+  #   regression  CFU/g is very skewed, so the automatic log(y) refit and all four diagnostic plots appear
+  #   chisq       11 soil types x 4 activity results: many graph panels, and small expected counts add the Monte Carlo p-value
+  #   logistic    a significant result with Inconclusive rows left out (the note under the summary appears)
+  # ==================================================================================================================================================
+DEBUG_MODE  <- TRUE
+DEBUG_CASES <- list(
+  anova      = list(table = "samples_combined",            resp = "sample_ph",             expl = "soil_type"),
+  regression = list(table = "dilutions_combined",          resp = "cfug",                  expl = "sample_ph"),
+  chisq      = list(table = "aa_screen_isolates_combined", resp = "antibiotic_activity",   expl = "sample_soil_type"),
+  logistic   = list(table = "eukaryotics_combined",        resp = "eukaryotic_inhibition", expl = "temperature"))
 
   # [D2. Find the cleaned tables] ====================================================================================================================
   # Every .rds in Data/ is one table. Files ending in "_combined" are the "Combined" tables; everything else is "Individual". (data_dictionary.csv is
@@ -439,9 +568,13 @@ individual_keys <- sort_keys(individual_keys)  # apply the ordering to both grou
 combined_keys   <- sort_keys(combined_keys)
 
   # [pretty_name()] ==================================================================================================================================
-  # "antibio_suscepts_combined" -> "Antibio Suscepts" (label shown to students)
+  # "antibio_suscepts_combined" -> "Antibio Suscepts" (label shown to students). Acronyms are then fixed by hand: "Aa" -> "AA" (antibiotic
+  # activity) and "Rrna" -> "rRNA".
   # ==================================================================================================================================================
-pretty_name <- function(key) tools::toTitleCase(str_replace_all(str_remove(key, "_combined$"), "_", " "))
+pretty_name <- function(key) {
+  tools::toTitleCase(str_replace_all(str_remove(key, "_combined$"), "_", " ")) %>%
+    str_replace_all(c("\\bAa\\b" = "AA", "\\bRrna\\b" = "rRNA"))
+}
 
   # [D4. Load a table (once), then remember it] ======================================================================================================
   # `table_cache` is shared by all users, so each file is read from disk only the first time anyone opens it. read_rds() returns the table exactly as
@@ -457,11 +590,11 @@ load_table <- function(key) {  # load_table('isolates') returns that table, read
   get(key, envir = table_cache, inherits = FALSE)  # return the cached copy
 }
 
-  # [D5. Variable descriptions (the "Description" directory)] ========================================================================================
+  # [D5. Variable descriptions (the "Description" view)] =============================================================================================
   # OPTIONAL file: Data/data_dictionary.csv with 3 columns:
   #   table, variable, description
   # One row per column of each Individual table (Combined tables reuse these rows, see lookup_description()). A blank description shows the "not yet
-  # documented" reminder. Whatever you write there is shown in the Variable Directory. We start with an empty dictionary so the app still works when
+  # documented" reminder. Whatever you write there is shown in the Variable Description. We start with an empty dictionary so the app still works when
   # the file is missing.
   # ==================================================================================================================================================
 dictionary <- tibble(table = character(), variable = character(), description = character())
@@ -501,22 +634,39 @@ var_type <- function(x) {
   else                                   "Qualitative"
 }
 
+  # [binary_outcome()] ===============================================================================================================================
+  # Can a qualitative response be used in logistic regression? "Inconclusive" and "Isolate did not grow" are not real outcomes, so they are set to NA
+  # first. If exactly two outcomes are left, returns list(y = the cleaned values as text, event = the outcome being modelled, other = the other one);
+  # otherwise NULL. The event is "Yes" or "TRUE" when present, else the second outcome alphabetically (what glm() would model).
+  # ==================================================================================================================================================
+binary_outcome <- function(x) {
+  x  <- as.character(x)
+  x[str_detect(str_to_lower(x), "inconclusive|did not grow")] <- NA
+  lv <- sort(unique(x[!is.na(x)]))
+  if (length(lv) != 2) return(NULL)
+  event <- if ("Yes" %in% lv) "Yes" else if ("TRUE" %in% lv) "TRUE" else lv[2]
+  list(y = x, event = event, other = setdiff(lv, event))
+}
+
   # [pick_test()] ====================================================================================================================================
-  # Which of the three tests fits a Response / Explanatory pair?
+  # Which of the four tests fits a Response / Explanatory pair? resp and expl are the two columns themselves.
   #   quantitative response + qualitative explanatory   -> ANOVA
   #   quantitative response + quantitative explanatory  -> simple linear regression
   #   qualitative  response + qualitative  explanatory  -> chi-squared test
-  # Qualitative response + quantitative explanatory has no test in this app, so it returns NA.
+  #   qualitative  response + quantitative explanatory  -> logistic regression, but only if the response has exactly two outcomes (binary_outcome())
+  # Anything else returns NA.
   # ==================================================================================================================================================
-pick_test <- function(resp_type, expl_type) {
+pick_test <- function(resp, expl) {
+  resp_type <- var_type(resp); expl_type <- var_type(expl)
   if      (resp_type == "Quantitative" && expl_type == "Qualitative")  "anova"
   else if (resp_type == "Quantitative" && expl_type == "Quantitative") "regression"
   else if (resp_type == "Qualitative"  && expl_type == "Qualitative")  "chisq"
+  else if (resp_type == "Qualitative"  && expl_type == "Quantitative" && !is.null(binary_outcome(resp))) "logistic"
   else NA_character_
 }
 
   # [describe_type()] ================================================================================================================================
-  # A more detailed label, used only in the Type column of the Variable Directory. ID columns only link tables together, so they are labelled that way
+  # A more detailed label, used only in the Type column of the Variable Description. ID columns only link tables together, so they are labelled that way
   # to stop students analysing them. Text with a huge number of different values is flagged (the picker hides these).
   # ==================================================================================================================================================
 describe_type <- function(name, x) {
@@ -591,42 +741,122 @@ html_table <- function(df, caption = NULL) {
       tags$tbody(lapply(seq_len(nrow(df)), function(i) tags$tr(lapply(df[i, ], tags$td))))))
 }
 
-  # [Graph theme + sea-green -> cyan colour ramp] ====================================================================================================
-  # te_cols(n)  n colours blending from sea green to cyan (used to colour groups in graphs)
-  # te_theme()  the common graph look (clean white background, bold green title)
+  # [var_label()] ====================================================================================================================================
+  # A column name as graph text: underscores become spaces and words are capitalized ("sample_ph" -> "Sample pH"). Abbreviations are fixed by hand.
   # ==================================================================================================================================================
-te_cols  <- function(n) grDevices::colorRampPalette(c("#2E8B57", "#20B2AA", "#00BCD4"))(max(n, 1))
-te_theme <- function() {
-  theme_minimal(base_size = 13) +
-    theme(plot.title = element_text(face = "bold", colour = "#1B5E4B"),
-          panel.grid.minor = element_blank(),
-          legend.position = "right")
+var_label <- function(v) {
+  tools::toTitleCase(str_replace_all(v, "_", " ")) %>%
+    str_replace_all(c("\\bPh\\b" = "pH", "\\bCfug\\b" = "CFU/g", "\\bLat\\b" = "Latitude", "\\bLng\\b" = "Longitude",
+                      "\\bAa\\b" = "AA", "\\bRrna\\b" = "rRNA"))
 }
 
-  # [Diagnostic graphs shared by ANOVA and regression] ===============================================================================================
-  # qq_plot() Q-Q plot: if the residuals are normal, the points follow the line. resid_plot() Residuals vs. fitted values, with a dashed line at 0.
-  # ANOVA fitted values repeat for each group, so jitter spreads the points sideways
-  #               (width = 3% of the fitted-value range, with a fallback value if the range is 0); regression uses plain points. Labels and the theme
-  #               are added last, then the plot is returned.
+  # [Graph theme + green -> cyan colour ramp] ========================================================================================================
+  # te_cols(n)  n colours for groups in graphs. Up to 3 groups blend sea green to cyan. More groups use a wider, still muted ramp (deep green ->
+  #             soft green -> teal -> pale cyan -> slate blue) and alternate its two halves, so neighbouring bars and boxes never get near-identical
+  #             colours.
+  # te_theme()  the common graph look, chosen by GRAPH_STYLE [D1]: The Economist's style (ggthemes) or a plain white one; both get a bold green
+  #             title
+  # y_axis(), x_axis()  number axes with evenly spaced "pretty" breaks, short labels for big numbers (100M instead of 1e+08), and only a little
+  #             padding past the data, so the data fill the graph
   # ==================================================================================================================================================
-qq_plot <- function(res, title = "Normal Q-Q Plot of Residuals") {
-  ggplot(tibble(r = res), aes(sample = r)) +
-    stat_qq(colour = "#20B2AA", alpha = .6) + stat_qq_line(colour = "#2E8B57", linewidth = 1) +
-    labs(title = title, x = "Theoretical Quantiles", y = "Sample Quantiles (Residuals)") + te_theme()
+te_cols <- function(n) {
+  n <- max(n, 1)
+  if (n <= 3) return(grDevices::colorRampPalette(c("#2E8B57", "#20B2AA", "#00BCD4"))(n))
+  cols <- grDevices::colorRampPalette(c("#1B5E4B", "#2E8B57", "#7CBF97", "#20B2AA", "#8AD5D0", "#00A5B8", "#4D8597"))(n)
+  cols[c(seq(1, n, 2), seq(2, n, 2))]  # 1, 3, 5, ... then 2, 4, 6, ...
 }
-resid_plot <- function(fitted, res, jitter = FALSE) {
+te_theme <- function() {
+  base <- if (GRAPH_STYLE == "economist") ggthemes::theme_economist(base_size = 11) else theme_minimal(base_size = 12)
+  base +
+    theme(plot.title = element_text(face = "bold", colour = "#1B5E4B"),
+          plot.title.position = "plot",
+          panel.grid.minor = element_blank(),
+          legend.position = "right",
+          axis.ticks.length = unit(2, "pt"),                               # short ticks so the axis values sit close to the graph...
+          axis.text.x  = element_text(margin = margin(t = 1)),
+          axis.text.y  = element_text(margin = margin(r = 1)),
+          axis.title.x = element_text(margin = margin(t = 10)),             # ...and the axis titles sit further away from the values
+          axis.title.y = element_text(margin = margin(r = 10)))
+}
+short_num <- scales::label_number(scale_cut = scales::cut_short_scale())  # 0, 100M, 200M ...; 6.0, 6.5, 7.0 ...
+y_axis <- function(n = 6, pad = c(.02, .05), ...) scale_y_continuous(breaks = scales::breaks_pretty(n), labels = short_num, expand = expansion(mult = pad), ...)
+x_axis <- function(n = 8, ...) scale_x_continuous(breaks = scales::breaks_pretty(n), labels = short_num, expand = expansion(mult = .02), ...)
+
+  # [Auto-sizing graph text] =========================================================================================================================
+  # Graphs have a fixed width (PLOT_W [D9]), so long or numerous labels must shrink or wrap instead of overlapping.
+  # fit_size(n, at)  text size for n labels: full size (10) for up to `at` labels, then smaller in proportion, but never below 8
+  # wrap_at(width)   a labeller that breaks text longer than `width` characters onto extra lines (used for axis labels, panels and legends)
+  # te_title(x)      a graph title, wrapped onto a second line when it is longer than 55 characters
+  # ==================================================================================================================================================
+fit_size <- function(n, at = 10) max(8, min(10, 10 * at / max(n, 1)))
+wrap_at  <- function(width) function(x) str_wrap(x, width)
+te_title <- function(x) str_wrap(x, 55)
+
+  # [Diagnostic graphs shared by ANOVA and regression] ===============================================================================================
+  # qq_band()    The Q-Q points and band, drawn like car::qqPlot(): the line runs through the 1st and 3rd quartiles, and the band is a 95% pointwise
+  #              confidence envelope around it. For each point, P = its plotting position, z = the matching normal quantile, and se = the standard
+  #              error of that order statistic.
+  # qq_check()   The normality check used instead of a test: how many residuals fall outside the band. Even normal residuals put about 5% outside
+  #              by chance, so they are only judged "not normal" when more than QQ_OUTSIDE (10%) do. Returns list(n_out, n, share, normal).
+  # qq_plot()    The Q-Q plot itself, with the band shaded.
+  # resid_plot() Residuals vs. fitted values, with a dashed line at 0. ANOVA fitted values repeat for each group, so jitter spreads the points sideways
+  #              (width = 3% of the fitted-value range, with a fallback value if the range is 0); regression uses plain points. Labels and the theme
+  #              are added last, then the plot is returned.
+  # ==================================================================================================================================================
+qq_band <- function(res) {
+  x  <- sort(res[is.finite(res)]); n <- length(x)
+  P  <- stats::ppoints(n); z <- stats::qnorm(P)
+  qx <- stats::quantile(x, c(.25, .75), names = FALSE); qz <- stats::qnorm(c(.25, .75))
+  b  <- diff(qx) / diff(qz); a <- qx[1] - b * qz[1]           # slope and intercept of the quartile line
+  se <- (b / stats::dnorm(z)) * sqrt(P * (1 - P) / n)
+  tibble(z = z, x = x, line = a + b * z, lo = line - 1.96 * se, hi = line + 1.96 * se)
+}
+qq_check <- function(res) {
+  d <- qq_band(res)
+  n_out <- sum(d$x < d$lo | d$x > d$hi)
+  list(n_out = n_out, n = nrow(d), share = n_out / nrow(d), normal = n_out / nrow(d) <= QQ_OUTSIDE)
+}
+qq_plot <- function(res, title = "Normal Q-Q Plot of Residuals") {
+  ggplot(qq_band(res), aes(z)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#00BCD4", alpha = .18) +
+    geom_line(aes(y = lo), colour = "#20B2AA", linetype = "dashed") + geom_line(aes(y = hi), colour = "#20B2AA", linetype = "dashed") +
+    geom_line(aes(y = line), colour = "#2E8B57", linewidth = 1) +
+    geom_point(aes(y = x), colour = "#1B5E4B", alpha = .6) +
+    x_axis(n = 6) + y_axis() +
+    labs(title = title, x = "Theoretical Quantiles", y = "Sample Quantiles (Residuals)",
+         caption = "Shaded band = 95% confidence envelope") + te_theme()
+}
+resid_plot <- function(fitted, res, jitter = FALSE, title = "Residuals vs. Fitted Values") {
   w <- 0.03 * diff(range(fitted)); if (!is.finite(w) || w == 0) w <- 0.01
   p <- ggplot(tibble(f = fitted, r = res), aes(f, r)) +
     geom_hline(yintercept = 0, linetype = "dashed", colour = "#1B5E4B")
   p <- p + if (jitter) geom_jitter(width = w, height = 0, colour = "#20B2AA", alpha = .45)
            else        geom_point(colour = "#20B2AA", alpha = .45)
-  p + labs(title = "Residuals vs. Fitted Values", x = "Fitted Values", y = "Residuals") + te_theme()
+  p + x_axis(n = 6) + y_axis() + labs(title = title, x = "Fitted Values", y = "Residuals") + te_theme()
 }
 
-safe_shapiro <- function(x) {  # Shapiro-Wilk normality test that never crashes (3-5000 values only)
-  x <- x[is.finite(x)]                                     # remove missing and infinite values
-  if (length(x) > 5000) { set.seed(1); x <- sample(x, 5000) }  # max 5000: reproducible sample
-  tryCatch(stats::shapiro.test(x), error = function(e) NULL)    # NULL if the test can't run
+  # [safe_levene()] ==================================================================================================================================
+  # Levene's test (car::leveneTest, centred on group medians as car does by default): do the groups have equal spread? Returns list(stat, p), with NA
+  # values if the test can't run.
+  # ==================================================================================================================================================
+safe_levene <- function(y, g) {
+  lt <- tryCatch(suppressWarnings(car::leveneTest(y ~ g, data = tibble(y = y, g = factor(g)))), error = function(e) NULL)
+  if (is.null(lt)) list(stat = NA_real_, p = NA_real_) else list(stat = lt$`F value`[1], p = lt$`Pr(>F)`[1])
+}
+
+  # [assumption_tbl() and qq_note()] =================================================================================================================
+  # assumption_tbl()  The "Assumption checks" table shared by ANOVA and regression: Levene's test (equal spread) with a plain-English reading.
+  #                   lev = a safe_levene() result; lev_name = how the row is labelled.
+  # qq_note()         One sentence reporting qq_check() (qc), shown under the table so students can see how normality was judged.
+  # ==================================================================================================================================================
+assumption_tbl <- function(lev, lev_name = "Levene's Test (Equal variances)") {
+  tibble(Test = lev_name, Statistic = lev$stat, `p-value` = fmt_p(lev$p), Interpretation = interp(lev$p))
+}
+qq_note <- function(qc, label = "Normality") {
+  tags$p(tags$strong(paste0(label, " (Q-Q plot): ")),
+         sprintf("%d of %d residuals (%.1f%%) fall outside the 95%% band. %s", qc$n_out, qc$n, 100 * qc$share,
+                 if (qc$normal) sprintf("That is %.0f%% or fewer, so the residuals look approximately normal.", 100 * QQ_OUTSIDE)
+                 else sprintf("That is more than %.0f%%, so the residuals do not look normal.", 100 * QQ_OUTSIDE)))
 }
 
   # [interp()] =======================================================================================================================================
@@ -655,7 +885,8 @@ conclusion_ui <- function(p, reject_txt, fail_txt) {
 
   # [1. ANOVA: quantitative response + qualitative explanatory] ======================================================================================
   # yvar = quantitative response column name; gvar = qualitative grouping column name. Returns a named list (type, title, main_plot, summary_ui,
-  # test_ui, diag_plots, diag_ui): the 'contract' the results page expects from every analyse_* function.
+  # test_ui, diag_plots, diag_ui): the 'contract' the results page expects from every analyse_* function. Two entries are optional: plot_height
+  # (a taller main graph, used by chi-squared) and diag_titles (headings over each pair of diagnostic plots, used by regression).
   # ==================================================================================================================================================
 analyse_anova <- function(df, yvar, gvar) {
   n_orig <- n_distinct(df[[gvar]], na.rm = TRUE)               # group count before lumping
@@ -670,49 +901,76 @@ analyse_anova <- function(df, yvar, gvar) {
   tab  <- summary(fit)[[1]]            # the ANOVA table as a data frame
   pval <- tab$`Pr(>F)`[1]              # p-value of the F-test
   res  <- stats::resid(fit)            # residuals (each value minus its group mean)
+  ylab <- var_label(yvar); glab <- var_label(gvar); ng <- nlevels(d$g)
   # -- Graph --
-  # Boxplots + (thinned) raw points + white diamond = group mean.
+  # Boxplots + (thinned) raw points. Group names wrap after 14 characters and shrink when there are many groups; with more than 4 groups they are
+  # also tilted.
   pts  <- if (nrow(d) > 4000) slice_sample(d, n = 4000) else d
   main_plot <- ggplot(d, aes(g, y, fill = g)) +
     geom_boxplot(alpha = .55, outlier.shape = NA) +
     geom_jitter(data = pts, width = .15, alpha = .25, size = .8, colour = "#1B5E4B") +
-    stat_summary(fun = mean, geom = "point", shape = 23, size = 3, fill = "white") +
-    scale_fill_manual(values = te_cols(nlevels(d$g))) + guides(fill = "none") +
-    labs(title = paste(yvar, "by", gvar), x = gvar, y = yvar,
-         caption = "White diamond = group mean") + te_theme() +
-    theme(axis.text.x = element_text(angle = 40, hjust = 1))
+    scale_fill_manual(values = te_cols(ng)) + guides(fill = "none") +
+    scale_x_discrete(labels = wrap_at(14)) + y_axis() +
+    labs(title = te_title(paste(ylab, "by", glab)), x = glab, y = ylab) + te_theme() +
+    theme(axis.text.x = element_text(size = fit_size(ng), angle = if (ng > 4) 40 else 0, hjust = if (ng > 4) 1 else .5, vjust = 1))
   # -- Numerical summary by group --
   # One row per group: n, mean, sd, median, min, max. A note is only shown when groups were lumped into 'Other'.
   by_g <- d %>%
     group_by(Group = g) %>%
     summarise(n = n(), mean = mean(y), sd = stats::sd(y), median = stats::median(y), min = min(y), max = max(y))
   note <- NULL
-  if (n_orig > TOP_LEVELS) note <- sprintf("%s has %d different values; only the %d most common are kept and the rest are grouped as \"Other\".", gvar, n_orig, TOP_LEVELS)
+  if (n_orig > TOP_LEVELS) note <- sprintf("%s has %d different values; only the %d most common are kept and the rest are grouped as \"Other\".", glab, n_orig, TOP_LEVELS)
   # -- ANOVA table + diagnostic tests --
-  # Shapiro-Wilk asks: are the residuals normal? An ANOVA on each value's distance from its group median is the Brown-Forsythe test (Levene using
-  # medians): do the groups have equal spread?
-  anova_tbl <- tibble(Source = c("Between groups", "Within groups (Residuals)"),
+  # Levene's test asks: do the groups have equal spread? qq_check() asks: are the residuals normal (do they stay inside the Q-Q band)?
+  anova_tbl <- tibble(Source = c("Between Groups", "Within Groups (Residuals)"),
                       Df = tab$Df, `Sum Sq` = tab$`Sum Sq`, `Mean Sq` = tab$`Mean Sq`,
                       `F value` = c(tab$`F value`[1], NA), `p-value` = c(fmt_p(pval), ""))
-  sw  <- safe_shapiro(res)                                      # Shapiro-Wilk
-  z   <- abs(d$y - stats::ave(d$y, d$g, FUN = stats::median))  # distances from group medians
-  bf  <- stats::anova(stats::lm(z ~ d$g))                       # Brown-Forsythe test
-  diag_tbl <- tibble(  # table of the two assumption checks, each with a plain-English reading
-    Test = c("Shapiro-Wilk (residuals are normal)", "Brown-Forsythe / Levene (equal variances)"),
-    Statistic = c(if (is.null(sw)) NA else unname(sw$statistic), bf$`F value`[1]),
-    `p-value` = fmt_p(c(if (is.null(sw)) NA else sw$p.value, bf$`Pr(>F)`[1])),
-    Interpretation = interp(c(if (is.null(sw)) NA else sw$p.value, bf$`Pr(>F)`[1])))
+  qc       <- qq_check(res)
+  diag_tbl <- assumption_tbl(safe_levene(d$y, d$g))
+  # -- Tukey HSD contrasts --
+  # Every pair of groups compared, with the family-wise error rate held at ALPHA. One row per pair: difference in means, its confidence interval and
+  # the adjusted p-value. TukeyHSD names each row "B-A"; pair_lab maps those names to "B − A" (built from the levels, so hyphens inside a group name
+  # are left alone).
+  tk <- stats::TukeyHSD(fit, conf.level = 1 - ALPHA)$g
+  pr <- utils::combn(levels(d$g), 2)
+  pair_lab  <- setNames(paste(pr[2, ], "−", pr[1, ]), paste(pr[2, ], pr[1, ], sep = "-"))
+  tukey_tbl <- tibble(Comparison = unname(pair_lab[rownames(tk)]), Difference = tk[, "diff"],
+                      `CI Lower` = tk[, "lwr"], `CI Upper` = tk[, "upr"], `Adjusted p-value` = fmt_p(tk[, "p adj"]),
+                      Significant = if_else(tk[, "p adj"] < ALPHA, "Yes", "No"))
+  # -- Kruskal-Wallis --
+  # Only added when the Q-Q check finds non-normal residuals: compares the groups using ranks, so it does not need normality.
+  kw_ui <- NULL
+  if (!qc$normal) {
+    kw <- stats::kruskal.test(y ~ g, data = d)
+    kw_ui <- tagList(
+      tags$h4("Kruskal-Wallis Test (Residuals are not normal)"),
+      tags$p(class = "note", sprintf("%.1f%% of the residuals fall outside the Q-Q plot's 95%% band (more than %.0f%%), so they do not look normal. This rank-based test is given as a check on the ANOVA. It asks whether the groups' distributions (roughly, their medians) differ.", 100 * qc$share, 100 * QQ_OUTSIDE)),
+      html_table(tibble(Statistic = c("Kruskal-Wallis χ²", "Degrees of freedom", "p-value"),
+                        Value = c(fmt_n(kw$statistic), as.character(kw$parameter), fmt_p(kw$p.value))), "Kruskal-Wallis Test"),
+      conclusion_ui(kw$p.value, "At least one group tends to have larger or smaller values than the others.",
+                    "There is not enough evidence that the groups differ."))
+  }
 
-  list(type = "anova", title = paste("ANOVA:", yvar, "by", gvar),
+  # -- Contrasts box --
+  # The Tukey table can run to 45+ rows, so it sits in a collapsible box (closed at first) whose heading already says how many pairs differ.
+  contrasts_ui <- tags$details(class = "contrasts",
+    tags$summary(sprintf("Pairwise Contrasts (Tukey HSD, %.0f%% confidence intervals): %d of %d pairs differ significantly",
+                         100 * (1 - ALPHA), sum(tk[, "p adj"] < ALPHA), nrow(tk))),
+    html_table(tukey_tbl),
+    tags$p(class = "note", "Each row compares two group means. A pair differs significantly when its adjusted p-value is below α (its confidence interval does not include 0)."))
+
+  list(type = "anova", title = paste("ANOVA:", ylab, "by", glab),
        main_plot = main_plot,
-       summary_ui = tagList(html_table(by_g, paste("Summary of", yvar, "for each", gvar, "group")),
+       summary_ui = tagList(html_table(by_g, paste("Summary of", ylab, "for Each", glab, "Group")),
                             if (!is.null(note)) tags$p(class = "note", note)),
-       test_ui = tagList(html_table(anova_tbl, "ANOVA table"),
+       test_ui = tagList(html_table(anova_tbl, "ANOVA Table"),
                          conclusion_ui(pval, "At least one group mean differs from the others.",
-                                       "There is not enough evidence that any group mean differs.")),
+                                       "There is not enough evidence that any group mean differs."),
+                         contrasts_ui,
+                         kw_ui),
        diag_plots = list(qq_plot(res), resid_plot(stats::fitted(fit), res, jitter = TRUE)),
-       diag_ui = tagList(html_table(diag_tbl, "Assumption checks"),
-                         tags$p(class = "note", "With very large samples these tests flag tiny, unimportant departures - judge the plots too.")))
+       diag_ui = tagList(html_table(diag_tbl, "Assumption Checks"), qq_note(qc),
+                         tags$p(class = "note", "With very large samples Levene's test flags tiny, unimportant differences in spread - judge the plots too.")))
 }
 
   # [2. Simple linear regression: quantitative + quantitative] =======================================================================================
@@ -723,59 +981,87 @@ analyse_regression <- function(df, yvar, xvar) {
   d <- drop_na(d)
   validate(need(nrow(d) >= 3 && stats::sd(d$x) > 0 && stats::sd(d$y) > 0,  # 3+ rows, both vary
                 "Regression needs at least 3 complete observations where both variables vary."))
-  fit <- stats::lm(y ~ x, data = d)  # fit the straight-line model
-  s   <- summary(fit)                # summary of the fit: coefficients, R-squared, F-statistic
-  cf  <- s$coefficients              # coefficient table (estimate, std. error, t, p)
-  ci  <- stats::confint(fit)         # 95% confidence intervals for the coefficients
-  res <- stats::resid(fit)           # residuals (observed minus predicted)
-  # -- Overall F-test --
-  # p-value of the overall F-test.
-  fp  <- stats::pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3], lower.tail = FALSE)
+  yl <- var_label(yvar); xl <- var_label(xvar)   # the two names as shown on the page ("Sample pH")
+  # -- fit_slr() --
+  # Fits y ~ x for one version of the response (the original, or log(y) below) and returns everything shown for that fit: the model, its summary,
+  # residuals, the coefficient table, the overall F-test p-value, the Q-Q normality check, and Levene's test. Levene's test needs groups, so the
+  # residuals are split into two groups at the median fitted value (the "modified Levene" test for regression): equal spread means both halves
+  # scatter about the same.
+  fit_slr <- function(yy, ylab) {
+    fit <- stats::lm(yy ~ d$x)        # fit the straight-line model
+    s   <- summary(fit)              # summary of the fit: coefficients, R-squared, F-statistic
+    cf  <- s$coefficients            # coefficient table (estimate, std. error, t, p)
+    ci  <- stats::confint(fit)       # 95% confidence intervals for the coefficients
+    res <- stats::resid(fit)         # residuals (observed minus predicted)
+    fv  <- stats::fitted(fit)
+    qc  <- qq_check(res)
+    lev <- safe_levene(res, if_else(fv <= stats::median(fv), "Lower half", "Upper half"))
+    fp  <- stats::pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3], lower.tail = FALSE)  # p-value of the overall F-test
+    list(s = s, cf = cf, res = res, fv = fv, qc = qc, lev = lev,
+         coef_tbl = tibble(Term = c("Intercept (β₀)", paste0("Slope (β₁): ", xl)),
+                           Estimate = cf[, 1], `Std. Error` = cf[, 2], `t value` = cf[, 3],
+                           `p-value` = fmt_p(cf[, 4]), `95% CI Lower` = ci[, 1], `95% CI Upper` = ci[, 2]),
+         diag_tbl = assumption_tbl(lev, "Levene's Test (Equal spread: lower vs. upper half of fitted values)"),
+         f_line = tags$p(sprintf("Overall model F-test (Response: %s): F = %s on %d and %d df, p-value %s", ylab,
+                                 fmt_n(s$fstatistic[1]), s$fstatistic[2], s$fstatistic[3], fmt_p(fp))))
+  }
+  m  <- fit_slr(d$y, yl)
+  s  <- m$s; cf <- m$cf
   # -- Graph --
-  # Scatterplot (fainter when there are many points) with the least-squares line and its confidence band.
+  # Scatterplot (fainter when there are many points) with the least-squares line.
   main_plot <- ggplot(d, aes(x, y)) +
     geom_point(colour = "#20B2AA", alpha = if (nrow(d) > 500) .3 else .6) +
-    geom_smooth(method = "lm", formula = y ~ x, colour = "#2E8B57", fill = "#00BCD4", alpha = .25) +
-    labs(title = paste(yvar, "vs.", xvar), x = xvar, y = yvar,
-         caption = "Line = least-squares fit; band = 95% confidence interval for the mean") + te_theme()
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE, colour = "#2E8B57") +
+    x_axis() + y_axis() +
+    labs(title = te_title(paste(yl, "vs.", xl)), x = xl, y = yl, caption = "Line = least-squares fit") + te_theme()
 
   desc <- d %>%                                                 # descriptive stats, both variables
     pivot_longer(c(y, x), names_to = "role", values_to = "v") %>%  # one long column of values, labelled y or x
-    mutate(Variable = if_else(role == "y", paste0(yvar, " (response)"), paste0(xvar, " (explanatory)")),
+    mutate(Variable = if_else(role == "y", paste0(yl, " (Response)"), paste0(xl, " (Explanatory)")),
            Variable = fct_inorder(Variable)) %>%                   # keep the response first
     group_by(Variable) %>%
     summarise(n = n(), mean = mean(v), sd = stats::sd(v), median = stats::median(v), min = min(v), max = max(v))
-  # -- Fit, coefficient and assumption tables --
-  # fit_tbl   strength of the fit: correlation, R-squared, adjusted R-squared, residual standard error
-  # coef_tbl  coefficient table for display (Greek letters are written as Unicode escapes)
-  # sw        Shapiro-Wilk: are the residuals normal?
-  # sp        Spearman correlation of |residuals| with fitted values: near 0 means the spread is constant
-  # diag_tbl  the two assumption checks, each with a plain-English reading
+  # fit_tbl  strength of the fit: correlation, R-squared, adjusted R-squared, residual standard error
   fit_tbl <- tibble(Statistic = c("Correlation (r)", "R\u00b2", "Adjusted R\u00b2", "Residual standard error"),
                     Value = c(stats::cor(d$x, d$y), s$r.squared, s$adj.r.squared, s$sigma))
-  coef_tbl <- tibble(Term = c("Intercept (\u03b2\u2080)", paste0("Slope (\u03b2\u2081): ", xvar)),
-                     Estimate = cf[, 1], `Std. Error` = cf[, 2], `t value` = cf[, 3],
-                     `p-value` = fmt_p(cf[, 4]), `95% CI Lower` = ci[, 1], `95% CI Upper` = ci[, 2])
-  sw <- safe_shapiro(res)
-  sp <- tryCatch(suppressWarnings(stats::cor.test(abs(res), stats::fitted(fit), method = "spearman", exact = FALSE)),
-                 error = function(e) NULL)
-  diag_tbl <- tibble(
-    Test = c("Shapiro-Wilk (residuals are normal)", "Spearman: |residuals| vs fitted (constant spread)"),
-    Statistic = c(if (is.null(sw)) NA else unname(sw$statistic), if (is.null(sp)) NA else unname(sp$estimate)),
-    `p-value` = fmt_p(c(if (is.null(sw)) NA else sw$p.value, if (is.null(sp)) NA else sp$p.value)),
-    Interpretation = interp(c(if (is.null(sw)) NA else sw$p.value, if (is.null(sp)) NA else sp$p.value)))
+  # -- Automatic log(y) refit --
+  # If either assumption check on the original fit fails (residuals outside the Q-Q band, or Levene's test), the model is refitted with log(y), which
+  # often evens out skewed responses and spread that grows with y. log() needs every y above 0, so a response with zeros or negatives gets a note
+  # instead.
+  failed  <- !m$qc$normal || isTRUE(m$lev$p < ALPHA)
+  log_ui  <- NULL; log_diag <- NULL; log_plots <- list()
+  if (failed && min(d$y) <= 0) {
+    log_ui <- tags$p(class = "note", sprintf("An assumption check failed, but a log transformation was not tried because %s has values of 0 or below.", yl))
+  } else if (failed) {
+    lg <- fit_slr(log(d$y), paste0("Log(", yl, ")"))
+    b1 <- lg$cf[2, 1]
+    log_ui <- tagList(
+      tags$h4(sprintf("Log-Transformed Analysis: Log(%s) on %s", yl, xl)),
+      tags$p(class = "note", "At least one assumption check failed for the original data, so the model was refitted using the natural log of the response."),
+      html_table(lg$coef_tbl, sprintf("Regression Coefficients (Response: log(%s))", yl)),
+      lg$f_line,
+      tags$p(sprintf("Interpretation: each 1-unit increase in %s multiplies %s by e^%s = %s, a change of about %s%%.",
+                     xl, yl, fmt_n(b1, 4), fmt_n(exp(b1), 4), fmt_n(100 * (exp(b1) - 1), 2))),
+      conclusion_ui(lg$cf[2, 4], sprintf("There is evidence of a linear relationship between log(%s) and %s.", yl, xl),
+                    sprintf("There is not enough evidence of a linear relationship between log(%s) and %s.", yl, xl)))
+    log_diag  <- tagList(html_table(lg$diag_tbl, sprintf("Assumption Checks After the Log Transformation (Log(%s))", yl)),
+                         qq_note(lg$qc, sprintf("Normality after the log transformation (Log(%s))", yl)))
+    log_plots <- list(qq_plot(lg$res), resid_plot(lg$fv, lg$res))  # the "Log Transformation" heading above them names the model (diag_titles)
+  }
 
-  list(type = "regression", title = paste("Simple Linear Regression:", yvar, "on", xvar),
+  list(type = "regression", title = paste("Simple Linear Regression:", yl, "on", xl),
        main_plot = main_plot,
-       summary_ui = tagList(html_table(desc, "Descriptive statistics"), html_table(fit_tbl, "Strength of the linear relationship")),
-       test_ui = tagList(html_table(coef_tbl, "Regression coefficients"),
-                         tags$p(sprintf("Overall model F-test: F = %s on %d and %d df, p-value %s",
-                                        fmt_n(s$fstatistic[1]), s$fstatistic[2], s$fstatistic[3], fmt_p(fp))),
+       diag_titles = if (length(log_plots)) c(paste("Original Model:", yl), sprintf("Log Transformation: Log(%s)", yl)),  # headings over each pair
+       summary_ui = tagList(html_table(desc, "Descriptive Statistics"), html_table(fit_tbl, "Strength of the Linear Relationship")),
+       test_ui = tagList(html_table(m$coef_tbl, "Regression Coefficients"),
+                         m$f_line,
                          conclusion_ui(cf[2, 4], "There is evidence of a linear relationship between the two variables.",
-                                       "There is not enough evidence of a linear relationship.")),
-       diag_plots = list(resid_plot(stats::fitted(fit), res), qq_plot(res)),
-       diag_ui = tagList(html_table(diag_tbl, "Assumption checks"),
-                         tags$p(class = "note", "Also check the Residuals vs. Fitted plot: a random cloud around 0 supports linearity and equal spread.")))
+                                       "There is not enough evidence of a linear relationship."),
+                         log_ui),
+       diag_plots = c(list(qq_plot(m$res), resid_plot(m$fv, m$res)), log_plots),  # Q-Q first, then residuals vs. fitted (2 x 2 with the log refit)
+       diag_ui = tagList(html_table(m$diag_tbl, "Assumption Checks"), qq_note(m$qc),
+                         tags$p(class = "note", "Also check the Residuals vs. Fitted plot: a random cloud around 0 supports linearity and equal spread."),
+                         log_diag))
 }
 
   # [3. Chi-squared test of independence: qualitative + qualitative] =================================================================================
@@ -797,7 +1083,7 @@ analyse_chisq <- function(df, v1, v2) {
                             else sprintf("%s has %d categories", nm, nlevels(f))
     validate(need(FALSE, sprintf(
       "The chi-squared test needs at least two categories in each variable, using only rows where both are filled in. Only %s of %s rows have both %s and %s filled in; among those rows, %s and %s.",
-      format(nrow(d), big.mark = ","), format(n_all, big.mark = ","), v1, v2, left(d$a, v1), left(d$b, v2))))
+      format(nrow(d), big.mark = ","), format(n_all, big.mark = ","), var_label(v1), var_label(v2), left(d$a, var_label(v1)), left(d$b, var_label(v2)))))
   }
   # -- Run the test --
   # Contingency table (the count for every combination of categories), then the test with no continuity correction. Small-count warnings are reported
@@ -807,31 +1093,40 @@ analyse_chisq <- function(df, v1, v2) {
   expd <- test$expected   # counts we would expect if the variables were independent
   low  <- sum(expd < 5)   # how many cells have an expected count below 5
   n    <- sum(tab)        # total sample size
-  cv   <- sqrt(unname(test$statistic) / (n * min(nrow(tab) - 1, ncol(tab) - 1)))   # Cramer's V
   note <- NULL            # a note is only shown when categories were lumped into 'Other'
   if (max(n1, n2) > TOP_LEVELS) note <- sprintf("Variables with more than %d categories keep only their %d most common; the rest are grouped as \"Other\".", TOP_LEVELS, TOP_LEVELS)
   # -- Graph --
-  # Stacked 100% bars; each bar is one category of v1, split by v2.
+  # Column graph of the response (v2): one panel per category of the explanatory variable (v1), one column per response category, named under the
+  # column (no legend). A thin border around each panel keeps neighbouring panels apart. Panel names wrap after 18 characters, column names after
+  # 12 and shrink when there are many; when more than 8 column names share a row they are also tilted. Up to 4 panels share a row, and the graph
+  # grows 190 px taller for each row past the first two. The border's linetype is set because the Economist theme makes outlines invisible.
+  l1 <- var_label(v1); l2 <- var_label(v2); na <- nlevels(d$a); nb <- nlevels(d$b)
+  ncols <- min(na, if (na <= 4) 2 else 4)
+  nrows <- ceiling(na / ncols)
+  tilt  <- nb * ncols > 8
   plot_df <- count(d, a, b, .drop = FALSE)          # every a/b combination, including zero counts
-  main_plot <- ggplot(plot_df, aes(a, n, fill = b)) +
-    geom_col(position = "fill", colour = "white") +
-    scale_fill_manual(values = te_cols(nlevels(d$b))) +
-    scale_y_continuous(labels = percent) +
-    labs(title = paste(v2, "within each", v1), x = v1, y = "Percent of row", fill = v2) + te_theme() +
-    theme(axis.text.x = element_text(angle = 40, hjust = 1))
+  main_plot <- ggplot(plot_df, aes(b, n, fill = b)) +
+    geom_col(colour = "white") +
+    facet_wrap(~ a, ncol = ncols, labeller = as_labeller(wrap_at(18))) +
+    scale_fill_manual(values = te_cols(nb)) + guides(fill = "none") +
+    scale_x_discrete(labels = wrap_at(12)) + y_axis(n = 4, pad = c(0, .08)) +
+    labs(title = te_title(paste(l2, "by", l1)), subtitle = paste("Panels:", l1), x = l2, y = "Count") + te_theme() +
+    theme(axis.text.x = element_text(size = fit_size(nb * ncols, at = 8), angle = if (tilt) 35 else 0, hjust = if (tilt) 1 else .5, vjust = 1),
+          panel.grid.major.x = element_blank(),
+          panel.border = element_rect(colour = "grey55", fill = NA, linewidth = .4, linetype = "solid"), panel.spacing = unit(10, "pt"),
+          strip.text = element_text(face = "bold", colour = "#1B5E4B", size = fit_size(na)))
 
   counts_tbl <- as.data.frame.matrix(stats::addmargins(tab)) %>%              # with row/column totals
     rownames_to_column("Level")
   pct_tbl    <- as.data.frame.matrix(round(100 * prop.table(tab, 1), 1)) %>%  # row % (each row = 100)
     rownames_to_column("Level")
   # -- Test results and diagnostics --
-  # test_tbl  statistic, degrees of freedom, p-value, Cramer's V (effect size), n
+  # test_tbl  statistic, degrees of freedom, p-value, n
   # mc        optional note with a Monte Carlo (simulation-based) p-value, used when many expected counts are small
   # exp_tbl   expected counts, formatted for display
-  # sres_tbl  standardized residuals: how strongly each cell departs from independence (beyond about 2 = a lot)
-  # heat_df   the residuals reshaped into one row per cell so ggplot can draw them as a heat map (the diagnostic graph)
-  test_tbl <- tibble(Statistic = c("Chi-squared (\u03c7\u00b2)", "Degrees of freedom", "p-value", "Cram\u00e9r's V (effect size, 0-1)", "Sample size (n)"),
-                     Value = c(fmt_n(test$statistic), as.character(test$parameter), fmt_p(test$p.value), fmt_n(cv), as.character(n)))
+  # pres_tbl  Pearson residuals, (O - E) / sqrt(E): how strongly each cell departs from independence (beyond about 2 = a lot)
+  test_tbl <- tibble(Statistic = c("Chi-squared (\u03c7\u00b2)", "Degrees of freedom", "p-value", "Sample size (n)"),
+                     Value = c(fmt_n(test$statistic), as.character(test$parameter), fmt_p(test$p.value), as.character(n)))
   mc <- NULL
   if (low / length(expd) > 0.2) {  # many small expected counts: add a simulation-based p-value
     set.seed(1)
@@ -839,64 +1134,183 @@ analyse_chisq <- function(df, v1, v2) {
     mc  <- tags$p(class = "note", sprintf("Because %d%% of cells have an expected count below 5, a simulation-based (Monte Carlo) p-value is also given: %s.", round(100 * low / length(expd)), fmt_p(mcp)))
   }
   exp_tbl  <- as.data.frame.matrix(round(expd, 2)) %>% rownames_to_column("Level")
-  sres_m   <- test$stdres
-  sres_tbl <- as.data.frame.matrix(round(sres_m, 2)) %>% rownames_to_column("Level")
-  heat_df  <- as.data.frame(as.table(sres_m), responseName = "z", stringsAsFactors = FALSE) %>% rename(a = Var1, b = Var2)
-  heat <- ggplot(heat_df, aes(b, a, fill = z)) + geom_tile(colour = "white") +
-    geom_text(aes(label = round(z, 1)), size = 3.2) +
-    scale_fill_gradient2(low = "#00ACC1", mid = "white", high = "#2E8B57", midpoint = 0, name = "Std.\nresidual") +
-    labs(title = "Standardized Residuals", x = v2, y = v1) + te_theme() +
-    theme(axis.text.x = element_text(angle = 40, hjust = 1), panel.grid = element_blank())
+  pres_tbl <- as.data.frame.matrix(round(test$residuals, 2)) %>% rownames_to_column("Level")
 
-  list(type = "chisq", title = paste("Chi-squared Test of Independence:", v1, "and", v2),
+  list(type = "chisq", title = paste("Chi-squared Test of Independence:", l1, "and", l2),
        main_plot = main_plot,
-       summary_ui = tagList(html_table(counts_tbl, sprintf("Counts (rows: %s; columns: %s)", v1, v2)),
-                            html_table(pct_tbl, "Row percentages (each row adds to 100%)"),
+       plot_height = if (nrows > 2) 440 + 190 * (nrows - 2) else NULL,
+       summary_ui = tagList(html_table(counts_tbl, sprintf("Counts (Rows: %s; columns: %s)", l1, l2)),
+                            html_table(pct_tbl, "Row Percentages (Each row adds to 100%)"),
                             if (!is.null(note)) tags$p(class = "note", note)),
-       test_ui = tagList(html_table(test_tbl, "Chi-squared test"), mc,
+       test_ui = tagList(html_table(test_tbl, "Chi-squared Test"), mc,
                          conclusion_ui(test$p.value, "The two variables appear to be associated.",
                                        "There is not enough evidence that the variables are associated.")),
-       diag_plots = list(heat),
+       diag_plots = list(),
        diag_ui = tagList(
          tags$p(sprintf("Cells with expected count below 5: %d of %d (%.0f%%). Smallest expected count: %s.",
                         low, length(expd), 100 * low / length(expd), fmt_n(min(expd), 2))),
          tags$p(class = "note", "Rule of thumb: all expected counts should be at least 1, and at least 80% should be 5 or more."),
-         html_table(exp_tbl, "Expected counts (if the variables were independent)"),
-         html_table(sres_tbl, "Standardized residuals (beyond about \u00b12 = cell contributes strongly)")))
+         html_table(exp_tbl, "Expected Counts (If the variables were independent)"),
+         html_table(pres_tbl, "Pearson Residuals, (O \u2212 E) / \u221aE (Beyond about \u00b12 = cell contributes strongly)")))
+}
+
+  # [4. Simple logistic regression: two-outcome qualitative response + quantitative explanatory] ======================================================
+  # yvar = response column name (exactly two outcomes, see binary_outcome()); xvar = explanatory column name (quantitative). Returns the same named
+  # list as analyse_anova(). In the working table d, out = the outcome as text, x = the explanatory value, y = 1 if out is the event, else 0.
+  # ==================================================================================================================================================
+analyse_logistic <- function(df, yvar, xvar) {
+  bo <- binary_outcome(df[[yvar]])
+  validate(need(!is.null(bo), "Logistic regression needs a response with exactly two outcomes (such as Yes / No)."))
+  n_inc <- sum(!is.na(df[[yvar]]) & is.na(bo$y))              # rows dropped as Inconclusive / did not grow
+  d <- tibble(out = bo$y, x = df[[xvar]]) %>% drop_na() %>% mutate(y = as.integer(out == bo$event))
+  validate(need(nrow(d) >= 10 && n_distinct(d$y) == 2 && stats::sd(d$x) > 0,
+                "Logistic regression needs at least 10 complete rows, both outcomes present, and an explanatory variable that varies."))
+  ev  <- paste(bo$event); ylab <- var_label(yvar); xlab <- var_label(xvar)
+
+  fit  <- suppressWarnings(stats::glm(y ~ x, family = stats::binomial, data = d))  # warnings (separation) are reported below instead
+  cf   <- summary(fit)$coefficients                              # estimate (log-odds), std. error, z, p
+  ci   <- suppressWarnings(suppressMessages(tryCatch(stats::confint(fit), error = function(e) stats::confint.default(fit))))  # 95% CIs (profile; Wald if that fails)
+  phat <- stats::fitted(fit)                                     # predicted probability of the event for each row
+  # "Perfect separation": x splits the two outcomes (almost) perfectly, so the fit runs off to infinity and the estimates, odds ratios and z-test
+  # p-values are meaningless. The plain-English interpretation is replaced by a warning when this happens.
+  separate <- !fit$converged || any(phat < 1e-6 | phat > 1 - 1e-6)
+  # -- Likelihood-ratio test and fit --
+  # The LRT compares this model with one that ignores x: the drop in deviance is chi-squared on 1 df.
+  lrt   <- fit$null.deviance - fit$deviance
+  lrt_p <- stats::pchisq(lrt, df = 1, lower.tail = FALSE)
+  b1   <- cf[2, 1]; or <- exp(b1)
+  q     <- stats::quantile(d$x, c(.25, .75), names = FALSE)     # predicted probability at the 1st and 3rd quartiles of x
+  pq    <- stats::predict(fit, tibble(x = q), type = "response")
+
+  # -- Graph --
+  # Each row is a faint point at 1 (event) or 0 (not), jittered up/down a little; the line is the fitted S-shaped probability curve. Half-transparent
+  # cyan lines mark Y = 1 and Y = 0 (the two possible outcomes) and a sky-blue dotted line marks Y = 0.5 (a 50/50 chance), to help the eye.
+  grid <- tibble(x = seq(min(d$x), max(d$x), length.out = 200))
+  grid$p <- stats::predict(fit, grid, type = "response")
+  main_plot <- ggplot() +
+    geom_hline(yintercept = c(0, 1), colour = "#00ACC1", linewidth = 1, alpha = .5) +
+    geom_hline(yintercept = .5, colour = "#4FC3F7", linetype = "dotted", linewidth = .9) +
+    geom_jitter(data = d, aes(x, y), width = 0, height = .03, colour = "#20B2AA", alpha = if (nrow(d) > 500) .2 else .4) +
+    geom_line(data = grid, aes(x, p), colour = "#2E8B57", linewidth = 1.2) +
+    scale_y_continuous(breaks = seq(0, 1, .25), limits = c(-.05, 1.05)) + x_axis() +
+    labs(title = te_title(paste0("Probability of ", ylab, " = ", ev, " by ", xlab)), x = xlab,
+         y = str_wrap(paste0("Probability ", ylab, " = ", ev), 30),
+         caption = paste0("Points: 1 = ", ev, ", 0 = ", bo$other, ". Line = fitted logistic curve.")) +
+    te_theme()
+
+  # -- Numerical summary --
+  # The explanatory variable described separately for each outcome, plus a note on any Inconclusive rows left out.
+  by_out <- d %>% group_by(Outcome = out) %>%
+    summarise(n = n(), mean = mean(x), sd = stats::sd(x), median = stats::median(x), min = min(x), max = max(x))
+  inc_note <- if (n_inc > 0) tags$p(class = "note", sprintf("%d row(s) recorded as Inconclusive or Isolate did not grow are left out, because they are not one of the two outcomes.", n_inc))
+
+  # -- Coefficient and fit tables --
+  # coef_tbl  log-odds estimates with their odds ratios (e^estimate) and 95% CIs. For the intercept the "odds ratio" is the odds of the event when
+  #           x = 0.
+  # fit_tbl   deviances and the likelihood-ratio test
+  coef_tbl <- tibble(Term = c("Intercept (\u03b2\u2080)", paste0("Slope (\u03b2\u2081): ", xlab)),
+                     `Estimate (Log-odds)` = cf[, 1], `Std. Error` = cf[, 2], `z value` = cf[, 3], `p-value` = fmt_p(cf[, 4]),
+                     `Odds Ratio` = exp(cf[, 1]), `OR 95% CI Lower` = exp(ci[, 1]), `OR 95% CI Upper` = exp(ci[, 2]))
+  fit_tbl <- tibble(Statistic = c("Null deviance (No x)", "Residual deviance (With x)", "Likelihood-ratio \u03c7\u00b2 (1 df)", "p-value", "Sample size (n)"),
+                    Value = c(fmt_n(fit$null.deviance), fmt_n(fit$deviance), fmt_n(lrt), fmt_p(lrt_p), as.character(nrow(d))))
+  sep_ui <- tags$p(class = "concl", sprintf("Warning: %s separates the two outcomes almost perfectly (every row on one side of a cut-off has the same outcome), so the estimates and odds ratios above run off toward 0 or infinity and should not be interpreted. The likelihood-ratio test still shows that the two are strongly related.", xlab))
+  interp_ui <- if (separate) sep_ui else tags$p(tags$strong("Interpretation: "), sprintf(
+    "Each 1-unit increase in %s multiplies the odds that %s = %s by %s (a %s%% %s in the odds). The predicted probability of %s is %.1f%% when %s = %s (1st quartile) and %.1f%% when %s = %s (3rd quartile).",
+    xlab, ylab, ev, fmt_n(or, 3), fmt_n(abs(100 * (or - 1)), 1), if (or >= 1) "increase" else "decrease",
+    ev, 100 * pq[1], xlab, fmt_n(q[1], 2), 100 * pq[2], xlab, fmt_n(q[2], 2)))
+
+  # -- Diagnostics --
+  # hl        Hosmer-Lemeshow goodness-of-fit test: rows are grouped into (up to) 10 bins by predicted probability, and observed event counts are
+  #           compared with predicted ones. A small p-value means the S-curve does not fit the data well. Needs 3+ bins (df = bins - 2).
+  # small     size of the smaller outcome group; with fewer than 10 the estimates are unreliable.
+  g  <- min(10, n_distinct(phat))
+  hb <- tibble(p = phat, y = d$y) %>% mutate(bin = ntile(p, g)) %>% group_by(bin) %>%
+    summarise(n = n(), obs = sum(y), expd = sum(p))
+  hl   <- sum((hb$obs - hb$expd)^2 / (hb$expd * (1 - hb$expd / hb$n)))
+  hl_p <- if (g >= 3) stats::pchisq(hl, df = g - 2, lower.tail = FALSE) else NA
+  diag_tbl <- tibble(Test = sprintf("Hosmer-Lemeshow (Model fits the data; %d bins)", g),
+                     Statistic = if (g >= 3) hl else NA, `p-value` = fmt_p(hl_p), Interpretation = interp(hl_p))
+  small    <- min(table(d$y))
+
+  list(type = "logistic", title = paste("Simple Logistic Regression:", ylab, "on", xlab),
+       main_plot = main_plot,
+       summary_ui = tagList(html_table(by_out, paste("Summary of", xlab, "for Each", ylab, "Outcome")),
+                            tags$p(class = "note", sprintf("The model gives the probability that %s = %s (the other outcome is %s).", ylab, ev, bo$other)),
+                            inc_note),
+       test_ui = tagList(html_table(coef_tbl, "Logistic Regression Coefficients"),
+                         html_table(fit_tbl, "Likelihood-Ratio Test and Model Fit"),
+                         interp_ui,
+                         conclusion_ui(lrt_p, sprintf("%s is associated with the probability that %s = %s.", xlab, ylab, ev),
+                                       sprintf("There is not enough evidence that %s is associated with the probability that %s = %s.", xlab, ylab, ev))),
+       diag_plots = list(),
+       diag_ui = tagList(html_table(diag_tbl, "Assumption Checks"),
+                         tags$p(tags$strong("Enough of each outcome: "), sprintf("the smaller outcome has %d rows. %s", small,
+                                if (small >= 10) "That is at least 10, which is enough for one explanatory variable."
+                                else "That is fewer than 10, so the estimates may be unreliable - interpret with caution.")),
+                         if (separate) sep_ui))
 }
 
   # [Explanations (shown under "View More on Test" and in "Learn More")] =============================================================================
   # test_info: the text for each test (name, when it is used, purpose, equations, hypotheses, assumptions). Edit it here to change what 'View More on
-  # Test' and 'Learn More' show. \uXXXX codes are Unicode symbols (Greek letters, subscripts).
+  # Test' and 'Learn More' show. Each `model` entry is c(equation, explanation): the equation is shown in a green box and the explanation of its
+  # symbols in a pale blue box under it. Math is written in LaTeX between \( and \) and drawn by KaTeX in the browser (see [C2]); in R strings every
+  # LaTeX backslash is doubled, e.g. "\\(\\beta_1\\)". \displaystyle makes fractions full size.
   # ==================================================================================================================================================
 test_info <- list(
   anova = list(
     name = "Analysis of Variance (ANOVA)",
-    when = "One quantitative response variable and one qualitative explanatory variable.",
-    purpose = "ANOVA asks whether the average of a quantitative variable differs between the groups (levels) of a categorical variable, by comparing how much the group means vary from each other to how much individual values vary within each group.",
-    model = c("y\u1d62\u2c7c = \u03bc + \u03c4\u1d62 + \u03b5\u1d62\u2c7c,   \u03b5\u1d62\u2c7c ~ N(0, \u03c3\u00b2)",
-              "y\u1d62\u2c7c = observation j in group i;  \u03bc = overall mean;  \u03c4\u1d62 = effect of group i;  \u03b5\u1d62\u2c7c = random error",
-              "F = MSG / MSE = (between-group variation) / (within-group variation)"),
-    hypotheses = c("H\u2080: \u03bc\u2081 = \u03bc\u2082 = \u2026 = \u03bc\u2096  (all group means are equal)", "H\u2090: at least one group mean is different"),
-    assumptions = "Observations are independent; residuals are approximately normal (Q-Q plot, Shapiro-Wilk); groups have similar spread (residuals vs. fitted, Brown-Forsythe)."),
+    when = "One quantitative (number) response variable and one qualitative (category) explanatory variable.",
+    purpose = "ANOVA asks whether the average of a number variable is different in at least one of the groups. It compares how far apart the group averages are (variation between groups) with how much the values bounce around inside each group (variation within groups). If the group averages are far apart compared with the spread inside the groups, the difference is probably not just chance.",
+    model = list(
+      c("\\(\\displaystyle Y_{ik} = \\mu + \\alpha_i + \\varepsilon_{ik}, \\qquad \\varepsilon_{ik} \\sim N(0, \\sigma^2)\\)",
+        "\\(Y_{ik}\\) = the k-th measurement in group i;  \\(\\mu\\) = the overall (grand) average;  \\(\\alpha_i\\) = how far group i's average is from the overall average;  \\(\\varepsilon_{ik}\\) = random error, how far this measurement is from its group's average (assumed normal, centered at 0, with the same spread \\(\\sigma\\) in every group)"),
+      c("\\(\\displaystyle F = \\frac{\\text{MS Between Groups}}{\\text{MS Within Groups}}\\)",
+        "MS = mean square, a measure of variation.  MS Between Groups = how far apart the group averages are;  MS Within Groups = how spread out the values are inside each group.  If \\(H_0\\) is true, F is close to 1; a large F gives a small p-value")),
+    hypotheses = c("\\(H_0: \\alpha_i = 0\\) for every group i  (all group averages are equal)",
+                   "\\(H_a: \\alpha_i \\neq 0\\) for at least one group i  (at least one group average is different)"),
+    assumptions = "Each measurement is independent of the others. The residuals are roughly normal: on the Q-Q plot, no more than 10% of the points fall outside the shaded 95% band. Every group has about the same spread: the residuals vs. fitted plot shows a similar vertical spread for each group, and Levene's test has a p-value above 0.05. ANOVA can handle small departures from these. If the residuals are not normal, the app also runs the Kruskal-Wallis test, which compares ranks instead of averages and does not need normal data. Tukey HSD contrasts then compare every pair of groups to show which ones differ."),
   regression = list(
     name = "Simple Linear Regression",
-    when = "Both variables are quantitative.",
-    purpose = "Simple linear regression fits a straight line that describes how the response variable changes, on average, as the explanatory variable increases, and tests whether that relationship is real or could be due to chance.",
-    model = c("y\u1d62 = \u03b2\u2080 + \u03b2\u2081x\u1d62 + \u03b5\u1d62,   \u03b5\u1d62 ~ N(0, \u03c3\u00b2)",
-              "\u03b2\u2080 = intercept;  \u03b2\u2081 = slope (change in y for each 1-unit increase in x);  \u03b5\u1d62 = random error",
-              "t = b\u2081 / SE(b\u2081);   R\u00b2 = proportion of the variation in y explained by x"),
-    hypotheses = c("H\u2080: \u03b2\u2081 = 0  (no linear relationship)", "H\u2090: \u03b2\u2081 \u2260 0  (a linear relationship exists)"),
-    assumptions = "The relationship is linear; observations are independent; residuals are approximately normal (Q-Q plot, Shapiro-Wilk); residual spread is constant (residuals vs. fitted)."),
+    when = "Both variables are quantitative (numbers).",
+    purpose = "Simple linear regression draws the straight line that best fits a scatterplot. The slope tells how much the response changes, on average, for each 1-unit increase in the explanatory variable. The test asks whether the slope is really different from 0, or whether a flat line (no relationship) could explain the data just as well.",
+    model = list(
+      c("\\(\\displaystyle Y_i = \\beta_0 + \\beta_1 X_i + \\varepsilon_i, \\qquad \\varepsilon_i \\sim N(0, \\sigma^2)\\)",
+        "\\(Y_i\\) = the response for row i;  \\(X_i\\) = the explanatory value for row i;  \\(\\beta_0\\) = the true intercept (average Y when X = 0);  \\(\\beta_1\\) = the true slope (change in average Y for each 1-unit increase in X);  \\(\\varepsilon_i\\) = random error, how far the point sits above or below the line"),
+      c("\\(\\displaystyle \\hat{Y}_i = b_0 + b_1 X_i\\)",
+        "The line fitted from the data:  \\(b_0\\) and \\(b_1\\) are our estimates of \\(\\beta_0\\) and \\(\\beta_1\\);  \\(\\hat{Y}_i\\) = the predicted average Y at \\(X_i\\)"),
+      c("\\(\\displaystyle t = \\frac{b_1}{SE(b_1)}\\)",
+        "How many standard errors the estimated slope is away from 0;  \\(R^2\\) = the share of the variation in Y explained by X (from 0 to 1)")),
+    hypotheses = c("\\(H_0: \\beta_1 = 0\\)  (no linear relationship; the line is flat)",
+                   "\\(H_a: \\beta_1 \\neq 0\\)  (a linear relationship exists)"),
+    assumptions = "The relationship follows a straight line. Each point is independent of the others. The residuals are roughly normal: no more than 10% of the points fall outside the Q-Q plot's shaded 95% band. The residuals have the same spread all along the line: no funnel (megaphone) or curved pattern in the residuals vs. fitted plot, and Levene's test comparing the lower and upper halves of the fitted values has a p-value above 0.05. If a check fails and every response value is above 0, the app also fits the model to log(Y), which often straightens a curve and evens out the spread."),
   chisq = list(
     name = "Chi-squared Test of Independence",
-    when = "Both variables are qualitative (categorical).",
-    purpose = "The chi-squared test checks whether two categorical variables are related, by comparing the counts we observed in each combination of categories with the counts we would expect if the variables were unrelated.",
-    model = c("E\u1d62\u2c7c = (row total i \u00d7 column total j) / n",
-              "\u03c7\u00b2 = \u03a3 (O\u1d62\u2c7c \u2212 E\u1d62\u2c7c)\u00b2 / E\u1d62\u2c7c,   df = (rows \u2212 1)(columns \u2212 1)",
-              "O = observed count;  E = expected count if independent"),
-    hypotheses = c("H\u2080: the two variables are independent (not associated)", "H\u2090: the two variables are associated"),
-    assumptions = "Observations are independent; each observation falls in exactly one cell; expected counts are large enough (all \u2265 1 and at least 80% \u2265 5).")
+    when = "Both variables are qualitative (categories).",
+    purpose = "The chi-squared test asks whether two category variables are related. It counts how many rows fall in each combination of categories (observed counts) and compares them with the counts we would expect if the two variables had nothing to do with each other (expected counts). Big gaps between observed and expected counts are evidence that the variables are associated.",
+    model = list(
+      c("\\(\\displaystyle E_{ij} = \\frac{(\\text{row } i \\text{ total}) \\times (\\text{column } j \\text{ total})}{n}\\)",
+        "\\(E_{ij}\\) = the expected count in row i, column j if the variables were independent;  n = the total number of observations"),
+      c("\\(\\displaystyle \\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}, \\qquad df = (r - 1)(c - 1)\\)",
+        "O = observed count;  E = expected count;  \\(\\sum\\) = add up over every cell;  r and c = the number of rows and columns;  df = degrees of freedom.  The bigger \\(\\chi^2\\) is, the further the counts are from independence"),
+      c("\\(\\displaystyle \\text{Pearson residual} = \\frac{O_{ij} - E_{ij}}{\\sqrt{E_{ij}}}\\)",
+        "Shows which cells drive the result: positive = more than expected, negative = fewer than expected;  beyond about \\(\\pm 2\\) is a large difference")),
+    hypotheses = c("\\(H_0\\): the two variables are independent  (not associated)",
+                   "\\(H_a\\): the two variables are associated  (not independent)"),
+    assumptions = "Each observation is independent and falls into exactly one cell. The expected counts are large enough for the p-value to be trusted: all are at least 1, and at least 80% are 5 or more. When too many expected counts are small, the app also gives a simulation-based (Monte Carlo) p-value."),
+  logistic = list(
+    name = "Simple Logistic Regression",
+    when = "A qualitative response with exactly two outcomes (such as Yes / No) and a quantitative explanatory variable.",
+    purpose = "Logistic regression asks whether the chance of one outcome (for example, antibiotic activity = Yes) goes up or down as the explanatory variable increases. A chance has to stay between 0 and 1, so instead of a straight line it fits an S-shaped curve. The test asks whether the curve really slopes, or whether a flat line (the same chance everywhere) could explain the data just as well.",
+    model = list(
+      c("\\(\\displaystyle P(Y_i = 1 \\mid x_i) = \\frac{e^{\\beta_0 + \\beta_1 x_i}}{1 + e^{\\beta_0 + \\beta_1 x_i}}\\)",
+        "\\(P(Y_i = 1 \\mid x_i)\\) = the chance that row i has the outcome (Y = 1, such as Yes) given its x value;  \\(e \\approx 2.718\\) (a math constant);  \\(\\beta_0\\) = intercept;  \\(\\beta_1\\) = slope (positive: the chance rises as x increases; negative: it falls)"),
+      c("\\(\\displaystyle \\text{Odds ratio} = e^{\\beta_1}\\)",
+        "Odds = \\(\\frac{P}{1 - P}\\), the chance of the outcome divided by the chance of not having it.  The odds ratio is how many times the odds are multiplied for each 1-unit increase in x (1 = no change; above 1 = higher odds; below 1 = lower odds)"),
+      c("\\(\\displaystyle \\chi^2_{LR} = \\text{null deviance} - \\text{residual deviance}, \\qquad df = 1\\)",
+        "Deviance measures how badly a model misses the data.  Null deviance = misfit of a flat model that ignores x;  residual deviance = misfit with x included.  A big drop means x helps predict the outcome")),
+    hypotheses = c("\\(H_0: \\beta_1 = 0\\)  (x does not change the chance of the outcome; odds ratio = 1)",
+                   "\\(H_a: \\beta_1 \\neq 0\\)  (x changes the chance of the outcome; odds ratio \\(\\neq\\) 1)"),
+    assumptions = "Each row is independent of the others. The S-shaped curve fits the data: the Hosmer-Lemeshow goodness-of-fit test has a p-value above 0.05 (here a large p-value is good, because the null hypothesis says the model fits). Each outcome has at least 10 rows, and x does not split the two outcomes perfectly. Rows recorded as Inconclusive are left out.")
 )
 
   # [info_ui()] ======================================================================================================================================
@@ -907,9 +1321,10 @@ info_ui <- function(type) {
   tagList(
     tags$p(tags$strong("When it is used: "), i$when),
     tags$p(tags$strong("Purpose: "), i$purpose),
-    tags$p(tags$strong("Mathematical model:")), lapply(i$model, function(m) tags$div(class = "formula", m)),
+    tags$p(tags$strong("Mathematical model:")),
+    lapply(i$model, function(m) tagList(tags$div(class = "formula", m[1]), tags$div(class = "formula-note", m[2]))),
     tags$p(tags$strong("Hypotheses:"), style = "margin-top:10px;"), lapply(i$hypotheses, function(m) tags$div(class = "formula", m)),
-    tags$p(tags$strong("Assumptions (diagnostics): "), i$assumptions, style = "margin-top:10px;"))
+    tags$p(tags$strong("Assumptions (Diagnostics): "), i$assumptions, style = "margin-top:10px;"))
 }
 
   # [END DESIGNER SECTION] ===========================================================================================================================
@@ -966,16 +1381,58 @@ plot_box <- function(id, width, height) {
                    downloadLink(paste0(id, "_pdf"), "PDF", onclick = close_menu),
                    downloadLink(paste0(id, "_png"), "PNG", onclick = close_menu)))
 }
+
+  # [Graph sizes and diag_groups()] ==================================================================================================================
+  # PLOT_RES, PLOT_W, DIAG_W, DIAG_H  graph sizes in pixels; PLOT_RES also turns pixels into inches for the downloads [F8].
+  # plot_height()  440 px unless the test asks for more (r$plot_height, e.g. many chi-squared panels).
+  # diag_groups()  lays out the diagnostic plots two to a row. When a test names its groups (r$diag_titles, e.g. regression with a log refit), each
+  #                pair of plots gets its title above it.
+  # ==================================================================================================================================================
+PLOT_RES <- 110                    # pixels per inch for plots on the page
+PLOT_W   <- 780                    # main graph width (px)
+DIAG_W   <- 520; DIAG_H <- 360     # diagnostic plot size (px)
+plot_height <- function(r) if (is.null(r$plot_height)) 440 else r$plot_height
+
+diag_groups <- function(r) {
+  box  <- function(i) plot_box(paste0("diag_plot_", i), width = paste0(DIAG_W, "px"), height = paste0(DIAG_H, "px"))
+  n    <- length(r$diag_plots)
+  if (is.null(r$diag_titles)) return(div(class = "diag-row", lapply(seq_len(n), box)))
+  lapply(seq_along(r$diag_titles), function(g) tagList(
+    tags$div(class = "diag-title", r$diag_titles[g]),
+    div(class = "diag-row", lapply(intersect(c(2 * g - 1, 2 * g), seq_len(n)), box))))
+}
 ```
 
 ```{r}
 # [E. PAGE SHELL (rendered once)] ====================================================================================================================
 # Everything inside "page" is filled in by the server section below.
 # ====================================================================================================================================================
+# BANNER_ART: a close-up of soil bacteria (rods with flagella and a coccus cluster) drawn in pale cyan for the right end of the banner. The drawing is
+# larger than the banner on purpose, so the cells are cut off at its edges; the fade and position are set in CSS [B2] (.te-banner-art).
+BANNER_ART <- '
+<svg viewBox="0 0 300 80" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+  <g fill="#B2EBF2" fill-opacity=".7" stroke="#E0F7FA" stroke-width="2.6" stroke-linecap="round">
+    <rect x="165" y="-10" width="175" height="58" rx="29" transform="rotate(-16 252 19)"/>
+    <rect x="198" y="50" width="120" height="40" rx="20" transform="rotate(12 258 70)"/>
+    <rect x="62" y="4" width="66" height="26" rx="13" transform="rotate(24 95 17)"/>
+    <circle cx="140" cy="44" r="13"/><circle cx="160" cy="62" r="11"/><circle cx="128" cy="68" r="9"/>
+  </g>
+  <g fill="none" stroke="#00ACC1" stroke-width="2.4" stroke-linecap="round">
+    <path d="M200 30 q10 -10 20 0 t20 0 t20 0 t20 -2"/>
+    <path d="M222 72 q8 -7 16 0 t16 0 t16 2"/>
+  </g>
+  <g fill="none" stroke="#E0F7FA" stroke-width="2" stroke-linecap="round" stroke-opacity=".9">
+    <path d="M170 48 q-9 9 -18 2 t-18 4 t-16 -4"/>
+    <path d="M200 76 q-8 -9 -16 -2 t-16 0 t-14 6"/>
+    <path d="M66 26 q-8 6 -15 0 t-14 2"/>
+  </g>
+</svg>'
 tagList(
   div(class = "te-banner",
-      h1("Tiny Earth Project \u2013 Bio 181 Lab"),
-      p("Explore soil-bacteria data from the Tiny Earth network and test relationships between variables \u00b7 BYU-Idaho")),
+      div(class = "te-banner-art", HTML(BANNER_ART)),
+      h1("Tiny Earth Public Database \u2013 BIO 181 Lab Analysis App"),
+      p("Explore soil-bacteria data from the Tiny Earth Public Database and test relationships between variables using statistics",
+        "\u00b7 University of Wisconsin\u2013Madison \u00b7 BYU-Idaho")),
   uiOutput("page"))  # placeholder: see output$page in the server section [F2]
 ```
 
@@ -988,14 +1445,14 @@ tagList(
   # [F1. This visitor's app state] ===================================================================================================================
   #   page     : "viewer" (data viewer) or "results" (analysis page)
   #   mode     : "browse" (table selector) or "select" (pick two variables)
-  #   view     : "table" (Table Viewer) or "description" (Variable Directory)
+  #   view     : "table" (Table Viewer) or "description" (Variable Description)
   #   table    : the table currently selected
   #   resp     : the variable ticked in the Response column ("" = none yet)
   #   expl     : the variable ticked in the Explanatory column ("" = none yet)
   #   analysis : the table + response + explanatory variable sent to the results page
   # ==================================================================================================================================================
 rv <- reactiveValues(page = "viewer", mode = "browse", view = "table",
-                     table = if (length(individual_keys)) individual_keys[1] else all_keys[1],
+                     table = if ("samples" %in% all_keys) "samples" else all_keys[1],  # the app opens on Samples
                      resp = "", expl = "", analysis = NULL)
 
   # [current_df() and table_label()] =================================================================================================================
@@ -1015,7 +1472,7 @@ output$page <- renderUI({
                p("The Data folder has no .rds files yet. Run the Data_Clean script first, then restart the app.")))
   if (rv$page == "viewer")
     div(class = "app-grid",
-        div(uiOutput("left_ui")),
+        div(class = "left-col", uiOutput("left_ui")),
         div(uiOutput("right_ui")))
   else
     uiOutput("results_ui")
@@ -1025,22 +1482,31 @@ output$page <- renderUI({
   # browse = Table Selector; select = variable picker (the else branch below).
   # ==================================================================================================================================================
 output$left_ui <- renderUI({
+  # Reading rv$page makes the panel rebuild on "Back to Data", so the variable picker shows the ticks that rv$resp / rv$expl still hold (otherwise
+  # the boxes come back empty while Analyze still glows).
+  req(rv$page == "viewer")
   if (rv$mode == "browse") {
     # -- Table Selector --
-    # Each table section is collapsible. Whether it is open is remembered in input$sec_<id> (isolate() = read it now without re-drawing the panel each
-    # time one is toggled). The bottom row holds Description (left) and Run Analysis (right). Description shows / hides the Variable Directory for the
-    # selected table; it is filled in (solid green) while that view is open.
-    is_open <- function(id) { v <- isolate(input[[paste0("sec_", id)]]); is.null(v) || isTRUE(v) }
+    # Each table section is collapsible and starts folded up. Whether it is open is remembered in input$sec_<id> (isolate() = read it now without
+    # re-drawing the panel each time one is toggled). The bottom row holds Description (left) and Run Analysis (right). Description shows the Variable
+    # Description for the selected table; while that view is open the button is filled in (solid green), reads "Table" (click it to go back), and
+    # Run Analysis is greyed out.
+    is_open  <- function(id) isTRUE(isolate(input[[paste0("sec_", id)]]))
+    in_desc  <- rv$view == "description"
     div(class = "panel-card left-card",
         actionButton("btn_background", "Background", class = "btn-te btn-wide"),
+        if (DEBUG_MODE) actionButton("btn_debug", NULL, icon = icon("bug"), class = "btn-te btn-outline btn-square debug-corner has-tip tip-start",
+                                     `data-tip` = "Debug: For app development, not intended for student use.",
+                                     `aria-label` = "Debug: open each test"),  # opens the Debug window [F12]; pinned to the screen's bottom-left corner
         div(class = "selector-scroll",
             div(class = "sel-title", style = "margin-top:10px;", "Table Selector"),
             selector_section("Individual", "Individual", individual_keys, rv$table, is_open("Individual")),
             selector_section("Combined",   "Combined",   combined_keys,   rv$table, is_open("Combined"))),
         div(class = "btn-row",
-            actionButton("btn_desc", "Description", title = "Describe every variable in the selected table",
-                         class = paste("btn-te", if (rv$view != "description") "btn-outline")),
-            actionButton("btn_run", "Run Analysis", class = "btn-te btn-cyan")))
+            actionButton("btn_desc", if (in_desc) "Table" else "Description",
+                         title = if (in_desc) "Back to the Table Viewer" else "Describe every variable in the selected table",
+                         class = paste("btn-te", if (!in_desc) "btn-outline")),
+            actionButton("btn_run", "Run Analysis", class = "btn-te btn-cyan", disabled = in_desc)))
   } else {
     # -- Variable picker (same card layout as the selector) --
     # Two checkbox columns sit beside every variable: Response (y) and Explanatory (x). isolate() restores earlier ticks without re-drawing the panel
@@ -1048,8 +1514,7 @@ output$left_ui <- renderUI({
     df   <- current_df()
     vars <- analysis_vars(df)  # columns worth analysing (see analysis_vars())
     div(class = "panel-card left-card",
-        div(class = "sel-title", "Select two variables"),
-        p(class = "hint", paste("Table:", table_label())),
+        div(class = "sel-title", "Select two variables."),
         p(class = "hint", "Tick one Response (y) and one Explanatory (x) variable."),
         div(class = "selector-scroll",
             div(class = "pick-head", span("Variable"), span(class = "h-resp", "Response (y)"), span(class = "h-expl", "Explanatory (x)")),
@@ -1061,43 +1526,43 @@ output$left_ui <- renderUI({
   }
 })
 
-  # [F4. Variable picker status and Analyse button] ==================================================================================================
+  # [F4. Variable picker status and Analyze button] ==================================================================================================
   # pair_test()          which test fits the ticked pair? NA until both columns have a variable (or if no test fits).
   # output$sel_status    message under the variable list: progress, a warning for a pair with no test, or the test that will run. n = how many columns
   #                      have a tick (0, 1 or 2).
-  # output$analyse_btn   "Analyse" is greyed out until a valid Response + Explanatory pair is ticked, then lights up.
+  # output$analyse_btn   "Analyze" is greyed out until a valid Response + Explanatory pair is ticked, then lights up and gently pulses.
   # ==================================================================================================================================================
 pair_test <- reactive({
   df <- current_df()
   if (!nzchar(rv$resp) || !nzchar(rv$expl)) return(NA_character_)
-  pick_test(var_type(df[[rv$resp]]), var_type(df[[rv$expl]]))
+  pick_test(df[[rv$resp]], df[[rv$expl]])
 })
 
 output$sel_status <- renderUI({
   n <- (nzchar(rv$resp)) + (nzchar(rv$expl))
   if (n < 2)                p(class = "hint", sprintf("%d of 2 selected", n))
-  else if (is.na(pair_test())) p(class = "concl", "A qualitative response with a quantitative explanatory variable has no matching test in this app. Swap the columns or choose different variables.")
+  else if (is.na(pair_test())) p(class = "concl", "Logistic regression needs a response with exactly two outcomes (such as Yes / No), not counting Inconclusive. Choose a different response, or swap the columns.")
   else                      p(class = "hint", "Ready: ", tags$strong(test_info[[pair_test()]]$name))
 })
 
 output$analyse_btn <- renderUI({
-  if (!is.na(pair_test())) actionButton("btn_analyse", "Analyse", class = "btn-te btn-glow")
-  else actionButton("btn_analyse", "Analyse", class = "btn-te", disabled = "disabled")
+  if (!is.na(pair_test())) actionButton("btn_analyse", "Analyze", class = "btn-te btn-glow")
+  else actionButton("btn_analyse", "Analyze", class = "btn-te", disabled = TRUE)
 })
 
-  # [F5. RIGHT PANEL: Table Viewer OR Variable Directory] ============================================================================================
-  # Table Viewer (the data) or Variable Directory (what each column means).
+  # [F5. RIGHT PANEL: Table Viewer OR Variable Description] ==========================================================================================
+  # Table Viewer (the data) or Variable Description (what each column means).
   # ==================================================================================================================================================
 output$right_ui <- renderUI({
   if (rv$view == "table") {
     div(class = "panel-card",
         div(class = "viewer-head", h3("Table Viewer"),
-            span(class = "current", "Currently viewing: ", tags$strong(table_label()))),
+            span(class = "current", "Currently Viewing: ", tags$strong(table_label()))),
         DTOutput("data_table"),  # placeholder for the interactive table in output$data_table below
         div(class = "table-foot", textOutput("table_count")))
   } else {
     div(class = "panel-card",
-        div(class = "viewer-head", h3("Variable Directory"),
+        div(class = "viewer-head", h3("Variable Description"),
             span(class = "current", "Table: ", tags$strong(table_label()))),
         DTOutput("dict_table"),
         div(class = "table-foot", "Each row describes one column (factor) of the selected table."))
@@ -1136,7 +1601,7 @@ output$table_count <- renderText({  # text under the table: rows (data points) a
   sprintf("%s data points (rows) \u00d7 %d factors (columns) in this table.", format(nrow(df), big.mark = ","), ncol(df))
 })
 
-  # [output$dict_table: the Variable Directory] ======================================================================================================
+  # [output$dict_table: the Variable Description] ======================================================================================================
   # One row per column of the table: name, type, plain-English description, % missing, distinct values, and the first 3 example values. Shown as a
   # table; dom 'ftip' = search box, table, info line, page buttons.
   # ==================================================================================================================================================
@@ -1161,10 +1626,10 @@ observeEvent(input$pick_table, {                      # chose a different table
   req(input$pick_table %in% all_keys)
   rv$table <- input$pick_table
 })
-observeEvent(input$btn_desc, {                        # Description: flip table <-> directory
+observeEvent(input$btn_desc, {                        # Description / Table: flip between the two views
   rv$view <- if (rv$view == "description") "table" else "description"
 })
-observeEvent(input$btn_run,  { rv$mode <- "select"; rv$resp <- ""; rv$expl <- "" })
+observeEvent(input$btn_run,  { req(rv$view == "table"); rv$mode <- "select"; rv$resp <- ""; rv$expl <- "" })
 observeEvent(input$btn_back, { rv$mode <- "browse"; rv$resp <- ""; rv$expl <- "" })
 
 observeEvent(input$sel_pair, {                       # tePick() reports the ticked pair
@@ -1195,45 +1660,47 @@ observeEvent(input$btn_background, {
     tags$ul(
       tags$li(tags$strong("Quantitative response + qualitative explanatory"), " \u2192 Analysis of Variance (ANOVA)"),
       tags$li(tags$strong("Quantitative + quantitative"), " \u2192 Simple Linear Regression"),
-      tags$li(tags$strong("Qualitative + qualitative"), " \u2192 Chi-squared Test of Independence")),
+      tags$li(tags$strong("Qualitative + qualitative"), " \u2192 Chi-squared Test of Independence"),
+      tags$li(tags$strong("Two-outcome qualitative response (e.g. Yes / No) + quantitative explanatory"), " \u2192 Simple Logistic Regression")),
     h4("How to use it"),
     tags$ol(
       tags$li("Pick a table in the Table Selector. Individual tables match the Tiny Earth database; Combined tables add the related sample and institution columns."),
       tags$li("Use the filter boxes above the Table Viewer to search and narrow the data. Use the Description button to see what each column means."),
-      tags$li("Press Run Analysis, tick exactly two variables, then press Analyse."),
-      tags$li("Read the graph and numerical summary. Open View More on Test for the test, its equations, and diagnostic checks. Learn More explains each test; Save PDF prints the page.")),
+      tags$li("Press Run Analysis, tick exactly two variables, then press Analyze."),
+      tags$li("Read the graphical and numerical summaries, then open View More on Test for the test, its equations, and the assumption checks. Every test uses a 0.05 significance level. Learn More gives a broad guide to the statistics; Save PDF prints the page."),
+      tags$li("The round buttons at the top right: the microscope downloads an analysis worksheet (when your instructor has added one), the table lets you explore and download the data you analyzed, and the speech bubble sends feedback.")),
     p(class = "note", "All results are intended for academic and learning purposes.")))
 })
 
   # [F8. RESULTS PAGE] ===============================================================================================================================
-  # analysis_type() "anova", "regression" or "chisq", decided by the TYPES of the Response and Explanatory variables chosen in the picker. req() waits
-  #                  until an analysis has been requested.
+  # analysis_type()  "anova", "regression", "chisq" or "logistic", decided by the TYPES of the Response and Explanatory variables chosen in the
+  #                  picker. req() waits until an analysis has been requested.
   # result()         runs the matching test function (from the designer section above).
   # ==================================================================================================================================================
 analysis_type <- reactive({
   a  <- req(rv$analysis)
   df <- load_table(a$table)  # load the table that was chosen
-  pick_test(var_type(df[[a$resp]]), var_type(df[[a$expl]]))
+  pick_test(df[[a$resp]], df[[a$expl]])
 })
 
 result <- reactive({
   a  <- req(rv$analysis)
   df <- load_table(a$table)
   tp <- analysis_type()
-  validate(need(!is.na(tp), "No test matches a qualitative response with a quantitative explanatory variable. Go back and swap the columns."))
+  validate(need(!is.na(tp), "No test matches this pair. Logistic regression needs a response with exactly two outcomes. Go back and choose different variables."))
   switch(tp,
          anova      = analyse_anova(df, yvar = a$resp, gvar = a$expl),
          regression = analyse_regression(df, yvar = a$resp, xvar = a$expl),
-         chisq      = analyse_chisq(df, a$expl, a$resp))  # rows = explanatory, columns = response
+         chisq      = analyse_chisq(df, a$expl, a$resp),  # rows = explanatory, columns = response
+         logistic   = analyse_logistic(df, yvar = a$resp, xvar = a$expl))
 })
 
   # [Top bar and results body] =======================================================================================================================
-  # output$results_ui the top bar (Back / Learn More / Save PDF / Feedback), built once per analysis. "Save PDF" uses the browser's print window -
-  # choose "Save
-  #                      as PDF" as the printer.
+  # output$results_ui    the top bar (Back on the left; Learn More / Save PDF / Worksheet / Explore Data / Feedback on the right), built once per
+  #                      analysis. "Save PDF" uses the browser's print window - choose "Save as PDF" as the printer.
   # output$results_body  everything under the top bar. result() is calculated once and shared with the plots; r = the named list returned by the
   #                      matching analyse_* function. The "View More on Test" drop-down is a button that toggles the "open" class (see CSS). When
-  #                      printing, the section is always shown.
+  #                      printing, the section is always shown. diag_groups() [D9] lays out the diagnostic plots.
   # ==================================================================================================================================================
 output$results_ui <- renderUI({
   a  <- req(rv$analysis)
@@ -1243,9 +1710,13 @@ output$results_ui <- renderUI({
           div(class = "spacer"),
           actionButton("btn_learn", "Learn More", class = "btn-te btn-cyan"),
           tags$button(type = "button", class = "btn btn-te", onclick = "window.print();", "Save PDF"),
-          actionButton("btn_feedback", NULL, icon = icon("comment-dots"), class = "btn-te btn-round",
-                       title = "Give feedback on this app")),  # opens the Feedback window [F10]
-      p(class = "hint", paste("Table:", pretty_name(a$table), "\u00b7 Response (y):", a$resp, "\u00b7 Explanatory (x):", a$expl)),
+          actionButton("btn_worksheet", NULL, icon = icon("microscope"), class = "btn-te btn-round has-tip", disabled = !WORKSHEET_ENABLED,
+                       `data-tip` = "Download Worksheet", `aria-label` = "Download Worksheet"),  # opens the Worksheet window [F13]
+          actionButton("btn_explore", NULL, icon = icon("table"), class = "btn-te btn-round has-tip",
+                       `data-tip` = "Explore and download data", `aria-label` = "Explore and download data"),  # opens the Explore Data window [F11]
+          actionButton("btn_feedback", NULL, icon = icon("comment-dots"), class = "btn-te btn-round has-tip",
+                       `data-tip` = "Give feedback on this app", `aria-label` = "Give feedback on this app")),  # opens the Feedback window [F10]
+      p(class = "hint", paste("Table:", pretty_name(a$table), "\u00b7 Response (y):", var_label(a$resp), "\u00b7 Explanatory (x):", var_label(a$expl))),
       uiOutput("results_body"))
 })
 
@@ -1253,8 +1724,8 @@ output$results_body <- renderUI({
   r <- result()
   div(
     h2(r$title),
-    h3(class = "sec-title", "Graph"),
-    plot_box("res_plot", width = "780px", height = "440px"),
+    h3(class = "sec-title", "Graphical Summary"),
+    plot_box("res_plot", width = paste0(PLOT_W, "px"), height = paste0(plot_height(r), "px")),
     h3(class = "sec-title", "Numerical Summary"),
     div(class = "csv-tables", r$summary_ui),  # csv-tables shows each table's CSV button (see [B7])
     div(class = "more",
@@ -1265,60 +1736,100 @@ output$results_body <- renderUI({
             info_ui(r$type),
             h3(class = "sec-title", "Test Results"), r$test_ui,
             h3(class = "sec-title", "Diagnostics"),
-            div(class = "diag-row", lapply(seq_along(r$diag_plots), function(i)
-              plot_box(paste0("diag_plot_", i), width = "520px", height = "360px"))),
+            diag_groups(r),
             r$diag_ui)))
 })
 
   # [Plots] ==========================================================================================================================================
-  # Plots use fixed sizes and suspendWhenHidden = FALSE so they are already drawn when the drop-down is opened or the page is printed. The two
-  # diagnostic plots are created in a loop; local() gives each pass its own copy of i. req() skips plot 2 for tests that only have one diagnostic plot
-  # (chi-squared).
+  # Plots have fixed sizes in pixels (PLOT_W, DIAG_W, DIAG_H [D9]), so they look the same on every screen. suspendWhenHidden = FALSE draws the plots
+  # before the drop-down is opened or the page is printed. Up to four diagnostic plots (regression with its log refit) are created in a loop; local()
+  # gives each pass its own copy of i. req() skips the slots a test does not use.
   # ==================================================================================================================================================
-output$res_plot <- renderPlot(result()$main_plot, width = 780, height = 440, res = 110)
+output$res_plot <- renderPlot(result()$main_plot, width = PLOT_W, height = function() plot_height(result()), res = PLOT_RES)
 outputOptions(output, "res_plot", suspendWhenHidden = FALSE)
-for (i in 1:2) local({
+for (i in 1:4) local({
   ii <- i; id <- paste0("diag_plot_", ii)
   output[[id]] <- renderPlot({ r <- result(); req(length(r$diag_plots) >= ii); r$diag_plots[[ii]] },
-                             width = 520, height = 360, res = 100)
+                             width = DIAG_W, height = DIAG_H, res = PLOT_RES)
   outputOptions(output, id, suspendWhenHidden = FALSE)
 })
 
   # [Graph downloads] ================================================================================================================================
   # plot_downloads() gives one graph its PDF and PNG download (the links in plot_box()). ggsave() redraws the same ggplot at the same size in inches
-  # as on the page (pixels / res), so the file looks like what the student sees; PNGs are 300 dpi so they stay sharp in Word. cairo_pdf keeps symbols
-  # such as the plus-minus sign intact. Files are named after the test, e.g. "ANOVA_pH_by_Site_graph.png".
+  # as on the page (pixels / PLOT_RES), so the file looks like what the student sees; PNGs are 300 dpi so they stay sharp in Word. cairo_pdf keeps
+  # symbols such as the plus-minus sign intact. w and h are functions, because the chi-squared graph's height depends on the data. Files are named
+  # after the test, e.g. "ANOVA_pH_by_Site_graph.png".
   # ==================================================================================================================================================
 plot_downloads <- function(id, get_plot, w, h, label) {
   for (ext in c("pdf", "png")) local({
     e <- ext
     output[[paste0(id, "_", e)]] <- downloadHandler(
       filename = function() paste0(str_replace_all(result()$title, "[^A-Za-z0-9]+", "_"), "_", label, ".", e),
-      content  = function(file) ggsave(file, get_plot(), width = w, height = h, units = "in", dpi = 300,
+      content  = function(file) ggsave(file, get_plot(), width = w() / PLOT_RES, height = h() / PLOT_RES, units = "in", dpi = 300,
                                        device = if (e == "pdf") grDevices::cairo_pdf else "png"))
     outputOptions(output, paste0(id, "_", e), suspendWhenHidden = FALSE)  # links work even inside the closed drop-down
   })
 }
-plot_downloads("res_plot", function() result()$main_plot, 780 / 110, 440 / 110, "graph")
-for (i in 1:2) local({
-  ii <- i
-  plot_downloads(paste0("diag_plot_", ii), function() result()$diag_plots[[ii]], 520 / 100, 360 / 100, paste0("diagnostic_", ii))
+plot_downloads("res_plot", function() result()$main_plot, function() PLOT_W, function() plot_height(result()), "graph")
+for (i in 1:4) local({
+  ii <- i; id <- paste0("diag_plot_", ii)
+  plot_downloads(id, function() result()$diag_plots[[ii]], function() DIAG_W, function() DIAG_H, paste0("diagnostic_", ii))
 })
 
   # [F9. Learn More window] ==========================================================================================================================
-  # Shows a table of which test goes with which variable types, then one explanation block per test, with the test you just ran first.
+  # A broad guide to the statistics in the app (based on the BYU-I class notes): choosing a test, how a hypothesis test works, reading the graphs,
+  # checking assumptions, the four tests in one paragraph each (their `purpose` from test_info), and links to the class notes. The details for one
+  # test (equations, hypotheses, assumptions) live under "View More on Test" on the results page.
   # ==================================================================================================================================================
+LEARN_LINKS <- c(
+  "Making Inference (p-values and significance)" = "https://byuistats.github.io/Statistics-Notebook/MakingInference.html",
+  "ANOVA"                                        = "https://byuistats.github.io/Statistics-Notebook/ANOVA.html",
+  "Kruskal-Wallis Test"                          = "https://byuistats.github.io/Statistics-Notebook/Kruskal.html",
+  "Linear Regression"                            = "https://byuistats.github.io/Statistics-Notebook/LinearRegression.html",
+  "Logistic Regression"                          = "https://byuistats.github.io/Statistics-Notebook/LogisticRegression.html",
+  "Chi-squared Tests"                            = "https://byuistats.github.io/Statistics-Notebook/ChiSquaredTests.html",
+  "Checking Assumptions (Math 326)"              = "https://byuistats.github.io/Math326_Quarto4/assumptions.html")
+
 observeEvent(input$btn_learn, {
-  current <- analysis_type()
-  if (is.na(current)) current <- "anova"
-  order   <- c(current, setdiff(names(test_info), current))     # show the test you ran first
   showModal(modalDialog(
-    title = "Learn More: The Three Tests", size = "l", easyClose = TRUE, footer = modalButton("Close"),
-    p("The app picks the test from the types of the two variables you chose:"),
-    tags$table(class = "te-table",
-      tags$thead(tags$tr(tags$th("Variables chosen"), tags$th("Test used"))),
-      tags$tbody(lapply(names(test_info), function(k) tags$tr(tags$td(test_info[[k]]$when), tags$td(test_info[[k]]$name))))),
-    lapply(order, function(k) tagList(h4(class = "sec-title", test_info[[k]]$name), info_ui(k)))))
+    title = "Learn More: Statistics in This App", size = "l", easyClose = TRUE, footer = modalButton("Close"),
+    div(class = "learn",
+      h4(class = "sec-title", "1. Which Test?"),
+      p("The app picks the test from the types of the two variables you choose. Quantitative variables are numbers (pH, temperature); qualitative variables are categories (soil type, Yes / No)."),
+      tags$table(class = "te-table",
+        tags$thead(tags$tr(tags$th("Response (y)"), tags$th("Explanatory (x)"), tags$th("Test used"))),
+        tags$tbody(
+          tags$tr(tags$td("Quantitative"), tags$td("Qualitative"), tags$td(test_info$anova$name)),
+          tags$tr(tags$td("Quantitative"), tags$td("Quantitative"), tags$td(test_info$regression$name)),
+          tags$tr(tags$td("Qualitative"), tags$td("Qualitative"), tags$td(test_info$chisq$name)),
+          tags$tr(tags$td("Qualitative with two outcomes (Yes / No)"), tags$td("Quantitative"), tags$td(test_info$logistic$name)))),
+      h4(class = "sec-title", "2. How a Hypothesis Test Works"),
+      tags$ul(
+        tags$li(tags$strong("Hypotheses: "), "the null hypothesis (H₀) is the “nothing is going on” claim: no difference between groups, no relationship. The alternative hypothesis (Hₐ) is what we conclude if the data give strong evidence against H₀."),
+        tags$li(tags$strong("Test statistic: "), "one number (F, t, or χ²) that measures how far the data are from what H₀ predicts."),
+        tags$li(tags$strong("p-value: "), "the probability of getting results as extreme as ours, or more extreme, if H₀ were true. A small p-value means our data would be surprising if nothing were going on."),
+        tags$li(tags$strong("Significance level (α = 0.05): "), "every test in this app uses 0.05. If p < 0.05, we reject H₀ (the result is statistically significant). If p ≥ 0.05, we fail to reject H₀, which is not the same as proving H₀ true."),
+        tags$li(tags$strong("Evidence, not proof: "), "even a significant result can be wrong. Rejecting H₀ when it is actually true is a Type I error, and α is the chance of making one. A relationship in observational data also does not prove that one variable causes the other.")),
+      h4(class = "sec-title", "3. Reading the Graphs"),
+      tags$ul(
+        tags$li(tags$strong("Boxplot (ANOVA): "), "the box holds the middle 50% of the values, the line inside is the median, and the faint dots are the individual values. Compare the boxes side by side."),
+        tags$li(tags$strong("Scatterplot (Linear Regression): "), "each dot is one row of data and the line is the fitted line. A steeper line means a stronger change in y as x increases."),
+        tags$li(tags$strong("Bar chart (Chi-squared): "), "each panel counts the response in one group of the explanatory variable. If the bars have a different shape from panel to panel, the variables may be associated."),
+        tags$li(tags$strong("S-curve (Logistic Regression): "), "the dots sit at 1 (the outcome happened) or 0 (it did not); the curve is the predicted chance of the outcome, and the dotted line marks a 50% chance.")),
+      h4(class = "sec-title", "4. Checking Assumptions"),
+      p("Every test rests on a few assumptions. If they are badly broken, the p-value can be misleading, so the app checks them for you under View More on Test:"),
+      tags$ul(
+        tags$li(tags$strong("Normal Q-Q plot: "), "compares the residuals (what the model misses) with a bell-shaped normal curve. The points should follow the line and stay inside the shaded band; the app flags the check if more than 10% fall outside."),
+        tags$li(tags$strong("Residuals vs. fitted plot: "), "the points should form an even, patternless cloud around 0. A funnel (megaphone) shape means the spread is not constant; a curve means a straight line does not fit."),
+        tags$li(tags$strong("Levene's test: "), "tests whether the groups have the same spread. Its H₀ is equal spread, so a p-value above 0.05 is what we want."),
+        tags$li(tags$strong("Independence: "), "each row should not influence another. No plot can check this; it depends on how the data were collected."),
+        tags$li(tags$strong("When a check fails: "), "ANOVA adds the Kruskal-Wallis test, regression refits the model with log(y), chi-squared adds a simulation-based p-value, and logistic regression warns you about a poor fit.")),
+      h4(class = "sec-title", "5. The Four Tests at a Glance"),
+      lapply(names(test_info), function(k) p(tags$strong(test_info[[k]]$name, ": "), test_info[[k]]$purpose)),
+      p(class = "note", "For the equations, hypotheses, and assumption checks of the test you ran, open View More on Test on the results page."),
+      h4(class = "sec-title", "6. Want More?"),
+      p("These BYU-Idaho class notes go deeper into each topic:"),
+      tags$ul(lapply(names(LEARN_LINKS), function(n) tags$li(tags$a(href = LEARN_LINKS[[n]], target = "_blank", n)))))))
 })
 
   # [F10. Feedback window] ===========================================================================================================================
@@ -1333,5 +1844,100 @@ observeEvent(input$btn_feedback, {
       modalButton("No"),
       tags$button(type = "button", class = "btn btn-te", `data-dismiss` = "modal", `data-bs-dismiss` = "modal",
                   onclick = sprintf("window.open('%s', '_blank', 'noopener');", FEEDBACK_URL), "Yes"))))
+})
+
+  # [F11. Explore Data window and downloads] =========================================================================================================
+  # The round data-table button asks which version of the analysed table to download:
+  #   Clean  the table the app uses (from Data/), saved as an Excel file (.xlsx).
+  #   Raw    the original Tiny Earth export (from Data_Raw/), unchanged. Raw files are named with hyphens ("aa-screen-isolates.xlsx"). A Combined
+  #          table has no raw file of its own, so its main table's raw file is given.
+  # Clicking either choice starts the download and closes the window (removeModal() via input$dl_done).
+  # ==================================================================================================================================================
+raw_path <- function(key) file.path("Data_Raw", paste0(str_replace_all(str_remove(key, "_combined$"), "_", "-"), ".xlsx"))
+
+observeEvent(input$btn_explore, {
+  key <- req(rv$analysis)$table
+  has_raw <- file.exists(raw_path(key))
+  done <- "Shiny.setInputValue('dl_done', Math.random());"
+  showModal(modalDialog(
+    title = tagList(icon("table"), " Explore Data"), easyClose = TRUE, footer = modalButton("Cancel"),
+    p("Download the data behind this analysis: ", tags$strong(paste0(pretty_name(key), if (str_detect(key, "_combined$")) " (Combined)" else " (Individual)")), "."),
+    div(class = "dl-choices",
+        downloadLink("dl_clean", class = "dl-choice", onclick = done,
+                     tags$strong(icon("broom"), " Clean Data"),
+                     span("The tidied table this app analyses (.xlsx).")),
+        if (has_raw)
+          downloadLink("dl_raw", class = "dl-choice", onclick = done,
+                       tags$strong(icon("file-excel"), " Raw Data"),
+                       span(if (str_detect(key, "_combined$")) "The original Tiny Earth export of the main table, before cleaning or joining (.xlsx)."
+                            else "The original Tiny Earth export, before any cleaning (.xlsx)."))
+        else div(class = "dl-choice", tags$strong(icon("file-excel"), " Raw Data"), span("No raw file was found for this table.")))))
+})
+observeEvent(input$dl_done, removeModal())
+
+output$dl_clean <- downloadHandler(
+  filename = function() paste0(req(rv$analysis)$table, "_clean.xlsx"),
+  content  = function(file) writexl::write_xlsx(load_table(req(rv$analysis)$table), file))
+output$dl_raw <- downloadHandler(
+  filename = function() basename(raw_path(req(rv$analysis)$table)),
+  content  = function(file) file.copy(raw_path(req(rv$analysis)$table), file))
+outputOptions(output, "dl_clean", suspendWhenHidden = FALSE)
+outputOptions(output, "dl_raw",   suspendWhenHidden = FALSE)
+
+  # [F12. Debug windows (only when DEBUG_MODE is TRUE)] ==============================================================================================
+  # The Debug button lists one link per test in DEBUG_CASES [D1]; each opens the app in a new window with ?debug=<test> in its address. When a window
+  # starts with that address, the observer below fills in rv$analysis from DEBUG_CASES and jumps straight to the results page.
+  # ==================================================================================================================================================
+debug_js <- function(test) sprintf("window.open('?debug=%s', 'te_debug_%s', 'popup,width=1150,height=900');", test, test)
+
+observeEvent(input$btn_debug, {
+  req(DEBUG_MODE)
+  showModal(modalDialog(
+    title = tagList(icon("bug"), " Debug: open each test"), easyClose = TRUE, footer = modalButton("Close"),
+    p("Each link opens that test's results page in a new window, using the variables set in DEBUG_CASES."),
+    tags$ul(lapply(names(DEBUG_CASES), function(k) {
+      cs <- DEBUG_CASES[[k]]
+      tags$li(tags$a(href = "#", onclick = paste(debug_js(k), "return false;"), tags$strong(test_info[[k]]$name)),
+              sprintf(" — %s: %s by %s", pretty_name(cs$table), var_label(cs$resp), var_label(cs$expl)))
+    }))))
+})
+
+observeEvent(session$clientData$url_search, {
+  test <- parseQueryString(session$clientData$url_search)$debug
+  req(DEBUG_MODE, !is.null(test), test %in% names(DEBUG_CASES))
+  rv$table    <- DEBUG_CASES[[test]]$table
+  rv$analysis <- DEBUG_CASES[[test]]
+  rv$page     <- "results"
+}, once = TRUE)
+
+  # [F13. Worksheet window (only when WORKSHEET_ENABLED is TRUE)] ====================================================================================
+  # The microscope button first asks "Would you like to download an analysis worksheet?". Yes swaps in a second window offering the Word and PDF
+  # versions for the test on the page (ws_path() builds e.g. "Worksheets/anova_worksheet.docx"); a format whose file is missing is shown as not yet
+  # available. Choosing a file starts the download and closes the window (input$dl_done, as in [F11]).
+  # ==================================================================================================================================================
+ws_path <- function(ext) file.path(WORKSHEET_DIR, paste0(result()$type, "_worksheet.", ext))
+
+observeEvent(input$btn_worksheet, {
+  req(WORKSHEET_ENABLED)
+  showModal(modalDialog(
+    title = tagList(icon("microscope"), " Download Worksheet"), easyClose = TRUE,
+    p("Would you like to download an analysis worksheet?"),
+    footer = tagList(modalButton("No"), actionButton("ws_yes", "Yes", class = "btn-te"))))
+})
+observeEvent(input$ws_yes, {
+  done   <- "Shiny.setInputValue('dl_done', Math.random());"
+  choice <- function(id, ext, label, ico)
+    if (file.exists(ws_path(ext))) downloadLink(id, class = "dl-choice", onclick = done, tags$strong(icon(ico), " ", label), span(paste0(".", ext)))
+    else div(class = "dl-choice", tags$strong(icon(ico), " ", label), span("Not available yet."))
+  showModal(modalDialog(
+    title = tagList(icon("microscope"), " Download Worksheet"), easyClose = TRUE, footer = modalButton("Cancel"),
+    p("Choose a format for the ", tags$strong(test_info[[result()$type]]$name), " worksheet:"),
+    div(class = "dl-choices", choice("dl_ws_docx", "docx", "Word Document", "file-word"), choice("dl_ws_pdf", "pdf", "PDF", "file-pdf"))))
+})
+for (ext in c("docx", "pdf")) local({
+  e <- ext
+  output[[paste0("dl_ws_", e)]] <- downloadHandler(filename = function() basename(ws_path(e)),
+                                                   content  = function(file) file.copy(ws_path(e), file))
+  outputOptions(output, paste0("dl_ws_", e), suspendWhenHidden = FALSE)
 })
 ```
