@@ -47,35 +47,4 @@ Project File Architecture:
 
   Scripts are run in this order: Data_Pull, then Data_Clean, then Bio181L_App_TE (open it in R-Studio and click "Run Document").
 
-Setup (install once):
-
-  Paste this line into the R-Studio Console. It installs every package the three scripts need (the same line is at the top of each script):
-
-    install.packages(c("tidyverse", "readxl", "httr2", "shiny", "DT", "car", "ggthemes", "scales", "writexl", "rmarkdown", "knitr"))
-
-  The app also needs Quarto, which comes with R-Studio, and an internet connection to draw the equations (KaTeX).
-
-What the app does:
-
-  Main screen
-    Table Selector --> Pick any Individual table (matches the Tiny Earth database) or Combined table (adds the related sample and institution columns)
-    Table Viewer --> Search, filter, and sort the selected table
-    Description --> Shows what each column (variable) of the table means
-    Run Analysis --> Tick one Response (y) and one Explanatory (x) variable; the app picks the right test and the Analyze button lights up
-    Background --> A short introduction to Tiny Earth and how to use the app
-
-  Results page
-    Graphical Summary --> A graph of the two variables (downloadable as PDF or PNG)
-    Numerical Summary --> Summary tables (downloadable as CSV)
-    View More on Test --> When the test is used, its purpose, the mathematical model and hypotheses (written as real math), the test results with a written conclusion, and the assumption checks (diagnostic plots and tests). If an assumption fails, a backup is added: Kruskal-Wallis for ANOVA, a log(y) refit for regression, and a simulation-based p-value for chi-squared
-    Learn More --> A broad guide to the statistics: choosing a test, how hypothesis tests work, reading the graphs, checking assumptions, and links to the BYU-Idaho class notes
-    Save PDF --> Prints the results page or saves it as a PDF
-    Round buttons --> Download an analysis worksheet (once worksheets are added), explore and download the clean or raw data behind the analysis, and give feedback on the app
-
-  Settings for maintainers (near the top of Bio181L_App_TE, section [D1])
-    DEBUG_MODE --> TRUE shows a bug button in the bottom-left corner that opens each test's results page for checking layouts. Set it to FALSE before publishing for students
-    WORKSHEET_ENABLED --> Set to TRUE once worksheet files are added to a Worksheets folder (named e.g. anova_worksheet.docx / anova_worksheet.pdf)
-    FEEDBACK_URL --> The feedback form the speech-bubble button opens
-    GRAPH_STYLE --> "economist" or "minimal" graph look
-
   All files in this project are stored on github: https://github.com/rop23003-creator/TinyEarthBio181_BYUI.git
