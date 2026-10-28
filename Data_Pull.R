@@ -54,30 +54,24 @@ pull_table <- function(table_name) {
   message("Downloading ", table_name, " ...")
 
   jar <- tempfile(fileext = ".txt")  # Cookie "jar": it's a temp file holding the site's cookies, so both requests look like one visitor.
-
-  # [Step 1/5] =======================================================================================================================================
+  # -- Step 1/5 --
   # Open the table's page and read its HTML as text. req_user_agent() labels our requests (here and in Step 3) so the site's admins can see in their
   # logs who is downloading and why. It does not change the data we get.
-  # ==================================================================================================================================================
   page <- request(paste0(base_url, "/", table_name, "/")) %>%
     req_user_agent("BYU-Idaho Bio 181 Tiny Earth data pull (R httr2)") %>%
     req_cookie_preserve(jar) %>%
     req_perform() %>%
     resp_body_string()
-
-  # [Step 2/5] =======================================================================================================================================
+  # -- Step 2/5 --
   # Find the two values the download button uses. str_match() returns the full match in column 1 and the part inside ( ) in column 2, so [, 2] is just
   # the value we want.
-  # ==================================================================================================================================================
   report_id <- str_match(page, 'data-report_id="(\\d+)"')[, 2]
   nonce <- str_match(page, paste0('reportbuilder_', report_id, '\\s*=\\s*\\{[^}]*"nonce":"([^"]+)"'))[, 2]
   if (is.na(report_id) || is.na(nonce)) {
     stop("could not find the download button on the ", table_name, " page -- the website may have changed.", call. = FALSE)
   }
-
-  # [Step 3/5] =======================================================================================================================================
+  # -- Step 3/5 --
   # Ask for the spreadsheet, the same way the button does, and save the reply to a temporary file.
-  # ==================================================================================================================================================
   tmp <- tempfile(fileext = ".xlsx")
   request(paste0(base_url, "/wp-admin/admin-ajax.php")) %>%
     req_user_agent("BYU-Idaho Bio 181 Tiny Earth data pull (R httr2)") %>%
@@ -89,20 +83,16 @@ pull_table <- function(table_name) {
                   downloadType = "download") %>%
     req_timeout(300) %>%
     req_perform(path = tmp)
-
-  # [Step 4/5] =======================================================================================================================================
+  # -- Step 4/5 --
   # Check the file before trusting it. Every .xlsx file begins with the two letters "PK" (it's a zip file inside), so anything else is rejected.
   # Then make sure readxl can actually open it. col_types = "text" reads every cell as plain text and it skips readxl's type-guessing.
-  # ==================================================================================================================================================
   xlsx_zip_id <- readBin(tmp, "raw", n = 2)
   if (!identical(xlsx_zip_id, charToRaw("PK"))) {
     stop("the website did not send an Excel file for ", table_name, call. = FALSE)
   }
   n_rows <- nrow(read_excel(tmp, col_types = "text"))
-
-  # [Step 5/5] =======================================================================================================================================
+  # -- Step 5/5 --
   # Put the file in Data_Raw and replace the old one.
-  # ==================================================================================================================================================
   file.copy(tmp, file.path(data_raw_dir, paste0(table_name, ".xlsx")), overwrite = TRUE)
   message("  saved ", table_name, ".xlsx (", n_rows, " rows)")
   n_rows
@@ -131,6 +121,5 @@ if (length(failed) > 0) {
           "were kept): ", paste(failed, collapse = ", "),
           "\nTry again later, or download them by hand from the website.",
           call. = FALSE)
-} else {
-  message("Next step: run Data_Clean.R.")
-}
+} 
+else {message("Next step: run Data_Clean.R.")}
